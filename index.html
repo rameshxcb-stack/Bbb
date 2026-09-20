@@ -1,0 +1,1906 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5">
+<meta name="theme-color" content="#07070d">
+<meta name="description" content="Free private photo and signature background remover for students, cyber cafes and everyday users.">
+<title>Photo & Signature BG Remover — Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ==================== DESIGN TOKENS ==================== */
+:root{
+  --bg:#07070d;
+  --panel:rgba(22,22,38,.78);
+  --stroke:rgba(148,163,184,.14);
+  --text:#f1f5f9;
+  --muted:#94a3b8;
+  --faint:#64748b;
+  --v:#8b5cf6;
+  --c:#22d3ee;
+  --r:16px;
+  --r2:12px;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{
+  margin:0;min-height:100%;background:var(--bg);color:var(--text);
+  font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;
+  background:
+    radial-gradient(900px 500px at 15% -5%,rgba(139,92,246,.22),transparent 55%),
+    radial-gradient(700px 500px at 85% 5%,rgba(34,211,238,.16),transparent 55%),
+    linear-gradient(180deg,#07070d,#0a0a14 50%,#07070d)
+}
+button,input,select{font:inherit;color:inherit}
+button{
+  border:1px solid var(--stroke);
+  background:linear-gradient(180deg,rgba(30,30,48,.75),rgba(20,20,34,.75));
+  border-radius:var(--r2);padding:11px 14px;cursor:pointer;font-weight:600;
+  min-height:46px;display:inline-flex;align-items:center;justify-content:center;
+  gap:6px;transition:.18s var(--ease);touch-action:manipulation
+}
+button:active{transform:scale(.97)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.primary{
+  background:linear-gradient(135deg,#7c3aed,#8b5cf6 50%,#22d3ee 140%);
+  border-color:rgba(167,139,250,.55);
+  box-shadow:0 10px 30px -8px rgba(139,92,246,.55)
+}
+.ghost{background:rgba(30,30,48,.4)}
+.small{padding:8px 10px;font-size:12px;min-height:38px}
+
+/* ==================== LAYOUT ==================== */
+.app{
+  max-width:1400px;margin:auto;padding:8px;
+  padding-top:calc(8px + var(--safe-top));
+  padding-bottom:calc(80px + var(--safe-bottom))
+}
+.hero{text-align:center;padding:10px 10px 6px;margin-bottom:6px}
+.hero .logo{
+  width:42px;height:42px;border-radius:12px;margin:0 auto 6px;
+  background:linear-gradient(135deg,#8b5cf6,#22d3ee);
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  box-shadow:0 0 24px rgba(139,92,246,.5)
+}
+.hero h1{
+  font-family:"Plus Jakarta Sans",sans-serif;font-size:17px;margin:0 0 2px;
+  font-weight:800;
+  background:linear-gradient(90deg,#f1f5f9,#a78bfa 60%,#22d3ee);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent
+}
+.hero p{margin:0;color:var(--muted);font-size:11px}
+.grid{display:block}
+.canvasCol{
+  position:sticky;top:0;z-index:20;
+  background:linear-gradient(180deg,#07070d 0%,#07070d 92%,rgba(7,7,13,.9));
+  backdrop-filter:blur(16px);
+  margin:0 -8px 8px;padding:6px 8px 8px;
+  border-bottom:1px solid var(--stroke)
+}
+
+/* ==================== STAGE ==================== */
+.stageWrap{
+  position:relative;border-radius:var(--r);overflow:hidden;
+  border:1px solid var(--stroke);background:#1a1a26;
+  background-image:
+    linear-gradient(45deg,#242438 25%,transparent 25%),
+    linear-gradient(-45deg,#242438 25%,transparent 25%),
+    linear-gradient(45deg,transparent 75%,#242438 75%),
+    linear-gradient(-45deg,transparent 75%,#242438 75%);
+  background-size:16px 16px;
+  background-position:0 0,0 8px,8px -8px,-8px 0;
+  height:clamp(220px,40vh,380px)
+}
+.canvasBox{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  transform-origin:center;transition:transform .15s var(--ease);padding:8px
+}
+.canvasBox canvas{
+  max-width:100%;max-height:100%;width:auto;height:auto;display:block;
+  border-radius:4px;box-shadow:0 8px 24px rgba(0,0,0,.45);
+  touch-action:auto
+}
+.canvasBox canvas.brushing{touch-action:none;cursor:crosshair}
+
+.badge{
+  position:absolute;top:8px;left:8px;background:rgba(10,10,20,.88);
+  border:1px solid rgba(139,92,246,.4);color:#c4b5fd;border-radius:8px;
+  padding:4px 10px;font-size:10px;font-weight:700;letter-spacing:.08em;z-index:5
+}
+.viewBtns{position:absolute;top:8px;right:8px;display:flex;gap:3px;z-index:5}
+.viewBtns button{
+  background:rgba(10,10,20,.88);width:32px;height:32px;padding:0;
+  min-height:32px;font-size:14px;border-radius:8px
+}
+.liveBadge{
+  position:absolute;bottom:8px;left:8px;background:rgba(16,185,129,.92);
+  color:#fff;border-radius:99px;padding:3px 9px;font-size:9.5px;font-weight:700;z-index:5
+}
+.liveBadge::before{
+  content:"";display:inline-block;width:5px;height:5px;border-radius:50%;
+  background:#fff;margin-right:4px
+}
+.stageLoader{
+  position:absolute;inset:0;z-index:20;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  background:rgba(7,7,13,.82);backdrop-filter:blur(8px);
+  font-size:12.5px;font-weight:600
+}
+.spinner{
+  display:inline-block;width:18px;height:18px;
+  border:2px solid rgba(255,255,255,.22);border-top-color:#a78bfa;
+  border-radius:50%;animation:spin .8s linear infinite
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.brushHint{
+  position:absolute;right:8px;bottom:8px;z-index:6;
+  padding:5px 9px;border-radius:9px;background:rgba(10,10,20,.85);
+  border:1px solid var(--stroke);font-size:10px;color:var(--muted);
+  pointer-events:none
+}
+.canvasActions{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:6px}
+.canvasActions button{
+  padding:7px 4px;font-size:10.5px;min-height:40px;flex-direction:column;gap:2px
+}
+.ico{font-size:14px;line-height:1}
+
+/* ==================== CONTROLS ==================== */
+.controlsCol{padding-bottom:calc(20px + var(--safe-bottom))}
+.featureNav{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:6px;
+  background:rgba(10,10,20,.5);border:1px solid var(--stroke);
+  border-radius:14px;margin-bottom:8px
+}
+.featureNav button{
+  padding:8px 3px;font-size:10px;font-weight:600;min-height:54px;
+  background:transparent;border:1px solid transparent;border-radius:10px;
+  flex-direction:column;gap:3px;line-height:1.2;color:var(--muted)
+}
+.featureNav button.on{
+  background:linear-gradient(135deg,rgba(139,92,246,.9),rgba(34,211,238,.75));
+  color:#fff;border-color:transparent;
+  box-shadow:0 6px 18px -6px rgba(139,92,246,.6)
+}
+.panel{
+  display:none;animation:fadeIn .25s var(--ease) both;
+  background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);
+  padding:13px;backdrop-filter:blur(20px);box-shadow:0 8px 24px -8px rgba(0,0,0,.4)
+}
+.panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.panel h3{
+  font-family:"Plus Jakarta Sans",sans-serif;font-size:11.5px;margin:0 0 10px;
+  text-transform:uppercase;letter-spacing:.04em
+}
+.opt{color:var(--faint);font-size:9.5px;text-transform:none;letter-spacing:0}
+
+/* ==================== DROP ZONE ==================== */
+.drop{
+  display:block;border:2px dashed rgba(167,139,250,.4);border-radius:var(--r2);
+  padding:22px 12px;text-align:center;cursor:pointer;
+  background:radial-gradient(circle at 50% 0%,rgba(139,92,246,.1),transparent 70%)
+}
+.drop:hover,.drop.dragover{
+  border-color:rgba(167,139,250,.9);
+  background:radial-gradient(circle at 50% 0%,rgba(139,92,246,.22),transparent 70%)
+}
+.drop .ico{font-size:26px;display:block;margin-bottom:4px}
+.drop strong{display:block;font-size:13.5px}
+.drop small{display:block;color:var(--muted);font-size:10.5px}
+#file{display:none!important}
+
+/* ==================== STATUS ==================== */
+.status{color:var(--muted);font-size:11.5px;margin-top:8px;min-height:14px}
+.bar{height:4px;background:rgba(148,163,184,.1);border-radius:99px;overflow:hidden;margin-top:6px}
+.bar i{
+  display:block;height:100%;width:0;
+  background:linear-gradient(90deg,#8b5cf6,#22d3ee);transition:width .25s
+}
+
+/* ==================== NOTICE ==================== */
+.notice{
+  padding:9px 11px;border-radius:var(--r2);
+  background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.22);
+  font-size:10.5px;color:var(--muted);line-height:1.55;margin-top:10px
+}
+.notice.warn{border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.08)}
+.notice.green{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.06)}
+
+/* ==================== NEXT STEPS ==================== */
+.nextSteps{
+  margin-top:12px;padding:12px;
+  background:linear-gradient(135deg,rgba(16,185,129,.10),rgba(34,211,238,.06));
+  border:1px solid rgba(16,185,129,.35);
+  border-radius:var(--r2);
+  animation:fadeIn .3s var(--ease) both
+}
+.nextSteps .nsTitle{
+  font-size:11.5px;color:var(--muted);margin-bottom:10px;text-align:center;font-weight:600
+}
+.nextSteps .actions{margin-top:0}
+
+/* ==================== SLIDERS / INPUTS ==================== */
+.row{display:flex;align-items:center;gap:10px;margin:8px 0}
+.row label{color:var(--muted);font-size:11.5px;flex:1}
+.row output{font-weight:700;font-size:11.5px;min-width:38px;text-align:right}
+input[type=range]{
+  width:100%;height:8px;appearance:none;
+  background:linear-gradient(90deg,rgba(139,92,246,.55),rgba(34,211,238,.4));
+  border-radius:99px;outline:0;margin:6px 0
+}
+input[type=range]::-webkit-slider-thumb{
+  appearance:none;width:24px;height:24px;border-radius:50%;
+  background:#fff;border:2px solid #8b5cf6;
+  box-shadow:0 0 0 4px rgba(139,92,246,.2)
+}
+select,input[type=text],input[type=number]{
+  width:100%;background:rgba(10,10,20,.6);color:var(--text);
+  border:1px solid var(--stroke);border-radius:var(--r2);
+  padding:12px 13px;font-size:13.5px;min-height:46px;outline:0
+}
+select:focus,input:focus{
+  border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px rgba(139,92,246,.15)
+}
+
+/* ==================== OPTION GRIDS ==================== */
+.bgOpts,.adjGrid,.presets,.brushModes{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:6px
+}
+.bgOpts button,.adjGrid button,.presets button,.brushModes button{
+  padding:8px 4px;flex-direction:column;gap:3px;font-size:10px;min-height:54px
+}
+.bgOpts .swatch{width:20px;height:20px;border-radius:6px;border:1px solid rgba(255,255,255,.2)}
+.checker{
+  background-color:#ddd;
+  background-image:
+    linear-gradient(45deg,#aaa 25%,transparent 25%),
+    linear-gradient(-45deg,#aaa 25%,transparent 25%),
+    linear-gradient(45deg,transparent 75%,#aaa 75%),
+    linear-gradient(-45deg,transparent 75%,#aaa 75%);
+  background-size:8px 8px;
+  background-position:0 0,0 4px,4px -4px,-4px 0
+}
+.white{background:#fff}
+.blue{background:#2471d8}
+.custom{background:linear-gradient(135deg,#8b5cf6,#22d3ee)}
+.bgOpts button.on,.brushModes button.on,.presets button.on{
+  background:linear-gradient(135deg,rgba(139,92,246,.75),rgba(34,211,238,.6));
+  border-color:transparent
+}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.actions.single{grid-template-columns:1fr}
+
+/* ==================== SIZE INFO ==================== */
+.sizeInfo{
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;
+  font-size:10.5px;color:var(--muted);margin-top:8px;padding:7px 9px;
+  background:rgba(10,10,20,.4);border-radius:10px;border:1px solid var(--stroke)
+}
+
+/* ==================== STICKY BAR ==================== */
+.stickyBar{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  padding:8px 10px;padding-bottom:calc(8px + var(--safe-bottom));
+  background:linear-gradient(180deg,transparent,rgba(7,7,13,.95) 35%);
+  backdrop-filter:blur(14px)
+}
+.stickyBar .inner{
+  max-width:1400px;margin:auto;
+  display:grid;grid-template-columns:auto auto 1fr;gap:6px
+}
+.stickyBar button{min-height:48px}
+
+/* ==================== TOAST ==================== */
+.toast{
+  position:fixed;left:50%;bottom:calc(76px + var(--safe-bottom));
+  transform:translateX(-50%) translateY(80px);
+  background:rgba(20,20,34,.97);border:1px solid rgba(139,92,246,.5);
+  color:#e9d5ff;padding:10px 18px;border-radius:20px;
+  font-size:12px;font-weight:600;z-index:100;opacity:0;pointer-events:none;
+  transition:.35s var(--ease);max-width:calc(100vw - 24px);
+  text-align:center;word-wrap:break-word
+}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ==================== FOOTER ==================== */
+.footer{
+  text-align:center;padding:14px 10px;color:var(--faint);
+  font-size:10px;line-height:1.7
+}
+.hidden{display:none!important}
+
+/* ==================== DESKTOP ==================== */
+@media(min-width:900px){
+  .app{max-width:1360px;padding:16px;padding-bottom:90px}
+  .hero{padding:16px 12px 12px}
+  .hero h1{font-size:24px}
+  .hero .logo{width:52px;height:52px;font-size:26px}
+  .grid{display:grid;grid-template-columns:1fr 420px;gap:16px;align-items:start}
+  .canvasCol{top:16px;background:transparent;backdrop-filter:none;margin:0;padding:0;border:0}
+  .stageWrap{height:auto;min-height:440px;max-height:76vh}
+  .canvasActions{margin-top:10px}
+  .canvasActions button{flex-direction:row;min-height:44px;font-size:12px}
+  .controlsCol{max-height:calc(100vh - 32px);overflow-y:auto;padding-right:8px}
+  .featureNav{grid-template-columns:repeat(4,1fr)}
+}
+@media(max-width:360px){
+  .hero h1{font-size:15px}
+  .presets{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header class="hero">
+  <div class="logo">✂️</div>
+  <h1>Photo & Signature BG Remover</h1>
+  <p>Free • No signup • Local browser processing</p>
+</header>
+
+<div class="grid">
+
+  <!-- ==================== CANVAS COLUMN ==================== -->
+  <div class="canvasCol">
+    <div class="stageWrap" id="stage">
+      <span class="badge" id="modeBadge">READY</span>
+      <div class="viewBtns">
+        <button id="zoomOut" title="Zoom out">−</button>
+        <button id="zoomReset" title="Fit">⌂</button>
+        <button id="zoomIn" title="Zoom in">+</button>
+      </div>
+      <div class="liveBadge hidden" id="liveBadge">EDITED</div>
+      <div class="canvasBox" id="canvasBox">
+        <canvas id="c" width="900" height="600"></canvas>
+      </div>
+      <div class="stageLoader hidden" id="stageLoader">
+        <span class="spinner"></span>
+        <span id="stageLoaderText">Processing…</span>
+      </div>
+      <div class="brushHint hidden" id="brushHint">🖌️ Brush active</div>
+    </div>
+    <div class="canvasActions">
+      <button id="compareBtn" class="ghost"><span class="ico">◐</span><span>Compare</span></button>
+      <button id="undoBtn" class="ghost"><span class="ico">↶</span><span>Undo</span></button>
+      <button id="resetBtn" class="ghost"><span class="ico">↻</span><span>Reset</span></button>
+      <button id="fullscreenBtn" class="ghost"><span class="ico">⛶</span><span>Full</span></button>
+    </div>
+  </div>
+
+  <!-- ==================== CONTROLS COLUMN ==================== -->
+  <div class="controlsCol">
+
+    <div class="featureNav" id="featureNav">
+      <button data-tab="upload" class="on"><span class="ico">📷</span><span>Upload</span></button>
+      <button data-tab="ai"><span class="ico">🤖</span><span>AI</span></button>
+      <button data-tab="sign"><span class="ico">✍️</span><span>Sign</span></button>
+      <button data-tab="bg"><span class="ico">🎨</span><span>BG</span></button>
+      <button data-tab="adjust"><span class="ico">🎛️</span><span>Adjust</span></button>
+      <button data-tab="edge"><span class="ico">✨</span><span>Edge</span></button>
+      <button data-tab="brush"><span class="ico">🖌️</span><span>Fix</span></button>
+      <button data-tab="size"><span class="ico">📐</span><span>Size</span></button>
+      <button data-tab="download"><span class="ico">⬇</span><span>Save</span></button>
+    </div>
+
+    <div class="panels">
+
+      <!-- UPLOAD -->
+      <div class="panel active" data-panel="upload">
+        <h3>📷 Image Upload</h3>
+        <label id="drop" class="drop" for="file">
+          <span class="ico">🖼️</span>
+          <strong>Image Upload करें</strong>
+          <small>JPG • PNG • WEBP • HEIC* — Tap या Drag & Drop</small>
+        </label>
+        <input id="file" type="file" accept="image/*">
+        <div id="status" class="status">Image upload करें।</div>
+        <div class="bar"><i id="progress"></i></div>
+
+        <!-- Next steps appear after image loads -->
+        <div id="nextSteps" class="nextSteps hidden">
+          <div class="nsTitle">✅ Image load हो गई — अब क्या करें?</div>
+          <div class="actions">
+            <button id="goAI" class="primary">🤖 AI से BG हटाएँ</button>
+            <button id="goSign" class="ghost">✍️ Signature</button>
+          </div>
+        </div>
+
+        <div class="notice green">🔒 आपकी image server पर upload नहीं होती। AI model पहली बार external CDN से browser में download होता है, बाद में browser cache से चलता है।</div>
+        <div class="notice warn">⚠️ पहली बार AI use करने पर model download होगा (40–100 MB). WiFi recommended. HEIC support browser पर निर्भर करता है।</div>
+      </div>
+
+      <!-- AI -->
+      <div class="panel" data-panel="ai">
+        <h3>🤖 AI Background Remove</h3>
+        <select id="engine">
+          <option value="fast">⚡ Fast — ISNet Mobile (~40 MB)</option>
+          <option value="isnet">🧠 Balanced — ISNet FP16 (~80 MB)</option>
+          <option value="quality">🏆 High Quality — BiRefNet Lite (~100 MB)</option>
+        </select>
+        <div class="actions single">
+          <button id="aiRemove" class="primary">✨ Background हटाएँ</button>
+        </div>
+        <div class="notice">💡 कमजोर mobile पर Fast mode चुनें। पहली बार model download के बाद हर बार तेज़ चलेगा।</div>
+      </div>
+
+      <!-- SIGNATURE -->
+      <div class="panel" data-panel="sign">
+        <h3>✍️ Signature Clean</h3>
+        <div class="row">
+          <label>Ink threshold</label>
+          <output id="sigThreshO">180</output>
+        </div>
+        <input id="sigThresh" type="range" min="60" max="240" value="180">
+        <div class="row">
+          <label>Edge smooth</label>
+          <output id="sigSmoothO">1.2</output>
+        </div>
+        <input id="sigSmooth" type="range" min="0" max="4" step=".2" value="1.2">
+        <div class="actions single">
+          <button id="sigAuto" class="primary">✨ Signature Clean करें</button>
+        </div>
+        <div class="notice">💡 White/grey paper से dark ink निकालने के लिए। Threshold adjust करके फिर Clean दबाएँ।</div>
+      </div>
+
+      <!-- BACKGROUND -->
+      <div class="panel" data-panel="bg">
+        <h3>🎨 Background <span class="opt">Live preview</span></h3>
+        <div class="bgOpts" id="bgOpts">
+          <button data-bg="checker" class="on"><span class="swatch checker"></span><span>Clear</span></button>
+          <button data-bg="white"><span class="swatch white"></span><span>White</span></button>
+          <button data-bg="blue"><span class="swatch blue"></span><span>Blue</span></button>
+          <button data-bg="custom"><span class="swatch custom"></span><span>Custom</span></button>
+        </div>
+        <input id="customColor" type="color" value="#f5f5f5" style="display:none;margin-top:10px;width:100%;height:46px;border:1px solid var(--stroke);border-radius:12px;background:transparent">
+        <div class="notice">💡 Clear = transparent PNG/WEBP. JPG export automatically solid background use करता है।</div>
+      </div>
+
+      <!-- ADJUST -->
+      <div class="panel" data-panel="adjust">
+        <h3>🎛️ Adjustments <span class="opt">Live</span></h3>
+        <div class="adjGrid">
+          <button id="rotL"><span class="ico">↺</span><span>Left</span></button>
+          <button id="rotR"><span class="ico">↻</span><span>Right</span></button>
+          <button id="flipH"><span class="ico">⇆</span><span>Flip H</span></button>
+          <button id="flipV"><span class="ico">⇅</span><span>Flip V</span></button>
+        </div>
+        <div class="row">
+          <label>Brightness</label>
+          <output id="brightO">1.00</output>
+        </div>
+        <input id="bright" type="range" min=".5" max="1.6" step=".02" value="1">
+        <div class="row">
+          <label>Contrast</label>
+          <output id="contrastO">1.00</output>
+        </div>
+        <input id="contrast" type="range" min=".5" max="1.6" step=".02" value="1">
+        <div class="actions single">
+          <button id="resetAdj" class="ghost small">↻ Reset</button>
+        </div>
+      </div>
+
+      <!-- EDGE -->
+      <div class="panel" data-panel="edge">
+        <h3>✨ Edge Refine</h3>
+        <div class="row">
+          <label>Feather</label>
+          <output id="featherO">1.5</output>
+        </div>
+        <input id="feather" type="range" min="0" max="6" step=".5" value="1.5">
+        <div class="row">
+          <label>Decontaminate</label>
+          <output id="defO">40</output>
+        </div>
+        <input id="def" type="range" min="0" max="100" value="40">
+        <div class="actions single">
+          <button id="applyEdge">✨ Edge साफ़ करें</button>
+        </div>
+        <div class="notice">💡 Feather = edge softness. Decontaminate = background colour halo हटाना (green/white edges पर असरदार)।</div>
+      </div>
+
+      <!-- BRUSH -->
+      <div class="panel" data-panel="brush">
+        <h3>🖌️ Manual Fix <span class="opt">AI mask correction</span></h3>
+        <div class="brushModes">
+          <button id="keepBrush" class="on"><span>🟢</span><span>Keep</span></button>
+          <button id="removeBrush"><span>🔴</span><span>Remove</span></button>
+          <button id="brushOff"><span>✋</span><span>Pan</span></button>
+          <button id="brushReset"><span>↺</span><span>Reset Mask</span></button>
+        </div>
+        <div class="row">
+          <label>Brush size</label>
+          <output id="brushSizeO">32</output>
+        </div>
+        <input id="brushSize" type="range" min="4" max="160" value="32">
+        <div class="row">
+          <label>Brush strength</label>
+          <output id="brushStrengthO">100</output>
+        </div>
+        <input id="brushStrength" type="range" min="10" max="100" value="100">
+        <div class="notice">🟢 Keep = subject रखो • 🔴 Remove = background हटाओ • ✋ Pan = brush बंद, page scroll सामान्य। Canvas पर drag करके mask ठीक करें।</div>
+      </div>
+
+      <!-- SIZE -->
+      <div class="panel" data-panel="size">
+        <h3>📐 Document Size</h3>
+        <div class="presets" id="presets">
+          <button data-w="0" data-h="0" class="on"><strong>Original</strong><small>No resize</small></button>
+          <button data-w="200" data-h="230"><strong>Exam</strong><small>200 × 230</small></button>
+          <button data-w="140" data-h="60"><strong>Signature</strong><small>140 × 60</small></button>
+          <button data-w="413" data-h="531"><strong>Passport</strong><small>413 × 531</small></button>
+          <button data-w="600" data-h="600"><strong>Square</strong><small>600 × 600</small></button>
+          <button data-w="1080" data-h="1080"><strong>Instagram</strong><small>1080 × 1080</small></button>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <label>Auto crop transparent area</label>
+          <input id="autoCrop" type="checkbox" style="width:22px;height:22px;min-height:22px;accent-color:#8b5cf6">
+        </div>
+        <div class="notice">💡 Auto crop ON = transparent margins हटेंगे। Form photos में जरूरत न हो तो OFF रखें।</div>
+      </div>
+
+      <!-- DOWNLOAD -->
+      <div class="panel" data-panel="download">
+        <h3>⬇ Download</h3>
+        <div class="row">
+          <label>Format</label>
+          <select id="format" style="flex:1.6;width:auto">
+            <option value="image/png">PNG (Transparent)</option>
+            <option value="image/jpeg">JPG (Small)</option>
+            <option value="image/webp">WEBP</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>Quality</label>
+          <output id="qualO">92</output>
+        </div>
+        <input id="quality" type="range" min="30" max="100" value="92">
+        <div class="row">
+          <label>Target size</label>
+          <select id="targetSize" style="flex:1.6;width:auto">
+            <option value="0">Best quality</option>
+            <option value="20">≤ 20 KB</option>
+            <option value="50">≤ 50 KB</option>
+            <option value="100">≤ 100 KB</option>
+            <option value="200">≤ 200 KB</option>
+            <option value="500">≤ 500 KB</option>
+          </select>
+        </div>
+        <div class="actions">
+          <button class="ghost small kbBtn" data-kb="20">20 KB</button>
+          <button class="ghost small kbBtn" data-kb="50">50 KB</button>
+          <button class="ghost small kbBtn" data-kb="100">100 KB</button>
+          <button class="ghost small kbBtn" data-kb="0">Best</button>
+        </div>
+        <div class="notice warn" id="pngNote" style="display:none">⚠️ PNG lossless है — target size पूरा करने के लिए image downscale हो सकती है।</div>
+        <div class="row">
+          <label>Print DPI</label>
+          <select id="dpi" style="flex:1.6;width:auto">
+            <option value="72">72</option>
+            <option value="150">150</option>
+            <option value="300" selected>300</option>
+            <option value="600">600</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>Filename</label>
+          <input id="fileNameInput" type="text" value="image-no-bg" style="flex:1.6">
+        </div>
+        <div class="sizeInfo">
+          <span>📏 <b id="pxInfo">— × —</b></span>
+          <span>🖨️ <b id="mmInfo">— × — mm</b></span>
+          <span>💾 <b id="kbInfo">—</b></span>
+        </div>
+        <div class="actions single">
+          <button id="downloadBtn2" class="primary" style="padding:14px;font-size:14px">⬇ Download</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  Made for students, cyber cafés & everyday users<br>
+  Free • No signup • Browser-side processing
+</footer>
+
+</div>
+
+<!-- STICKY BOTTOM BAR -->
+<div class="stickyBar">
+  <div class="inner">
+    <button id="undoBtnBottom" class="ghost">↶</button>
+    <button id="resetBtnBottom" class="ghost">↻</button>
+    <button id="downloadBtn" class="primary">⬇ Download</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+/* ========================================================
+   CORE SETUP
+   ======================================================== */
+const $ = id => document.getElementById(id);
+const c = $('c');
+const ctx = c.getContext('2d', { willReadFrequently: true });
+
+let original = null;
+let work = null;
+let maskBackup = null;
+let undoStack = [];
+let fileBase = 'image';
+let compareMode = false;
+let isProcessing = false;
+let hasResult = false;
+let sourceW = 0, sourceH = 0;
+
+const engineCache = { imgly: null, tf: null, isnet: {}, birefnet: null };
+
+const state = {
+  bg: 'checker',
+  customColor: '#f5f5f5',
+  brightness: 1,
+  contrast: 1,
+  rotate: 0,
+  flipH: false,
+  flipV: false,
+  zoom: 1,
+  brushMode: 'keep',
+  brushSize: 32,
+  brushStrength: 100,
+  autoCrop: false
+};
+
+let currentSize = { w: 0, h: 0 };
+let currentDpi = 300;
+let currentFormat = 'image/png';
+let currentQuality = 0.92;
+let currentTargetKB = 0;
+
+const MAX_FILE_MB = 25;
+const MAX_MP = 12;
+
+/* ========================================================
+   UTILITIES
+   ======================================================== */
+function status(msg, p) {
+  $('status').textContent = msg;
+  if (p !== undefined) $('progress').style.width = Math.max(0, Math.min(100, p)) + '%';
+}
+
+let toastTimer = null;
+function toast(msg, ms = 2400) {
+  const el = $('toast');
+  el.textContent = msg;
+  el.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('on'), ms);
+}
+
+function setLoading(on, text) {
+  $('stageLoaderText').textContent = text || 'Processing…';
+  $('stageLoader').classList.toggle('hidden', !on);
+}
+
+/* Deep clone with fallback for older Safari */
+function cloneState(s) {
+  if (typeof structuredClone === 'function') return structuredClone(s);
+  return JSON.parse(JSON.stringify(s));
+}
+
+/* ============ FIXED: snapshot accepts optional source ============ */
+function snapshot(img) {
+  const source = img || work;
+  if (!source) return null;
+  return new ImageData(new Uint8ClampedArray(source.data), source.width, source.height);
+}
+
+/* Alpha-only backup — 4x less memory than full ImageData */
+function captureAlpha(img) {
+  if (!img) return null;
+  const n = img.width * img.height;
+  const mask = new Uint8ClampedArray(n);
+  for (let i = 0, p = 3; i < n; i++, p += 4) mask[i] = img.data[p];
+  return mask;
+}
+
+function applyAlpha(img, mask) {
+  if (!mask || !img) return;
+  const n = img.width * img.height;
+  if (mask.length !== n) return;
+  for (let i = 0, p = 3; i < n; i++, p += 4) img.data[p] = mask[i];
+}
+
+function pushHistory() {
+  if (!work) return;
+  undoStack.push({
+    work: snapshot(),
+    state: cloneState(state),
+    hasResult,
+    maskBackup: maskBackup ? new Uint8ClampedArray(maskBackup) : null
+  });
+  if (undoStack.length > 12) undoStack.shift();
+}
+
+/* EXIF-aware image decoding */
+async function decodeImage(file) {
+  if (typeof createImageBitmap === 'function') {
+    try {
+      return await createImageBitmap(file, { imageOrientation: 'from-image' });
+    } catch (_) { /* fall through */ }
+  }
+  return await loadImage(file);
+}
+
+function loadImage(file) {
+  return new Promise((res, rej) => {
+    const u = URL.createObjectURL(file);
+    const im = new Image();
+    im.onload = () => { URL.revokeObjectURL(u); res(im); };
+    im.onerror = () => { URL.revokeObjectURL(u); rej(new Error('Image decode नहीं हुआ')); };
+    im.src = u;
+  });
+}
+
+/* ========================================================
+   UI HELPERS
+   ======================================================== */
+function resetCompare() {
+  if (compareMode) {
+    compareMode = false;
+    $('compareBtn').innerHTML = '<span class="ico">◐</span><span>Compare</span>';
+  }
+  updateLiveBadge();
+}
+
+function updateLiveBadge() {
+  $('liveBadge').classList.toggle('hidden', !hasResult || compareMode);
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('#featureNav button').forEach(b =>
+    b.classList.toggle('on', b.dataset.tab === tab)
+  );
+  document.querySelectorAll('.panel').forEach(p =>
+    p.classList.toggle('active', p.dataset.panel === tab)
+  );
+  updateCanvasTouchAction();
+}
+
+function updateCanvasTouchAction() {
+  const brushPanelActive = document.querySelector('.panel.active')?.dataset.panel === 'brush';
+  const brushOn = brushPanelActive && state.brushMode !== 'off' && hasResult;
+  c.classList.toggle('brushing', brushOn);
+}
+
+function showNextSteps(isSignature) {
+  const el = $('nextSteps');
+  if (!el) return;
+  el.classList.remove('hidden');
+  $('goAI').onclick = () => switchTab('ai');
+  $('goSign').onclick = () => switchTab('sign');
+  if (isSignature) {
+    $('goSign').classList.remove('ghost');
+    $('goSign').classList.add('primary');
+    $('goAI').classList.remove('primary');
+    $('goAI').classList.add('ghost');
+  } else {
+    $('goAI').classList.remove('ghost');
+    $('goAI').classList.add('primary');
+    $('goSign').classList.remove('primary');
+    $('goSign').classList.add('ghost');
+  }
+}
+
+function hideNextSteps() {
+  const el = $('nextSteps');
+  if (el) el.classList.add('hidden');
+}
+
+document.querySelectorAll('#featureNav button').forEach(b => {
+  b.onclick = () => switchTab(b.dataset.tab);
+});
+
+/* ========================================================
+   RENDERING
+   ======================================================== */
+function render() {
+  if (!work) return;
+
+  const swap = state.rotate % 180 !== 0;
+  const w = swap ? work.height : work.width;
+  const h = swap ? work.width : work.height;
+
+  if (c.width !== w || c.height !== h) {
+    c.width = w;
+    c.height = h;
+  }
+
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+
+  if (state.bg === 'white') {
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);
+  } else if (state.bg === 'blue') {
+    ctx.fillStyle = '#2471d8'; ctx.fillRect(0, 0, w, h);
+  } else if (state.bg === 'custom') {
+    ctx.fillStyle = state.customColor; ctx.fillRect(0, 0, w, h);
+  }
+
+  ctx.save();
+  ctx.translate(w / 2, h / 2);
+  ctx.rotate(state.rotate * Math.PI / 180);
+  ctx.scale(state.flipH ? -1 : 1, state.flipV ? -1 : 1);
+
+  const filters = [];
+  if (state.brightness !== 1) filters.push(`brightness(${state.brightness})`);
+  if (state.contrast !== 1) filters.push(`contrast(${state.contrast})`);
+  ctx.filter = filters.length ? filters.join(' ') : 'none';
+
+  const tmp = document.createElement('canvas');
+  tmp.width = work.width;
+  tmp.height = work.height;
+  tmp.getContext('2d').putImageData(work, 0, 0);
+  ctx.drawImage(tmp, -work.width / 2, -work.height / 2);
+
+  ctx.restore();
+  ctx.filter = 'none';
+
+  $('canvasBox').style.transform = state.zoom !== 1 ? `scale(${state.zoom})` : '';
+  updateSizeInfo(w, h);
+  updateLiveBadge();
+}
+
+function updateSizeInfo(w, h) {
+  $('pxInfo').textContent = w + ' × ' + h;
+  $('mmInfo').textContent =
+    (w / currentDpi * 25.4).toFixed(1) + ' × ' +
+    (h / currentDpi * 25.4).toFixed(1) + ' mm';
+  $('kbInfo').textContent = work
+    ? '~' + Math.round(work.width * work.height * 4 * 0.15 / 1024) + ' KB'
+    : '—';
+}
+
+function syncUI() {
+  $('bright').value = state.brightness;
+  $('contrast').value = state.contrast;
+  $('brightO').textContent = state.brightness.toFixed(2);
+  $('contrastO').textContent = state.contrast.toFixed(2);
+  $('brushSize').value = state.brushSize;
+  $('brushSizeO').textContent = state.brushSize;
+  $('brushStrength').value = state.brushStrength;
+  $('brushStrengthO').textContent = state.brushStrength;
+  $('autoCrop').checked = state.autoCrop;
+
+  document.querySelectorAll('.brushModes button').forEach(b => b.classList.remove('on'));
+  if (state.brushMode === 'keep') $('keepBrush').classList.add('on');
+  else if (state.brushMode === 'remove') $('removeBrush').classList.add('on');
+  else $('brushOff').classList.add('on');
+
+  updateCanvasTouchAction();
+}
+
+/* ========================================================
+   FILE OPEN — FIXED
+   ======================================================== */
+async function openFile(file) {
+  if (!file) return;
+  if (!file.type.startsWith('image/')) return toast('❌ केवल image file चुनें');
+  if (file.size > MAX_FILE_MB * 1024 * 1024) {
+    return toast(`❌ File बहुत बड़ी है. Max ${MAX_FILE_MB} MB`);
+  }
+  if (isProcessing) return toast('⏳ Processing चल रही है');
+
+  try {
+    status('Image load हो रही है…', 10);
+    const im = await decodeImage(file);
+
+    const nw = im.width || im.naturalWidth;
+    const nh = im.height || im.naturalHeight;
+
+    sourceW = nw;
+    sourceH = nh;
+
+    const mp = sourceW * sourceH / 1e6;
+    if (mp > MAX_MP) {
+      const sc = Math.sqrt(MAX_MP / mp);
+      sourceW = Math.round(sourceW * sc);
+      sourceH = Math.round(sourceH * sc);
+      status(`Large image: ${sourceW}×${sourceH} पर optimized`, 55);
+    }
+
+    const src = document.createElement('canvas');
+    src.width = sourceW;
+    src.height = sourceH;
+    src.getContext('2d').drawImage(im, 0, 0, sourceW, sourceH);
+
+    original = src.getContext('2d').getImageData(0, 0, sourceW, sourceH);
+
+    /* ============ FIX: pass original explicitly ============ */
+    work = snapshot(original);
+    /* ===================================================== */
+
+    maskBackup = null;
+    undoStack = [];
+    hasResult = false;
+
+    /* Reset ALL state */
+    Object.assign(state, {
+      bg: 'checker',
+      customColor: '#f5f5f5',
+      brightness: 1,
+      contrast: 1,
+      rotate: 0,
+      flipH: false,
+      flipV: false,
+      zoom: 1,
+      brushMode: 'keep',
+      brushSize: 32,
+      brushStrength: 100,
+      autoCrop: false
+    });
+
+    /* Reset UI */
+    $('autoCrop').checked = false;
+    $('customColor').style.display = 'none';
+    $('customColor').value = '#f5f5f5';
+
+    fileBase = (file.name || 'image').replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_') || 'image';
+    $('fileNameInput').value = fileBase + '-no-bg';
+
+    document.querySelectorAll('#bgOpts button').forEach(b =>
+      b.classList.toggle('on', b.dataset.bg === 'checker')
+    );
+    document.querySelectorAll('#presets button').forEach(b =>
+      b.classList.toggle('on', b.dataset.w === '0')
+    );
+    currentSize = { w: 0, h: 0 };
+
+    compareMode = false;
+    $('compareBtn').innerHTML = '<span class="ico">◐</span><span>Compare</span>';
+
+    syncUI();
+    render();
+    $('modeBadge').textContent = 'READY';
+
+    /* Show next steps — STAY on upload tab */
+    const aspect = sourceW / sourceH;
+    const likelySign = aspect > 1.8 || (aspect > 1.4 && sourceH < 400);
+    showNextSteps(likelySign);
+
+    status('✅ Image ready — नीचे से action चुनें।', 100);
+    toast('✅ Image loaded');
+    switchTab('upload');
+  } catch (e) {
+    console.error(e);
+    status('Image load error: ' + (e.message || e), 0);
+    toast('❌ Image load नहीं हुई');
+  }
+}
+
+/* File input with double-fire prevention */
+let lastFileTime = 0;
+$('file').onchange = e => {
+  const now = Date.now();
+  if (now - lastFileTime < 300) return;
+  lastFileTime = now;
+  const f = e.target.files?.[0];
+  if (f) openFile(f);
+  setTimeout(() => { try { e.target.value = ''; } catch (_) {} }, 500);
+};
+
+/* Drag & drop */
+const drop = $('drop');
+['dragenter', 'dragover'].forEach(ev =>
+  drop.addEventListener(ev, e => {
+    e.preventDefault();
+    drop.classList.add('dragover');
+  })
+);
+['dragleave', 'drop'].forEach(ev =>
+  drop.addEventListener(ev, e => {
+    e.preventDefault();
+    drop.classList.remove('dragover');
+  })
+);
+drop.addEventListener('drop', e => {
+  const f = e.dataTransfer?.files?.[0];
+  if (f) openFile(f);
+});
+window.addEventListener('dragover', e => e.preventDefault());
+window.addEventListener('drop', e => {
+  if (!drop.contains(e.target)) e.preventDefault();
+});
+
+/* ========================================================
+   SLIDERS
+   ======================================================== */
+function bindRange(id, out, cb) {
+  const el = $(id);
+  if (!el) return;
+  el.oninput = () => {
+    const v = +el.value;
+    $(out).textContent = (id === 'bright' || id === 'contrast') ? v.toFixed(2) : v;
+    if (cb) cb(v);
+  };
+}
+bindRange('sigThresh', 'sigThreshO');
+bindRange('sigSmooth', 'sigSmoothO');
+bindRange('feather', 'featherO');
+bindRange('def', 'defO');
+bindRange('quality', 'qualO', v => currentQuality = v / 100);
+
+$('bright').oninput = () => {
+  state.brightness = +$('bright').value;
+  syncUI();
+  render();
+};
+$('contrast').oninput = () => {
+  state.contrast = +$('contrast').value;
+  syncUI();
+  render();
+};
+
+/* ========================================================
+   AI ENGINES
+   ======================================================== */
+async function loadImgly() {
+  if (engineCache.imgly) return engineCache.imgly;
+  status('AI engine load…', 15);
+  engineCache.imgly = await import('https://esm.sh/@imgly/background-removal@1.7.0');
+  return engineCache.imgly;
+}
+async function loadTF() {
+  if (engineCache.tf) return engineCache.tf;
+  status('AI engine load…', 15);
+  engineCache.tf = await import('https://esm.sh/@huggingface/transformers@3.8.1');
+  return engineCache.tf;
+}
+
+async function runISNet(blob, model) {
+  const m = await loadImgly();
+  return m.removeBackground(blob, {
+    model,
+    output: { format: 'image/png', quality: 1, type: 'foreground' },
+    publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.7.0/dist/',
+    proxyToWorker: false,
+    progress: (name, a, b) => {
+      if (b) {
+        const pct = Math.min(99, Math.round(a / b * 90));
+        status('AI processing… ' + pct + '%', pct);
+        setLoading(true, 'AI processing… ' + pct + '%');
+      }
+    }
+  });
+}
+
+async function runBiRefNet(blob) {
+  const { pipeline } = await loadTF();
+  if (!engineCache.birefnet) {
+    try {
+      engineCache.birefnet = await pipeline(
+        'image-segmentation',
+        'studioludens/birefnet-lite-512',
+        { device: 'webgpu', dtype: 'fp16' }
+      );
+    } catch (e) {
+      console.warn('WebGPU fallback:', e);
+      engineCache.birefnet = await pipeline(
+        'image-segmentation',
+        'studioludens/birefnet-lite-512',
+        { device: 'wasm', dtype: 'fp32' }
+      );
+    }
+  }
+  status('BiRefNet processing…', 45);
+  const result = await engineCache.birefnet(blob);
+  if (!result?.length || !result[0]?.mask) throw new Error('Mask नहीं मिला');
+  const mask = await result[0].mask.resize(original.width, original.height);
+  const md = mask.data;
+  const out = new ImageData(new Uint8ClampedArray(original.data), original.width, original.height);
+  for (let i = 0, p = 0; i < original.width * original.height; i++, p += 4) {
+    let a = md[i];
+    if (mask.channels > 1) a = md[i * mask.channels];
+    out.data[p + 3] = a;
+  }
+  return out;
+}
+
+async function applyResult(result) {
+  if (!result) throw new Error('Result missing');
+  if (result instanceof ImageData) {
+    work = result;
+    return;
+  }
+  const im = await loadImage(result);
+  const tmp = document.createElement('canvas');
+  tmp.width = im.naturalWidth || im.width;
+  tmp.height = im.naturalHeight || im.height;
+  tmp.getContext('2d').drawImage(im, 0, 0);
+  work = tmp.getContext('2d').getImageData(0, 0, tmp.width, tmp.height);
+}
+
+$('aiRemove').onclick = async () => {
+  if (!original) return toast('❌ पहले image upload करें');
+  if (isProcessing) return;
+  isProcessing = true;
+  pushHistory();
+  resetCompare();
+  $('aiRemove').disabled = true;
+  setLoading(true, 'AI prepare…');
+
+  try {
+    const tmp = document.createElement('canvas');
+    tmp.width = original.width;
+    tmp.height = original.height;
+    tmp.getContext('2d').putImageData(original, 0, 0);
+    const blob = await new Promise((r, j) =>
+      tmp.toBlob(b => b ? r(b) : j(new Error('PNG conversion failed')), 'image/png')
+    );
+
+    let result;
+    if ($('engine').value === 'quality') {
+      try {
+        result = await runBiRefNet(blob);
+      } catch (e) {
+        console.warn('BiRefNet failed:', e);
+        toast('BiRefNet failed — ISNet fallback');
+        result = await runISNet(blob, 'isnet_fp16');
+      }
+    } else {
+      result = await runISNet(blob, $('engine').value === 'isnet' ? 'isnet_fp16' : 'isnet_quint8');
+    }
+
+    await applyResult(result);
+    hasResult = true;
+    maskBackup = captureAlpha(work);
+    $('modeBadge').textContent = 'BG REMOVED';
+    status('✅ Background हट गया!', 100);
+    toast('✅ Background removed');
+    switchTab('bg');
+  } catch (e) {
+    console.error(e);
+    undoStack.pop();
+    status('AI error: ' + (e.message || e), 0);
+    toast('❌ AI processing failed');
+  } finally {
+    isProcessing = false;
+    $('aiRemove').disabled = false;
+    setLoading(false);
+  }
+};
+
+/* ========================================================
+   SIGNATURE CLEAN
+   ======================================================== */
+function sigClean() {
+  if (!original) return toast('❌ पहले image upload करें');
+  if (isProcessing) return;
+  isProcessing = true;
+  pushHistory();
+  setLoading(true, 'Signature clean…');
+
+  setTimeout(() => {
+    const w = original.width, h = original.height;
+    const src = original.data;
+    const out = new ImageData(new Uint8ClampedArray(src), w, h);
+    const th = +$('sigThresh').value;
+    const r = Math.round(+$('sigSmooth').value);
+    const alpha = new Uint8ClampedArray(w * h);
+
+    for (let i = 0, p = 0; i < w * h; i++, p += 4) {
+      const lum = 0.299 * src[p] + 0.587 * src[p + 1] + 0.114 * src[p + 2];
+      alpha[i] = Math.max(0, Math.min(255, 255 - (lum - (255 - th)) * 255 / th));
+    }
+
+    if (r) {
+      const tmp = new Float32Array(w * h);
+      const sm = new Uint8ClampedArray(w * h);
+      const win = 2 * r + 1;
+      for (let y = 0; y < h; y++) {
+        const row = y * w;
+        let sum = 0;
+        for (let x = -r; x <= r; x++) sum += alpha[row + Math.max(0, Math.min(w - 1, x))];
+        for (let x = 0; x < w; x++) {
+          tmp[row + x] = sum / win;
+          sum -= alpha[row + Math.max(0, Math.min(w - 1, x - r))];
+          sum += alpha[row + Math.max(0, Math.min(w - 1, x + r + 1))];
+        }
+      }
+      for (let x = 0; x < w; x++) {
+        let sum = 0;
+        for (let y = -r; y <= r; y++) sum += tmp[Math.max(0, Math.min(h - 1, y)) * w + x];
+        for (let y = 0; y < h; y++) {
+          sm[y * w + x] = sum / win;
+          sum -= tmp[Math.max(0, Math.min(h - 1, y - r)) * w + x];
+          sum += tmp[Math.max(0, Math.min(h - 1, y + r + 1)) * w + x];
+        }
+      }
+      alpha.set(sm);
+    }
+
+    for (let i = 0, p = 0; i < w * h; i++, p += 4) out.data[p + 3] = alpha[i];
+
+    work = out;
+    hasResult = true;
+    maskBackup = captureAlpha(out);
+    render();
+    $('modeBadge').textContent = 'SIGNATURE';
+    status('✅ Signature clean!', 100);
+    toast('✍️ Signature clean');
+    switchTab('bg');
+    isProcessing = false;
+    setLoading(false);
+  }, 30);
+}
+$('sigAuto').onclick = sigClean;
+
+/* ========================================================
+   BACKGROUND
+   ======================================================== */
+document.querySelectorAll('#bgOpts button').forEach(b => {
+  b.onclick = () => {
+    resetCompare();
+    state.bg = b.dataset.bg;
+    document.querySelectorAll('#bgOpts button').forEach(x =>
+      x.classList.toggle('on', x === b)
+    );
+    $('customColor').style.display = state.bg === 'custom' ? 'block' : 'none';
+    render();
+  };
+});
+$('customColor').oninput = e => {
+  state.customColor = e.target.value;
+  render();
+};
+
+/* ========================================================
+   ADJUSTMENTS
+   ======================================================== */
+$('rotL').onclick = () => { pushHistory(); state.rotate = (state.rotate + 270) % 360; render(); };
+$('rotR').onclick = () => { pushHistory(); state.rotate = (state.rotate + 90) % 360; render(); };
+$('flipH').onclick = () => { pushHistory(); state.flipH = !state.flipH; render(); };
+$('flipV').onclick = () => { pushHistory(); state.flipV = !state.flipV; render(); };
+$('resetAdj').onclick = () => {
+  pushHistory();
+  state.rotate = 0;
+  state.flipH = false;
+  state.flipV = false;
+  state.brightness = 1;
+  state.contrast = 1;
+  state.zoom = 1;
+  syncUI();
+  render();
+};
+
+/* ========================================================
+   ZOOM
+   ======================================================== */
+$('zoomIn').onclick = () => { state.zoom = Math.min(4, state.zoom * 1.2); render(); };
+$('zoomOut').onclick = () => { state.zoom = Math.max(0.5, state.zoom / 1.2); render(); };
+$('zoomReset').onclick = () => { state.zoom = 1; render(); };
+
+/* ========================================================
+   FULLSCREEN
+   ======================================================== */
+$('fullscreenBtn').onclick = () => {
+  const el = $('stage');
+  if (!document.fullscreenElement) {
+    const fn = el.requestFullscreen || el.webkitRequestFullscreen;
+    if (fn) fn.call(el).catch(() => toast('❌ Fullscreen not supported'));
+  } else {
+    document.exitFullscreen?.();
+  }
+};
+
+/* ========================================================
+   COMPARE
+   ======================================================== */
+$('compareBtn').onclick = () => {
+  if (!original || !work) return toast('❌ कोई image नहीं');
+  compareMode = !compareMode;
+
+  if (compareMode) {
+    const swap = state.rotate % 180 !== 0;
+    const w = swap ? original.height : original.width;
+    const h = swap ? original.width : original.height;
+    c.width = w;
+    c.height = h;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+
+    if (state.bg === 'white') { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); }
+    else if (state.bg === 'blue') { ctx.fillStyle = '#2471d8'; ctx.fillRect(0, 0, w, h); }
+    else if (state.bg === 'custom') { ctx.fillStyle = state.customColor; ctx.fillRect(0, 0, w, h); }
+
+    ctx.save();
+    ctx.translate(w / 2, h / 2);
+    ctx.rotate(state.rotate * Math.PI / 180);
+    ctx.scale(state.flipH ? -1 : 1, state.flipV ? -1 : 1);
+
+    const tmp = document.createElement('canvas');
+    tmp.width = original.width;
+    tmp.height = original.height;
+    tmp.getContext('2d').putImageData(original, 0, 0);
+    ctx.drawImage(tmp, -original.width / 2, -original.height / 2);
+    ctx.restore();
+
+    $('compareBtn').innerHTML = '<span class="ico">▶</span><span>After</span>';
+    $('modeBadge').textContent = 'BEFORE';
+  } else {
+    render();
+    $('compareBtn').innerHTML = '<span class="ico">◐</span><span>Compare</span>';
+  }
+  updateLiveBadge();
+};
+
+/* ========================================================
+   UNDO / RESET
+   ======================================================== */
+function doUndo() {
+  if (!undoStack.length) return toast('कुछ undo नहीं है');
+  const s = undoStack.pop();
+  work = s.work;
+  Object.assign(state, s.state);
+  hasResult = s.hasResult;
+  maskBackup = s.maskBackup ? new Uint8ClampedArray(s.maskBackup) : null;
+  compareMode = false;
+  $('compareBtn').innerHTML = '<span class="ico">◐</span><span>Compare</span>';
+  syncUI();
+  render();
+  toast('↶ Undo');
+}
+$('undoBtn').onclick = doUndo;
+$('undoBtnBottom').onclick = doUndo;
+
+function doReset() {
+  if (!original) return toast('❌ कोई image नहीं');
+  pushHistory();
+  work = new ImageData(new Uint8ClampedArray(original.data), original.width, original.height);
+  hasResult = false;
+  maskBackup = null;
+  Object.assign(state, {
+    bg: 'checker',
+    customColor: '#f5f5f5',
+    brightness: 1,
+    contrast: 1,
+    rotate: 0,
+    flipH: false,
+    flipV: false,
+    zoom: 1,
+    brushMode: 'keep',
+    brushSize: 32,
+    brushStrength: 100,
+    autoCrop: false
+  });
+  $('autoCrop').checked = false;
+  $('customColor').style.display = 'none';
+  document.querySelectorAll('#bgOpts button').forEach(b =>
+    b.classList.toggle('on', b.dataset.bg === 'checker')
+  );
+  compareMode = false;
+  $('compareBtn').innerHTML = '<span class="ico">◐</span><span>Compare</span>';
+  syncUI();
+  render();
+  toast('↻ Reset');
+}
+$('resetBtn').onclick = doReset;
+$('resetBtnBottom').onclick = doReset;
+
+/* ========================================================
+   EDGE REFINE
+   ======================================================== */
+$('applyEdge').onclick = () => {
+  if (!work) return toast('❌ कोई image नहीं');
+  pushHistory();
+  setLoading(true, 'Refining edges…');
+
+  setTimeout(() => {
+    const w = work.width, h = work.height;
+    const n = w * h;
+    const s = work.data;
+
+    const alpha = new Uint8ClampedArray(n);
+    for (let i = 0, p = 3; i < n; i++, p += 4) alpha[i] = s[p];
+
+    const fe = Math.round(+$('feather').value);
+    let a = alpha;
+    if (fe) {
+      const tmp = new Float32Array(n);
+      const o = new Uint8ClampedArray(n);
+      const win = 2 * fe + 1;
+      for (let y = 0; y < h; y++) {
+        const row = y * w;
+        let sum = 0;
+        for (let x = -fe; x <= fe; x++) sum += a[row + Math.max(0, Math.min(w - 1, x))];
+        for (let x = 0; x < w; x++) {
+          tmp[row + x] = sum / win;
+          sum -= a[row + Math.max(0, Math.min(w - 1, x - fe))];
+          sum += a[row + Math.max(0, Math.min(w - 1, x + fe + 1))];
+        }
+      }
+      for (let x = 0; x < w; x++) {
+        let sum = 0;
+        for (let y = -fe; y <= fe; y++) sum += tmp[Math.max(0, Math.min(h - 1, y)) * w + x];
+        for (let y = 0; y < h; y++) {
+          o[y * w + x] = sum / win;
+          sum -= tmp[Math.max(0, Math.min(h - 1, y - fe)) * w + x];
+          sum += tmp[Math.max(0, Math.min(h - 1, y + fe + 1)) * w + x];
+        }
+      }
+      a = o;
+    }
+
+    const def = +$('def').value / 100;
+    const out = new Uint8ClampedArray(s);
+
+    if (def > 0) {
+      const RADIUS = 4;
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const i = y * w + x;
+          const av = a[i];
+          if (av === 0 || av === 255) continue;
+          let bestA = 0, bpx = -1, bpy = -1;
+          for (let dy = -RADIUS; dy <= RADIUS; dy++) {
+            const ny = y + dy;
+            if (ny < 0 || ny >= h) continue;
+            for (let dx = -RADIUS; dx <= RADIUS; dx++) {
+              const nx = x + dx;
+              if (nx < 0 || nx >= w) continue;
+              const ni = ny * w + nx;
+              if (a[ni] > bestA) {
+                bestA = a[ni];
+                bpx = nx;
+                bpy = ny;
+                if (bestA === 255) break;
+              }
+            }
+            if (bestA === 255) break;
+          }
+          if (bpx < 0 || bestA < 200) continue;
+          const bp = (bpy * w + bpx) * 4;
+          const p = i * 4;
+          out[p]     = Math.round(s[p]     * (1 - def) + s[bp]     * def);
+          out[p + 1] = Math.round(s[p + 1] * (1 - def) + s[bp + 1] * def);
+          out[p + 2] = Math.round(s[p + 2] * (1 - def) + s[bp + 2] * def);
+        }
+      }
+    }
+
+    for (let i = 0, p = 3; i < n; i++, p += 4) out[p] = a[i];
+
+    work = new ImageData(out, w, h);
+    hasResult = true;
+    maskBackup = captureAlpha(work);
+    render();
+    $('modeBadge').textContent = 'REFINED';
+    status('✅ Edge refined!', 100);
+    toast('✨ Edge refined');
+    switchTab('bg');
+    setLoading(false);
+  }, 30);
+};
+
+/* ========================================================
+   MANUAL BRUSH — rotation & flip aware
+   ======================================================== */
+let drawing = false;
+let lastPt = null;
+
+function canvasPoint(e) {
+  if (!work) return { x: 0, y: 0 };
+  const rect = c.getBoundingClientRect();
+  let px = (e.clientX - rect.left) * (c.width / rect.width);
+  let py = (e.clientY - rect.top) * (c.height / rect.height);
+
+  const swap = state.rotate % 180 !== 0;
+  const cw = swap ? work.height : work.width;
+  const ch = swap ? work.width : work.height;
+
+  let dx = px - cw / 2;
+  let dy = py - ch / 2;
+
+  if (state.flipH) dx = -dx;
+  if (state.flipV) dy = -dy;
+
+  const rad = -state.rotate * Math.PI / 180;
+  const cos = Math.cos(rad);
+  const sin = Math.sin(rad);
+  const rx = dx * cos - dy * sin;
+  const ry = dx * sin + dy * cos;
+
+  let wx = rx + work.width / 2;
+  let wy = ry + work.height / 2;
+
+  wx = Math.max(0, Math.min(work.width - 1, wx));
+  wy = Math.max(0, Math.min(work.height - 1, wy));
+  return { x: wx, y: wy };
+}
+
+function paintAt(x, y) {
+  if (!work || state.brushMode === 'off') return;
+  const r = Math.max(2, state.brushSize / 2);
+  const strength = state.brushStrength / 100;
+  const d = work.data;
+  const w = work.width;
+  const h = work.height;
+  const x0 = Math.max(0, Math.floor(x - r));
+  const x1 = Math.min(w - 1, Math.ceil(x + r));
+  const y0 = Math.max(0, Math.floor(y - r));
+  const y1 = Math.min(h - 1, Math.ceil(y + r));
+  const target = state.brushMode === 'keep' ? 255 : 0;
+
+  for (let yy = y0; yy <= y1; yy++) {
+    for (let xx = x0; xx <= x1; xx++) {
+      const dx = xx - x;
+      const dy = yy - y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist > r) continue;
+      const fall = (1 - dist / r) * strength;
+      const p = (yy * w + xx) * 4;
+      d[p + 3] = Math.round(d[p + 3] + (target - d[p + 3]) * fall);
+    }
+  }
+}
+
+function stroke(a, b) {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const len = Math.max(1, Math.ceil(Math.hypot(dx, dy) / (state.brushSize * 0.25)));
+  for (let i = 0; i <= len; i++) {
+    const t = i / len;
+    paintAt(a.x + dx * t, a.y + dy * t);
+  }
+}
+
+c.addEventListener('pointerdown', e => {
+  if (!work || isProcessing) return;
+  if (state.brushMode === 'off') return;
+  if (!hasResult) { toast('पहले AI या Signature चलाएँ'); return; }
+
+  e.preventDefault();
+  pushHistory();
+  drawing = true;
+  c.setPointerCapture?.(e.pointerId);
+  lastPt = canvasPoint(e);
+  paintAt(lastPt.x, lastPt.y);
+  render();
+  hasResult = true;
+  updateLiveBadge();
+});
+
+c.addEventListener('pointermove', e => {
+  if (!drawing) return;
+  e.preventDefault();
+  const p = canvasPoint(e);
+  stroke(lastPt, p);
+  lastPt = p;
+  render();
+});
+
+c.addEventListener('pointerup', e => {
+  if (!drawing) return;
+  drawing = false;
+  lastPt = null;
+  c.releasePointerCapture?.(e.pointerId);
+  maskBackup = captureAlpha(work);
+  $('modeBadge').textContent = 'EDITED';
+});
+
+c.addEventListener('pointercancel', () => {
+  drawing = false;
+  lastPt = null;
+});
+
+$('keepBrush').onclick = () => {
+  state.brushMode = 'keep';
+  syncUI();
+  $('brushHint').textContent = '🟢 Keep mode';
+  $('brushHint').classList.remove('hidden');
+};
+$('removeBrush').onclick = () => {
+  state.brushMode = 'remove';
+  syncUI();
+  $('brushHint').textContent = '🔴 Remove mode';
+  $('brushHint').classList.remove('hidden');
+};
+$('brushOff').onclick = () => {
+  state.brushMode = 'off';
+  syncUI();
+  $('brushHint').classList.add('hidden');
+};
+$('brushReset').onclick = () => {
+  if (!maskBackup) return toast('पहले AI/Signature result बनाएं');
+  pushHistory();
+  const restored = new ImageData(new Uint8ClampedArray(work.data), work.width, work.height);
+  applyAlpha(restored, maskBackup);
+  work = restored;
+  render();
+  toast('↺ Mask reset');
+};
+
+$('brushSize').oninput = e => {
+  state.brushSize = +e.target.value;
+  syncUI();
+};
+$('brushStrength').oninput = e => {
+  state.brushStrength = +e.target.value;
+  syncUI();
+};
+
+/* ========================================================
+   SIZE PRESETS
+   ======================================================== */
+document.querySelectorAll('#presets button').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('#presets button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    currentSize = { w: +b.dataset.w, h: +b.dataset.h };
+    updateSizeInfo(c.width, c.height);
+    toast(currentSize.w ? `📐 ${currentSize.w}×${currentSize.h}` : '📐 Original');
+  };
+});
+$('autoCrop').onchange = e => {
+  state.autoCrop = e.target.checked;
+};
+
+/* ========================================================
+   DOWNLOAD OPTIONS
+   ======================================================== */
+$('format').onchange = e => {
+  currentFormat = e.target.value;
+  if (currentFormat === 'image/jpeg' && state.bg === 'checker') {
+    state.bg = 'white';
+    document.querySelectorAll('#bgOpts button').forEach(b =>
+      b.classList.toggle('on', b.dataset.bg === 'white')
+    );
+    render();
+    toast('JPG के लिए White background लगाया');
+  }
+};
+
+$('targetSize').onchange = e => {
+  currentTargetKB = +e.target.value;
+  $('pngNote').style.display =
+    currentTargetKB > 0 && currentFormat === 'image/png' ? 'block' : 'none';
+};
+document.querySelectorAll('.kbBtn').forEach(b => {
+  b.onclick = () => {
+    $('targetSize').value = b.dataset.kb;
+    currentTargetKB = +b.dataset.kb;
+    $('pngNote').style.display =
+      currentTargetKB > 0 && currentFormat === 'image/png' ? 'block' : 'none';
+  };
+});
+
+$('dpi').onchange = e => {
+  currentDpi = +e.target.value;
+  updateSizeInfo(c.width, c.height);
+};
+$('fileNameInput').oninput = e => {
+  fileBase = e.target.value.replace(/[^a-zA-Z0-9_-]/g, '_') || 'image';
+};
+
+/* ========================================================
+   DOWNLOAD PIPELINE
+   ======================================================== */
+function trimImage(im) {
+  const d = im.data, w = im.width, h = im.height;
+  let minX = w, minY = h, maxX = -1, maxY = -1;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      if (d[(y * w + x) * 4 + 3] > 4) {
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+  if (maxX < 0) return im;
+  const q = new ImageData(maxX - minX + 1, maxY - minY + 1);
+  for (let y = 0; y < q.height; y++) {
+    for (let x = 0; x < q.width; x++) {
+      const a = ((y + minY) * w + (x + minX)) * 4;
+      const b = (y * q.width + x) * 4;
+      q.data[b] = d[a];
+      q.data[b + 1] = d[a + 1];
+      q.data[b + 2] = d[a + 2];
+      q.data[b + 3] = d[a + 3];
+    }
+  }
+  return q;
+}
+
+async function buildOutputCanvas() {
+  let im = work;
+  if (state.autoCrop && state.bg === 'checker' && currentFormat !== 'image/jpeg') {
+    im = trimImage(work);
+  }
+
+  const swap = state.rotate % 180 !== 0;
+  const baseW = swap ? im.height : im.width;
+  const baseH = swap ? im.width : im.height;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = baseW;
+  canvas.height = baseH;
+  const cx = canvas.getContext('2d');
+
+  const bg = state.bg === 'white' ? '#fff'
+    : state.bg === 'blue' ? '#2471d8'
+    : state.bg === 'custom' ? state.customColor
+    : null;
+
+  if (bg) {
+    cx.fillStyle = bg;
+    cx.fillRect(0, 0, baseW, baseH);
+  }
+
+  cx.save();
+  cx.translate(baseW / 2, baseH / 2);
+  cx.rotate(state.rotate * Math.PI / 180);
+  cx.scale(state.flipH ? -1 : 1, state.flipV ? -1 : 1);
+
+  const filters = [];
+  if (state.brightness !== 1) filters.push(`brightness(${state.brightness})`);
+  if (state.contrast !== 1) filters.push(`contrast(${state.contrast})`);
+  cx.filter = filters.length ? filters.join(' ') : 'none';
+
+  const tmp = document.createElement('canvas');
+  tmp.width = im.width;
+  tmp.height = im.height;
+  tmp.getContext('2d').putImageData(im, 0, 0);
+  cx.drawImage(tmp, -im.width / 2, -im.height / 2);
+
+  cx.restore();
+
+  if (currentSize.w && currentSize.h) {
+    const out = document.createElement('canvas');
+    out.width = currentSize.w;
+    out.height = currentSize.h;
+    const o = out.getContext('2d');
+    o.imageSmoothingQuality = 'high';
+    if (bg) {
+      o.fillStyle = bg;
+      o.fillRect(0, 0, out.width, out.height);
+    }
+    const sa = canvas.width / canvas.height;
+    const da = out.width / out.height;
+    let sx = 0, sy = 0, sw = canvas.width, sh = canvas.height;
+    if (sa > da) { sw = canvas.height * da; sx = (canvas.width - sw) / 2; }
+    else { sh = canvas.width / da; sy = (canvas.height - sh) / 2; }
+    o.drawImage(canvas, sx, sy, sw, sh, 0, 0, out.width, out.height);
+    return out;
+  }
+  return canvas;
+}
+
+async function compressToTarget(canvas, format, targetKB) {
+  if (targetKB <= 0) {
+    const blob = await new Promise(r => canvas.toBlob(r, format, currentQuality));
+    return { blob, metTarget: true };
+  }
+
+  const target = targetKB * 1024;
+  let lo = 0.05, hi = 1, best = null;
+  for (let i = 0; i < 11; i++) {
+    const q = (lo + hi) / 2;
+    const blob = await new Promise(r => canvas.toBlob(r, format, q));
+    if (!blob) break;
+    if (blob.size <= target) { best = blob; lo = q; }
+    else hi = q;
+    if (hi - lo < 0.01) break;
+  }
+  if (best) return { blob: best, metTarget: true };
+
+  let currentCanvas = canvas;
+  let scale = 0.9;
+  let blob = await new Promise(r => currentCanvas.toBlob(r, format, 0.9));
+
+  while (blob && blob.size > target && currentCanvas.width > 80 && currentCanvas.height > 80 && scale > 0.15) {
+    const smaller = document.createElement('canvas');
+    smaller.width = Math.max(1, Math.round(canvas.width * scale));
+    smaller.height = Math.max(1, Math.round(canvas.height * scale));
+    const sctx = smaller.getContext('2d');
+    sctx.imageSmoothingQuality = 'high';
+    sctx.drawImage(canvas, 0, 0, smaller.width, smaller.height);
+    blob = await new Promise(r => smaller.toBlob(r, format, 0.85));
+    scale -= 0.08;
+  }
+  return { blob, metTarget: blob ? blob.size <= target : false };
+}
+
+async function doDownload(btn) {
+  if (!work) return toast('❌ पहले image upload करें');
+  if (isProcessing) return;
+
+  isProcessing = true;
+  btn.disabled = true;
+  const old = btn.innerHTML;
+  btn.innerHTML = '<span class="spinner"></span> Preparing…';
+  setLoading(true, 'Preparing download…');
+
+  try {
+    const canvas = await buildOutputCanvas();
+    const { blob, metTarget } = await compressToTarget(canvas, currentFormat, currentTargetKB);
+    if (!blob) throw new Error('Export failed');
+
+    const ext = currentFormat === 'image/png' ? 'png'
+      : currentFormat === 'image/jpeg' ? 'jpg' : 'webp';
+    const suffix = currentSize.w ? `-${currentSize.w}x${currentSize.h}` : '-no-bg';
+    const name = (fileBase || 'image') + suffix + '.' + ext;
+
+    const u = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = u;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(u), 3000);
+
+    const kb = Math.round(blob.size / 1024);
+    $('kbInfo').textContent = kb + ' KB';
+    status(`✅ Downloaded (${kb} KB)`, 100);
+    toast(`⬇ ${kb} KB downloaded`);
+
+    if (currentTargetKB > 0 && !metTarget) {
+      toast(`⚠️ Target ${currentTargetKB} KB तक नहीं पहुँच पाया (${kb} KB)`, 3500);
+    }
+  } catch (e) {
+    console.error(e);
+    status('Export error: ' + (e.message || e), 0);
+    toast('❌ Export error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = old;
+    isProcessing = false;
+    setLoading(false);
+  }
+}
+
+$('downloadBtn').onclick = () => doDownload($('downloadBtn'));
+$('downloadBtn2').onclick = () => doDownload($('downloadBtn2'));
+
+/* ========================================================
+   KEYBOARD SHORTCUTS
+   ======================================================== */
+window.addEventListener('keydown', e => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  const typing = tag === 'input' || tag === 'select' || tag === 'textarea';
+  if (typing) return;
+
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
+    e.preventDefault();
+    doUndo();
+  }
+  if (e.key === 'Escape' && compareMode) {
+    $('compareBtn').click();
+  }
+});
+
+/* ========================================================
+   INIT
+   ======================================================== */
+ctx.fillStyle = '#1a1a26';
+ctx.fillRect(0, 0, c.width, c.height);
+ctx.fillStyle = '#6b6b7c';
+ctx.textAlign = 'center';
+ctx.font = 'bold 18px Inter, sans-serif';
+ctx.fillText('📷 Image upload करें', c.width / 2, c.height / 2);
+
+syncUI();
+</script>
+</body>
+</html>
