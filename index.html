@@ -4,324 +4,130 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5">
 <meta name="theme-color" content="#07070d">
-<meta name="description" content="Free private photo and signature background remover for students, cyber cafes and everyday users.">
 <title>Photo & Signature BG Remover — Pro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ==================== DESIGN TOKENS ==================== */
-:root{
-  --bg:#07070d;
-  --panel:rgba(22,22,38,.78);
-  --stroke:rgba(148,163,184,.14);
-  --text:#f1f5f9;
-  --muted:#94a3b8;
-  --faint:#64748b;
-  --v:#8b5cf6;
-  --c:#22d3ee;
-  --r:16px;
-  --r2:12px;
-  --ease:cubic-bezier(.16,1,.3,1);
-  --safe-top:env(safe-area-inset-top,0px);
-  --safe-bottom:env(safe-area-inset-bottom,0px);
-}
+:root{--bg:#07070d;--panel:rgba(22,22,38,.78);--stroke:rgba(148,163,184,.14);--text:#f1f5f9;--muted:#94a3b8;--faint:#64748b;--v:#8b5cf6;--c:#22d3ee;--r:16px;--r2:12px;--ease:cubic-bezier(.16,1,.3,1);--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{
-  margin:0;min-height:100%;background:var(--bg);color:var(--text);
-  font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.5;
-  -webkit-font-smoothing:antialiased;overflow-x:hidden
-}
-body::before{
-  content:"";position:fixed;inset:0;z-index:-2;
-  background:
-    radial-gradient(900px 500px at 15% -5%,rgba(139,92,246,.22),transparent 55%),
-    radial-gradient(700px 500px at 85% 5%,rgba(34,211,238,.16),transparent 55%),
-    linear-gradient(180deg,#07070d,#0a0a14 50%,#07070d)
-}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:radial-gradient(900px 500px at 15% -5%,rgba(139,92,246,.22),transparent 55%),radial-gradient(700px 500px at 85% 5%,rgba(34,211,238,.16),transparent 55%),linear-gradient(180deg,#07070d,#0a0a14 50%,#07070d)}
 button,input,select{font:inherit;color:inherit}
-button{
-  border:1px solid var(--stroke);
-  background:linear-gradient(180deg,rgba(30,30,48,.75),rgba(20,20,34,.75));
-  border-radius:var(--r2);padding:11px 14px;cursor:pointer;font-weight:600;
-  min-height:46px;display:inline-flex;align-items:center;justify-content:center;
-  gap:6px;transition:.18s var(--ease);touch-action:manipulation
-}
-button:active{transform:scale(.97)}
-button:disabled{opacity:.5;cursor:not-allowed}
-.primary{
-  background:linear-gradient(135deg,#7c3aed,#8b5cf6 50%,#22d3ee 140%);
-  border-color:rgba(167,139,250,.55);
-  box-shadow:0 10px 30px -8px rgba(139,92,246,.55)
-}
-.ghost{background:rgba(30,30,48,.4)}
-.small{padding:8px 10px;font-size:12px;min-height:38px}
-
-/* ==================== LAYOUT ==================== */
-.app{
-  max-width:1400px;margin:auto;padding:8px;
-  padding-top:calc(8px + var(--safe-top));
-  padding-bottom:calc(80px + var(--safe-bottom))
-}
+button{border:1px solid var(--stroke);background:linear-gradient(180deg,rgba(30,30,48,.75),rgba(20,20,34,.75));border-radius:var(--r2);padding:11px 14px;cursor:pointer;font-weight:600;min-height:46px;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:.18s var(--ease);touch-action:manipulation}
+button:active{transform:scale(.97)}button:disabled{opacity:.5;cursor:not-allowed}
+.primary{background:linear-gradient(135deg,#7c3aed,#8b5cf6 50%,#22d3ee 140%);border-color:rgba(167,139,250,.55);box-shadow:0 10px 30px -8px rgba(139,92,246,.55)}
+.ghost{background:rgba(30,30,48,.4)}.small{padding:8px 10px;font-size:12px;min-height:38px}
+.danger{background:linear-gradient(135deg,#e11d48,#f43f5e);border-color:rgba(244,63,94,.5)}
+.app{max-width:1400px;margin:auto;padding:8px;padding-top:calc(8px + var(--safe-top));padding-bottom:calc(80px + var(--safe-bottom))}
 .hero{text-align:center;padding:10px 10px 6px;margin-bottom:6px}
-.hero .logo{
-  width:42px;height:42px;border-radius:12px;margin:0 auto 6px;
-  background:linear-gradient(135deg,#8b5cf6,#22d3ee);
-  display:flex;align-items:center;justify-content:center;font-size:20px;
-  box-shadow:0 0 24px rgba(139,92,246,.5)
-}
-.hero h1{
-  font-family:"Plus Jakarta Sans",sans-serif;font-size:17px;margin:0 0 2px;
-  font-weight:800;
-  background:linear-gradient(90deg,#f1f5f9,#a78bfa 60%,#22d3ee);
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent
-}
+.hero .logo{width:42px;height:42px;border-radius:12px;margin:0 auto 6px;background:linear-gradient(135deg,#8b5cf6,#22d3ee);display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 24px rgba(139,92,246,.5)}
+.hero h1{font-family:"Plus Jakarta Sans",sans-serif;font-size:17px;margin:0 0 2px;font-weight:800;background:linear-gradient(90deg,#f1f5f9,#a78bfa 60%,#22d3ee);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .hero p{margin:0;color:var(--muted);font-size:11px}
 .grid{display:block}
-.canvasCol{
-  position:sticky;top:0;z-index:20;
-  background:linear-gradient(180deg,#07070d 0%,#07070d 92%,rgba(7,7,13,.9));
-  backdrop-filter:blur(16px);
-  margin:0 -8px 8px;padding:6px 8px 8px;
-  border-bottom:1px solid var(--stroke)
-}
+.canvasCol{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,#07070d 0%,#07070d 92%,rgba(7,7,13,.9));backdrop-filter:blur(16px);margin:0 -8px 8px;padding:6px 8px 8px;border-bottom:1px solid var(--stroke)}
+.queueWrap{display:flex;gap:8px;margin-bottom:8px;padding:0 2px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.queueWrap::-webkit-scrollbar{display:none}.queueWrap.empty{display:none}
+.qItem{position:relative;flex-shrink:0;width:72px;height:72px;border-radius:10px;overflow:hidden;border:2px solid var(--stroke);background:#1a1a26;cursor:pointer;transition:.18s var(--ease)}
+.qItem:active{transform:scale(.96)}.qItem.on{border-color:#a78bfa;box-shadow:0 0 0 3px rgba(139,92,246,.35)}
+.qItem.done{border-color:#10b981}.qItem.processing{border-color:#f59e0b;animation:pulseBorder 1.5s ease-in-out infinite}
+@keyframes pulseBorder{0%,100%{border-color:#f59e0b}50%{border-color:#fbbf24}}
+.qItem img{width:100%;height:100%;object-fit:cover;display:block}
+.qDel{position:absolute;top:2px;right:2px;width:22px;height:22px;min-height:22px;padding:0;border-radius:50%;background:rgba(220,38,38,.95);border:1px solid rgba(255,255,255,.4);color:#fff;font-size:13px;font-weight:700;line-height:1;z-index:2;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.qDel:active{background:#dc2626;transform:scale(.9)}
+.qStatus{position:absolute;bottom:0;left:0;right:0;padding:2px 3px;font-size:8px;font-weight:700;text-align:center;background:rgba(0,0,0,.75);color:#fff;text-transform:uppercase;letter-spacing:.03em}
+.qStatus.done{background:rgba(16,185,129,.9)}.qStatus.processing{background:rgba(245,158,11,.9)}.qStatus.error{background:rgba(239,68,68,.9)}
+.qAdd{flex-shrink:0;width:72px;height:72px;min-height:72px;padding:0;border:2px dashed rgba(167,139,250,.4);border-radius:10px;background:rgba(139,92,246,.08);color:#c4b5fd;font-size:26px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.qAdd:active{background:rgba(139,92,246,.2)}
+.queueInfo{font-size:10.5px;color:var(--muted);padding:2px 4px 6px;display:flex;justify-content:space-between;align-items:center}
 
-/* ==================== STAGE ==================== */
-.stageWrap{
-  position:relative;border-radius:var(--r);overflow:hidden;
-  border:1px solid var(--stroke);background:#1a1a26;
-  background-image:
-    linear-gradient(45deg,#242438 25%,transparent 25%),
-    linear-gradient(-45deg,#242438 25%,transparent 25%),
-    linear-gradient(45deg,transparent 75%,#242438 75%),
-    linear-gradient(-45deg,transparent 75%,#242438 75%);
-  background-size:16px 16px;
-  background-position:0 0,0 8px,8px -8px,-8px 0;
-  height:clamp(220px,40vh,380px)
-}
-.canvasBox{
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  transform-origin:center;transition:transform .15s var(--ease);padding:8px
-}
-.canvasBox canvas{
-  max-width:100%;max-height:100%;width:auto;height:auto;display:block;
-  border-radius:4px;box-shadow:0 8px 24px rgba(0,0,0,.45);
-  touch-action:auto
-}
-.canvasBox canvas.brushing{touch-action:none;cursor:crosshair}
-
-.badge{
-  position:absolute;top:8px;left:8px;background:rgba(10,10,20,.88);
-  border:1px solid rgba(139,92,246,.4);color:#c4b5fd;border-radius:8px;
-  padding:4px 10px;font-size:10px;font-weight:700;letter-spacing:.08em;z-index:5
-}
+/* STAGE */
+.stageWrap{position:relative;border-radius:var(--r);overflow:hidden;border:1px solid var(--stroke);background:#1a1a26;background-image:linear-gradient(45deg,#242438 25%,transparent 25%),linear-gradient(-45deg,#242438 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#242438 75%),linear-gradient(-45deg,transparent 75%,#242438 75%);background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0;height:clamp(200px,34vh,340px)}
+.canvasBox{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;transform-origin:center;transition:transform .15s var(--ease);padding:8px}
+.canvasBox canvas{max-width:100%;max-height:100%;width:auto;height:auto;display:block;border-radius:4px;box-shadow:0 8px 24px rgba(0,0,0,.45);touch-action:auto}
+.canvasBox canvas.brushing{touch-action:none;cursor:none}
+.brushCursor{position:absolute;pointer-events:none;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1px rgba(0,0,0,.6),0 0 12px rgba(0,0,0,.5);z-index:10;display:none;mix-blend-mode:difference}
+.badge{position:absolute;top:8px;left:8px;background:rgba(10,10,20,.88);border:1px solid rgba(139,92,246,.4);color:#c4b5fd;border-radius:8px;padding:4px 10px;font-size:10px;font-weight:700;letter-spacing:.08em;z-index:5}
 .viewBtns{position:absolute;top:8px;right:8px;display:flex;gap:3px;z-index:5}
-.viewBtns button{
-  background:rgba(10,10,20,.88);width:32px;height:32px;padding:0;
-  min-height:32px;font-size:14px;border-radius:8px
-}
-.liveBadge{
-  position:absolute;bottom:8px;left:8px;background:rgba(16,185,129,.92);
-  color:#fff;border-radius:99px;padding:3px 9px;font-size:9.5px;font-weight:700;z-index:5
-}
-.liveBadge::before{
-  content:"";display:inline-block;width:5px;height:5px;border-radius:50%;
-  background:#fff;margin-right:4px
-}
-.stageLoader{
-  position:absolute;inset:0;z-index:20;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
-  background:rgba(7,7,13,.82);backdrop-filter:blur(8px);
-  font-size:12.5px;font-weight:600
-}
-.spinner{
-  display:inline-block;width:18px;height:18px;
-  border:2px solid rgba(255,255,255,.22);border-top-color:#a78bfa;
-  border-radius:50%;animation:spin .8s linear infinite
-}
+.viewBtns button{background:rgba(10,10,20,.88);width:32px;height:32px;padding:0;min-height:32px;font-size:14px;border-radius:8px}
+.liveBadge{position:absolute;bottom:8px;left:8px;background:rgba(16,185,129,.92);color:#fff;border-radius:99px;padding:3px 9px;font-size:9.5px;font-weight:700;z-index:5}
+.liveBadge::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:#fff;margin-right:4px}
+.stageLoader{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(7,7,13,.85);backdrop-filter:blur(8px);font-size:12.5px;font-weight:600;text-align:center;padding:16px}
+.stageLoader .stageName{font-size:14px;font-weight:700;color:#a78bfa;margin-bottom:2px}
+.stageLoader .stageDetail{font-size:11px;color:var(--muted);font-weight:500}
+.spinner{display:inline-block;width:22px;height:22px;border:2.5px solid rgba(255,255,255,.22);border-top-color:#a78bfa;border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.brushHint{
-  position:absolute;right:8px;bottom:8px;z-index:6;
-  padding:5px 9px;border-radius:9px;background:rgba(10,10,20,.85);
-  border:1px solid var(--stroke);font-size:10px;color:var(--muted);
-  pointer-events:none
-}
+.batchProgressBar{width:min(280px,80vw);height:6px;background:rgba(148,163,184,.15);border-radius:99px;overflow:hidden}
+.batchProgressBar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8b5cf6,#22d3ee);transition:width .3s}
+.brushHint{position:absolute;right:8px;bottom:8px;z-index:6;padding:5px 9px;border-radius:9px;background:rgba(10,10,20,.85);border:1px solid var(--stroke);font-size:10px;color:var(--muted);pointer-events:none}
 .canvasActions{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:6px}
-.canvasActions button{
-  padding:7px 4px;font-size:10.5px;min-height:40px;flex-direction:column;gap:2px
-}
+.canvasActions button{padding:7px 4px;font-size:10.5px;min-height:40px;flex-direction:column;gap:2px}
 .ico{font-size:14px;line-height:1}
 
-/* ==================== CONTROLS ==================== */
+/* Compare slider */
+.compareSlider{position:absolute;inset:0;z-index:15;display:none;touch-action:none;user-select:none;cursor:ew-resize}
+.compareSlider.on{display:block}
+.compareSlider .cBefore{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:8px;overflow:hidden}
+.compareSlider .cBefore canvas{max-width:100%;max-height:100%;width:auto;height:auto;display:block;border-radius:4px}
+.compareSlider .cDivider{position:absolute;top:0;bottom:0;width:3px;background:#fff;box-shadow:0 0 12px rgba(255,255,255,.6);left:50%;transform:translateX(-50%);pointer-events:none}
+.compareSlider .cHandle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#22d3ee);border:3px solid #fff;box-shadow:0 4px 16px rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;pointer-events:none}
+.compareSlider .cLabelL{position:absolute;top:12px;left:12px;background:rgba(10,10,20,.9);border:1px solid var(--stroke);color:var(--muted);padding:4px 10px;border-radius:8px;font-size:10px;font-weight:700;letter-spacing:.06em}
+.compareSlider .cLabelR{position:absolute;top:12px;right:12px;background:rgba(16,185,129,.9);color:#fff;padding:4px 10px;border-radius:8px;font-size:10px;font-weight:700;letter-spacing:.06em}
+
 .controlsCol{padding-bottom:calc(20px + var(--safe-bottom))}
-.featureNav{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:6px;
-  background:rgba(10,10,20,.5);border:1px solid var(--stroke);
-  border-radius:14px;margin-bottom:8px
-}
-.featureNav button{
-  padding:8px 3px;font-size:10px;font-weight:600;min-height:54px;
-  background:transparent;border:1px solid transparent;border-radius:10px;
-  flex-direction:column;gap:3px;line-height:1.2;color:var(--muted)
-}
-.featureNav button.on{
-  background:linear-gradient(135deg,rgba(139,92,246,.9),rgba(34,211,238,.75));
-  color:#fff;border-color:transparent;
-  box-shadow:0 6px 18px -6px rgba(139,92,246,.6)
-}
-.panel{
-  display:none;animation:fadeIn .25s var(--ease) both;
-  background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);
-  padding:13px;backdrop-filter:blur(20px);box-shadow:0 8px 24px -8px rgba(0,0,0,.4)
-}
+.featureNav{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:6px;background:rgba(10,10,20,.5);border:1px solid var(--stroke);border-radius:14px;margin-bottom:8px}
+.featureNav button{padding:8px 3px;font-size:10px;font-weight:600;min-height:54px;background:transparent;border:1px solid transparent;border-radius:10px;flex-direction:column;gap:3px;line-height:1.2;color:var(--muted)}
+.featureNav button.on{background:linear-gradient(135deg,rgba(139,92,246,.9),rgba(34,211,238,.75));color:#fff;border-color:transparent;box-shadow:0 6px 18px -6px rgba(139,92,246,.6)}
+.panel{display:none;animation:fadeIn .25s var(--ease) both;background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:13px;backdrop-filter:blur(20px);box-shadow:0 8px 24px -8px rgba(0,0,0,.4)}
 .panel.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.panel h3{
-  font-family:"Plus Jakarta Sans",sans-serif;font-size:11.5px;margin:0 0 10px;
-  text-transform:uppercase;letter-spacing:.04em
-}
+.panel h3{font-family:"Plus Jakarta Sans",sans-serif;font-size:11.5px;margin:0 0 10px;text-transform:uppercase;letter-spacing:.04em}
 .opt{color:var(--faint);font-size:9.5px;text-transform:none;letter-spacing:0}
-
-/* ==================== DROP ZONE ==================== */
-.drop{
-  display:block;border:2px dashed rgba(167,139,250,.4);border-radius:var(--r2);
-  padding:22px 12px;text-align:center;cursor:pointer;
-  background:radial-gradient(circle at 50% 0%,rgba(139,92,246,.1),transparent 70%)
-}
-.drop:hover,.drop.dragover{
-  border-color:rgba(167,139,250,.9);
-  background:radial-gradient(circle at 50% 0%,rgba(139,92,246,.22),transparent 70%)
-}
+.drop{display:block;border:2px dashed rgba(167,139,250,.4);border-radius:var(--r2);padding:22px 12px;text-align:center;cursor:pointer;background:radial-gradient(circle at 50% 0%,rgba(139,92,246,.1),transparent 70%)}
+.drop:hover,.drop.dragover{border-color:rgba(167,139,250,.9);background:radial-gradient(circle at 50% 0%,rgba(139,92,246,.22),transparent 70%)}
 .drop .ico{font-size:26px;display:block;margin-bottom:4px}
 .drop strong{display:block;font-size:13.5px}
 .drop small{display:block;color:var(--muted);font-size:10.5px}
-#file{display:none!important}
-
-/* ==================== STATUS ==================== */
+#fileMulti{display:none!important}
 .status{color:var(--muted);font-size:11.5px;margin-top:8px;min-height:14px}
 .bar{height:4px;background:rgba(148,163,184,.1);border-radius:99px;overflow:hidden;margin-top:6px}
-.bar i{
-  display:block;height:100%;width:0;
-  background:linear-gradient(90deg,#8b5cf6,#22d3ee);transition:width .25s
-}
-
-/* ==================== NOTICE ==================== */
-.notice{
-  padding:9px 11px;border-radius:var(--r2);
-  background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.22);
-  font-size:10.5px;color:var(--muted);line-height:1.55;margin-top:10px
-}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8b5cf6,#22d3ee);transition:width .25s}
+.notice{padding:9px 11px;border-radius:var(--r2);background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.22);font-size:10.5px;color:var(--muted);line-height:1.55;margin-top:10px}
 .notice.warn{border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.08)}
 .notice.green{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.06)}
-
-/* ==================== NEXT STEPS ==================== */
-.nextSteps{
-  margin-top:12px;padding:12px;
-  background:linear-gradient(135deg,rgba(16,185,129,.10),rgba(34,211,238,.06));
-  border:1px solid rgba(16,185,129,.35);
-  border-radius:var(--r2);
-  animation:fadeIn .3s var(--ease) both
-}
-.nextSteps .nsTitle{
-  font-size:11.5px;color:var(--muted);margin-bottom:10px;text-align:center;font-weight:600
-}
-.nextSteps .actions{margin-top:0}
-
-/* ==================== SLIDERS / INPUTS ==================== */
+.nextSteps{margin-top:12px;padding:12px;background:linear-gradient(135deg,rgba(16,185,129,.10),rgba(34,211,238,.06));border:1px solid rgba(16,185,129,.35);border-radius:var(--r2);animation:fadeIn .3s var(--ease) both}
+.nextSteps .nsTitle{font-size:11.5px;color:var(--muted);margin-bottom:10px;text-align:center;font-weight:600}
 .row{display:flex;align-items:center;gap:10px;margin:8px 0}
 .row label{color:var(--muted);font-size:11.5px;flex:1}
 .row output{font-weight:700;font-size:11.5px;min-width:38px;text-align:right}
-input[type=range]{
-  width:100%;height:8px;appearance:none;
-  background:linear-gradient(90deg,rgba(139,92,246,.55),rgba(34,211,238,.4));
-  border-radius:99px;outline:0;margin:6px 0
-}
-input[type=range]::-webkit-slider-thumb{
-  appearance:none;width:24px;height:24px;border-radius:50%;
-  background:#fff;border:2px solid #8b5cf6;
-  box-shadow:0 0 0 4px rgba(139,92,246,.2)
-}
-select,input[type=text],input[type=number]{
-  width:100%;background:rgba(10,10,20,.6);color:var(--text);
-  border:1px solid var(--stroke);border-radius:var(--r2);
-  padding:12px 13px;font-size:13.5px;min-height:46px;outline:0
-}
-select:focus,input:focus{
-  border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px rgba(139,92,246,.15)
-}
-
-/* ==================== OPTION GRIDS ==================== */
-.bgOpts,.adjGrid,.presets,.brushModes{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:6px
-}
-.bgOpts button,.adjGrid button,.presets button,.brushModes button{
-  padding:8px 4px;flex-direction:column;gap:3px;font-size:10px;min-height:54px
-}
+input[type=range]{width:100%;height:8px;appearance:none;background:linear-gradient(90deg,rgba(139,92,246,.55),rgba(34,211,238,.4));border-radius:99px;outline:0;margin:6px 0}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid #8b5cf6;box-shadow:0 0 0 4px rgba(139,92,246,.2)}
+select,input[type=text],input[type=number]{width:100%;background:rgba(10,10,20,.6);color:var(--text);border:1px solid var(--stroke);border-radius:var(--r2);padding:12px 13px;font-size:13.5px;min-height:46px;outline:0}
+select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px rgba(139,92,246,.15)}
+.bgOpts,.adjGrid,.presets,.brushModes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.bgOpts button,.adjGrid button,.presets button,.brushModes button{padding:8px 4px;flex-direction:column;gap:3px;font-size:10px;min-height:54px}
 .bgOpts .swatch{width:20px;height:20px;border-radius:6px;border:1px solid rgba(255,255,255,.2)}
-.checker{
-  background-color:#ddd;
-  background-image:
-    linear-gradient(45deg,#aaa 25%,transparent 25%),
-    linear-gradient(-45deg,#aaa 25%,transparent 25%),
-    linear-gradient(45deg,transparent 75%,#aaa 75%),
-    linear-gradient(-45deg,transparent 75%,#aaa 75%);
-  background-size:8px 8px;
-  background-position:0 0,0 4px,4px -4px,-4px 0
-}
-.white{background:#fff}
-.blue{background:#2471d8}
-.custom{background:linear-gradient(135deg,#8b5cf6,#22d3ee)}
-.bgOpts button.on,.brushModes button.on,.presets button.on{
-  background:linear-gradient(135deg,rgba(139,92,246,.75),rgba(34,211,238,.6));
-  border-color:transparent
-}
+.checker{background-color:#ddd;background-image:linear-gradient(45deg,#aaa 25%,transparent 25%),linear-gradient(-45deg,#aaa 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#aaa 75%),linear-gradient(-45deg,transparent 75%,#aaa 75%);background-size:8px 8px;background-position:0 0,0 4px,4px -4px,-4px 0}
+.white{background:#fff}.black{background:#000}.blue{background:#2471d8}.custom{background:linear-gradient(135deg,#8b5cf6,#22d3ee)}
+.bgOpts button.on,.brushModes button.on,.presets button.on{background:linear-gradient(135deg,rgba(139,92,246,.75),rgba(34,211,238,.6));border-color:transparent}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
 .actions.single{grid-template-columns:1fr}
-
-/* ==================== SIZE INFO ==================== */
-.sizeInfo{
-  display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;
-  font-size:10.5px;color:var(--muted);margin-top:8px;padding:7px 9px;
-  background:rgba(10,10,20,.4);border-radius:10px;border:1px solid var(--stroke)
-}
-
-/* ==================== STICKY BAR ==================== */
-.stickyBar{
-  position:fixed;left:0;right:0;bottom:0;z-index:50;
-  padding:8px 10px;padding-bottom:calc(8px + var(--safe-bottom));
-  background:linear-gradient(180deg,transparent,rgba(7,7,13,.95) 35%);
-  backdrop-filter:blur(14px)
-}
-.stickyBar .inner{
-  max-width:1400px;margin:auto;
-  display:grid;grid-template-columns:auto auto 1fr;gap:6px
-}
+.sizeInfo{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:10.5px;color:var(--muted);margin-top:8px;padding:7px 9px;background:rgba(10,10,20,.4);border-radius:10px;border:1px solid var(--stroke)}
+.stickyBar{position:fixed;left:0;right:0;bottom:0;z-index:50;padding:8px 10px;padding-bottom:calc(8px + var(--safe-bottom));background:linear-gradient(180deg,transparent,rgba(7,7,13,.95) 35%);backdrop-filter:blur(14px)}
+.stickyBar .inner{max-width:1400px;margin:auto;display:grid;grid-template-columns:auto auto 1fr;gap:6px}
 .stickyBar button{min-height:48px}
-
-/* ==================== TOAST ==================== */
-.toast{
-  position:fixed;left:50%;bottom:calc(76px + var(--safe-bottom));
-  transform:translateX(-50%) translateY(80px);
-  background:rgba(20,20,34,.97);border:1px solid rgba(139,92,246,.5);
-  color:#e9d5ff;padding:10px 18px;border-radius:20px;
-  font-size:12px;font-weight:600;z-index:100;opacity:0;pointer-events:none;
-  transition:.35s var(--ease);max-width:calc(100vw - 24px);
-  text-align:center;word-wrap:break-word
-}
+.toast{position:fixed;left:50%;bottom:calc(76px + var(--safe-bottom));transform:translateX(-50%) translateY(80px);background:rgba(20,20,34,.97);border:1px solid rgba(139,92,246,.5);color:#e9d5ff;padding:10px 18px;border-radius:20px;font-size:12px;font-weight:600;z-index:100;opacity:0;pointer-events:none;transition:.35s var(--ease);max-width:calc(100vw - 24px);text-align:center;word-wrap:break-word}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* ==================== FOOTER ==================== */
-.footer{
-  text-align:center;padding:14px 10px;color:var(--faint);
-  font-size:10px;line-height:1.7
-}
+.footer{text-align:center;padding:14px 10px;color:var(--faint);font-size:10px;line-height:1.7}
 .hidden{display:none!important}
-
-/* ==================== DESKTOP ==================== */
+.confirmModal{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s}
+.confirmBox{background:linear-gradient(160deg,#1a1a2e,#0f0f1a);border:1px solid var(--stroke);border-radius:var(--r);padding:20px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.confirmBox h3{font-family:"Plus Jakarta Sans",sans-serif;font-size:16px;margin:0 0 8px}
+.confirmBox p{color:var(--muted);font-size:12.5px;margin:0 0 16px;line-height:1.55}
+.confirmBox .actions{margin-top:0}
 @media(min-width:900px){
   .app{max-width:1360px;padding:16px;padding-bottom:90px}
-  .hero{padding:16px 12px 12px}
-  .hero h1{font-size:24px}
+  .hero{padding:16px 12px 12px}.hero h1{font-size:24px}
   .hero .logo{width:52px;height:52px;font-size:26px}
   .grid{display:grid;grid-template-columns:1fr 420px;gap:16px;align-items:start}
   .canvasCol{top:16px;background:transparent;backdrop-filter:none;margin:0;padding:0;border:0}
@@ -330,40 +136,49 @@ select:focus,input:focus{
   .canvasActions button{flex-direction:row;min-height:44px;font-size:12px}
   .controlsCol{max-height:calc(100vh - 32px);overflow-y:auto;padding-right:8px}
   .featureNav{grid-template-columns:repeat(4,1fr)}
+  .qItem{width:84px;height:84px}.qAdd{width:84px;height:84px}
 }
-@media(max-width:360px){
-  .hero h1{font-size:15px}
-  .presets{grid-template-columns:repeat(2,1fr)}
-}
+@media(max-width:360px){.hero h1{font-size:15px}.presets{grid-template-columns:repeat(2,1fr)}.qItem{width:64px;height:64px}.qAdd{width:64px;height:64px}}
 </style>
 </head>
 <body>
 <div class="app">
-
 <header class="hero">
   <div class="logo">✂️</div>
   <h1>Photo & Signature BG Remover</h1>
-  <p>Free • No signup • Local browser processing</p>
+  <p>Pro Matting • Batch • 100% private</p>
 </header>
 
 <div class="grid">
-
-  <!-- ==================== CANVAS COLUMN ==================== -->
   <div class="canvasCol">
+    <div class="queueInfo hidden" id="queueInfo">
+      <span><b id="queueCount">0</b> images</span>
+      <span>Tap thumb • × to delete</span>
+    </div>
+    <div class="queueWrap empty" id="queueWrap"><div id="queueStrip" style="display:flex;gap:8px"></div></div>
     <div class="stageWrap" id="stage">
       <span class="badge" id="modeBadge">READY</span>
       <div class="viewBtns">
-        <button id="zoomOut" title="Zoom out">−</button>
-        <button id="zoomReset" title="Fit">⌂</button>
-        <button id="zoomIn" title="Zoom in">+</button>
+        <button id="zoomOut">−</button><button id="zoomReset">⌂</button><button id="zoomIn">+</button>
       </div>
       <div class="liveBadge hidden" id="liveBadge">EDITED</div>
-      <div class="canvasBox" id="canvasBox">
-        <canvas id="c" width="900" height="600"></canvas>
+      <div class="canvasBox" id="canvasBox"><canvas id="c" width="900" height="600"></canvas></div>
+      <div class="brushCursor" id="brushCursor"></div>
+
+      <!-- Before/After slider overlay -->
+      <div class="compareSlider" id="compareSlider">
+        <div class="cBefore" id="cBeforeHost"></div>
+        <div class="cDivider" id="cDivider"></div>
+        <div class="cHandle" id="cHandle">⇆</div>
+        <div class="cLabelL">BEFORE</div>
+        <div class="cLabelR">AFTER</div>
       </div>
+
       <div class="stageLoader hidden" id="stageLoader">
         <span class="spinner"></span>
-        <span id="stageLoaderText">Processing…</span>
+        <div class="stageName" id="stageLoaderName">Preparing…</div>
+        <div class="stageDetail" id="stageLoaderText">Please wait</div>
+        <div class="batchProgressBar hidden" id="batchProgressBar"><i id="batchProgressFill"></i></div>
       </div>
       <div class="brushHint hidden" id="brushHint">🖌️ Brush active</div>
     </div>
@@ -371,13 +186,11 @@ select:focus,input:focus{
       <button id="compareBtn" class="ghost"><span class="ico">◐</span><span>Compare</span></button>
       <button id="undoBtn" class="ghost"><span class="ico">↶</span><span>Undo</span></button>
       <button id="resetBtn" class="ghost"><span class="ico">↻</span><span>Reset</span></button>
-      <button id="fullscreenBtn" class="ghost"><span class="ico">⛶</span><span>Full</span></button>
+      <button id="deleteCurrentBtn" class="ghost"><span class="ico">🗑</span><span>Delete</span></button>
     </div>
   </div>
 
-  <!-- ==================== CONTROLS COLUMN ==================== -->
   <div class="controlsCol">
-
     <div class="featureNav" id="featureNav">
       <button data-tab="upload" class="on"><span class="ico">📷</span><span>Upload</span></button>
       <button data-tab="ai"><span class="ico">🤖</span><span>AI</span></button>
@@ -391,20 +204,16 @@ select:focus,input:focus{
     </div>
 
     <div class="panels">
-
-      <!-- UPLOAD -->
       <div class="panel active" data-panel="upload">
         <h3>📷 Image Upload</h3>
-        <label id="drop" class="drop" for="file">
+        <label id="drop" class="drop" for="fileMulti">
           <span class="ico">🖼️</span>
-          <strong>Image Upload करें</strong>
-          <small>JPG • PNG • WEBP • HEIC* — Tap या Drag & Drop</small>
+          <strong>Images Upload करें</strong>
+          <small>एक साथ कई photos — JPG • PNG • WEBP</small>
         </label>
-        <input id="file" type="file" accept="image/*">
-        <div id="status" class="status">Image upload करें।</div>
+        <input id="fileMulti" type="file" accept="image/*" multiple>
+        <div id="status" class="status">Images upload करें।</div>
         <div class="bar"><i id="progress"></i></div>
-
-        <!-- Next steps appear after image loads -->
         <div id="nextSteps" class="nextSteps hidden">
           <div class="nsTitle">✅ Image load हो गई — अब क्या करें?</div>
           <div class="actions">
@@ -412,123 +221,126 @@ select:focus,input:focus{
             <button id="goSign" class="ghost">✍️ Signature</button>
           </div>
         </div>
-
-        <div class="notice green">🔒 आपकी image server पर upload नहीं होती। AI model पहली बार external CDN से browser में download होता है, बाद में browser cache से चलता है।</div>
-        <div class="notice warn">⚠️ पहली बार AI use करने पर model download होगा (40–100 MB). WiFi recommended. HEIC support browser पर निर्भर करता है।</div>
+        <div class="notice green">🔒 आपकी images server पर upload नहीं होतीं।</div>
       </div>
 
-      <!-- AI -->
       <div class="panel" data-panel="ai">
-        <h3>🤖 AI Background Remove</h3>
+        <h3>🤖 Background Remove</h3>
         <select id="engine">
-          <option value="fast">⚡ Fast — ISNet Mobile (~40 MB)</option>
-          <option value="isnet">🧠 Balanced — ISNet FP16 (~80 MB)</option>
-          <option value="quality">🏆 High Quality — BiRefNet Lite (~100 MB)</option>
+          <option value="fast">⚡ Fast — सबसे तेज़</option>
+          <option value="isnet">🧠 Medium — बेहतर quality</option>
+          <option value="quality">🏆 Slow — सबसे अच्छी quality (full res)</option>
         </select>
-        <div class="actions single">
-          <button id="aiRemove" class="primary">✨ Background हटाएँ</button>
+
+        <div class="row" style="margin-top:10px">
+          <label>Resolution</label>
+          <select id="detailLevel" style="flex:1.4;width:auto">
+            <option value="auto" selected>Auto (recommended)</option>
+            <option value="standard">Standard (1024px)</option>
+            <option value="high">High (1536px)</option>
+            <option value="max">Maximum (2048px)</option>
+            <option value="full">Full resolution (slowest)</option>
+          </select>
         </div>
-        <div class="notice">💡 कमजोर mobile पर Fast mode चुनें। पहली बार model download के बाद हर बार तेज़ चलेगा।</div>
+
+        <div class="row">
+          <label>Hair / Fur edge recovery</label>
+          <input id="hairMode" type="checkbox" checked style="width:22px;height:22px;min-height:22px;accent-color:#8b5cf6">
+        </div>
+        <div class="row">
+          <label>Alpha matting (soft edges)</label>
+          <input id="mattingMode" type="checkbox" checked style="width:22px;height:22px;min-height:22px;accent-color:#8b5cf6">
+        </div>
+        <div class="row">
+          <label>Halo removal</label>
+          <input id="haloMode" type="checkbox" checked style="width:22px;height:22px;min-height:22px;accent-color:#8b5cf6">
+        </div>
+        <div class="row">
+          <label>Color decontamination</label>
+          <input id="deconMode" type="checkbox" checked style="width:22px;height:22px;min-height:22px;accent-color:#8b5cf6">
+        </div>
+
+        <div class="actions single"><button id="aiRemove" class="primary">✨ Background हटाएँ (current)</button></div>
+        <div class="actions single">
+          <button id="aiRemoveAll" class="primary" style="background:linear-gradient(135deg,#059669,#10b981,#34d399);border-color:rgba(16,185,129,.55)">
+            🚀 सभी Images (Batch)
+          </button>
+        </div>
+        <div class="notice">
+          💡 <b>Auto</b> image size के हिसाब से AI resolution choose करता है।<br>
+          <b>Slow engine</b> हमेशा full resolution पर चलता है।
+        </div>
       </div>
 
-      <!-- SIGNATURE -->
       <div class="panel" data-panel="sign">
         <h3>✍️ Signature Clean</h3>
-        <div class="row">
-          <label>Ink threshold</label>
-          <output id="sigThreshO">180</output>
-        </div>
+        <div class="row"><label>Ink threshold</label><output id="sigThreshO">180</output></div>
         <input id="sigThresh" type="range" min="60" max="240" value="180">
-        <div class="row">
-          <label>Edge smooth</label>
-          <output id="sigSmoothO">1.2</output>
-        </div>
+        <div class="row"><label>Edge smooth</label><output id="sigSmoothO">1.2</output></div>
         <input id="sigSmooth" type="range" min="0" max="4" step=".2" value="1.2">
+        <div class="actions single"><button id="sigAuto" class="primary">✨ Signature Clean (current)</button></div>
         <div class="actions single">
-          <button id="sigAuto" class="primary">✨ Signature Clean करें</button>
+          <button id="sigAutoAll" class="primary" style="background:linear-gradient(135deg,#059669,#10b981,#34d399);border-color:rgba(16,185,129,.55)">
+            🚀 सभी Signatures (Batch)
+          </button>
         </div>
-        <div class="notice">💡 White/grey paper से dark ink निकालने के लिए। Threshold adjust करके फिर Clean दबाएँ।</div>
       </div>
 
-      <!-- BACKGROUND -->
       <div class="panel" data-panel="bg">
-        <h3>🎨 Background <span class="opt">Live preview</span></h3>
+        <h3>🎨 Background</h3>
         <div class="bgOpts" id="bgOpts">
           <button data-bg="checker" class="on"><span class="swatch checker"></span><span>Clear</span></button>
           <button data-bg="white"><span class="swatch white"></span><span>White</span></button>
-          <button data-bg="blue"><span class="swatch blue"></span><span>Blue</span></button>
+          <button data-bg="black"><span class="swatch black"></span><span>Black</span></button>
           <button data-bg="custom"><span class="swatch custom"></span><span>Custom</span></button>
         </div>
         <input id="customColor" type="color" value="#f5f5f5" style="display:none;margin-top:10px;width:100%;height:46px;border:1px solid var(--stroke);border-radius:12px;background:transparent">
-        <div class="notice">💡 Clear = transparent PNG/WEBP. JPG export automatically solid background use करता है।</div>
       </div>
 
-      <!-- ADJUST -->
       <div class="panel" data-panel="adjust">
-        <h3>🎛️ Adjustments <span class="opt">Live</span></h3>
+        <h3>🎛️ Adjustments</h3>
         <div class="adjGrid">
           <button id="rotL"><span class="ico">↺</span><span>Left</span></button>
           <button id="rotR"><span class="ico">↻</span><span>Right</span></button>
           <button id="flipH"><span class="ico">⇆</span><span>Flip H</span></button>
           <button id="flipV"><span class="ico">⇅</span><span>Flip V</span></button>
         </div>
-        <div class="row">
-          <label>Brightness</label>
-          <output id="brightO">1.00</output>
-        </div>
+        <div class="row"><label>Brightness</label><output id="brightO">1.00</output></div>
         <input id="bright" type="range" min=".5" max="1.6" step=".02" value="1">
-        <div class="row">
-          <label>Contrast</label>
-          <output id="contrastO">1.00</output>
-        </div>
+        <div class="row"><label>Contrast</label><output id="contrastO">1.00</output></div>
         <input id="contrast" type="range" min=".5" max="1.6" step=".02" value="1">
-        <div class="actions single">
-          <button id="resetAdj" class="ghost small">↻ Reset</button>
-        </div>
+        <div class="actions single"><button id="resetAdj" class="ghost small">↻ Reset</button></div>
       </div>
 
-      <!-- EDGE -->
       <div class="panel" data-panel="edge">
         <h3>✨ Edge Refine</h3>
-        <div class="row">
-          <label>Feather</label>
-          <output id="featherO">1.5</output>
-        </div>
+        <div class="row"><label>Feather</label><output id="featherO">1.5</output></div>
         <input id="feather" type="range" min="0" max="6" step=".5" value="1.5">
-        <div class="row">
-          <label>Decontaminate</label>
-          <output id="defO">40</output>
-        </div>
-        <input id="def" type="range" min="0" max="100" value="40">
-        <div class="actions single">
-          <button id="applyEdge">✨ Edge साफ़ करें</button>
-        </div>
-        <div class="notice">💡 Feather = edge softness. Decontaminate = background colour halo हटाना (green/white edges पर असरदार)।</div>
+        <div class="row"><label>Decontaminate</label><output id="defO">60</output></div>
+        <input id="def" type="range" min="0" max="100" value="60">
+        <div class="row"><label>Halo removal strength</label><output id="haloO">70</output></div>
+        <input id="halo" type="range" min="0" max="100" value="70">
+        <div class="actions single"><button id="applyEdge">✨ Edge साफ़ करें</button></div>
+        <div class="notice">💡 Halo removal extra pass है जो bright/dark outlines हटाता है।</div>
       </div>
 
-      <!-- BRUSH -->
       <div class="panel" data-panel="brush">
-        <h3>🖌️ Manual Fix <span class="opt">AI mask correction</span></h3>
+        <h3>🖌️ Manual Fix</h3>
         <div class="brushModes">
           <button id="keepBrush" class="on"><span>🟢</span><span>Keep</span></button>
           <button id="removeBrush"><span>🔴</span><span>Remove</span></button>
           <button id="brushOff"><span>✋</span><span>Pan</span></button>
-          <button id="brushReset"><span>↺</span><span>Reset Mask</span></button>
+          <button id="brushReset"><span>↺</span><span>Reset</span></button>
         </div>
-        <div class="row">
-          <label>Brush size</label>
-          <output id="brushSizeO">32</output>
-        </div>
+        <div class="row"><label>Brush size</label><output id="brushSizeO">32</output></div>
         <input id="brushSize" type="range" min="4" max="160" value="32">
-        <div class="row">
-          <label>Brush strength</label>
-          <output id="brushStrengthO">100</output>
-        </div>
+        <div class="row"><label>Brush hardness</label><output id="brushHardO">60</output></div>
+        <input id="brushHard" type="range" min="0" max="100" value="60">
+        <div class="row"><label>Brush strength</label><output id="brushStrengthO">100</output></div>
         <input id="brushStrength" type="range" min="10" max="100" value="100">
-        <div class="notice">🟢 Keep = subject रखो • 🔴 Remove = background हटाओ • ✋ Pan = brush बंद, page scroll सामान्य। Canvas पर drag करके mask ठीक करें।</div>
+        <div class="notice">🟢 Keep • 🔴 Remove • ✋ Pan. Canvas पर circle दिखेगा।</div>
       </div>
 
-      <!-- SIZE -->
       <div class="panel" data-panel="size">
         <h3>📐 Document Size</h3>
         <div class="presets" id="presets">
@@ -540,30 +352,23 @@ select:focus,input:focus{
           <button data-w="1080" data-h="1080"><strong>Instagram</strong><small>1080 × 1080</small></button>
         </div>
         <div class="row" style="margin-top:10px">
-          <label>Auto crop transparent area</label>
+          <label>Auto crop transparent</label>
           <input id="autoCrop" type="checkbox" style="width:22px;height:22px;min-height:22px;accent-color:#8b5cf6">
         </div>
-        <div class="notice">💡 Auto crop ON = transparent margins हटेंगे। Form photos में जरूरत न हो तो OFF रखें।</div>
       </div>
 
-      <!-- DOWNLOAD -->
       <div class="panel" data-panel="download">
         <h3>⬇ Download</h3>
-        <div class="row">
-          <label>Format</label>
+        <div class="row"><label>Format</label>
           <select id="format" style="flex:1.6;width:auto">
             <option value="image/png">PNG (Transparent)</option>
             <option value="image/jpeg">JPG (Small)</option>
             <option value="image/webp">WEBP</option>
           </select>
         </div>
-        <div class="row">
-          <label>Quality</label>
-          <output id="qualO">92</output>
-        </div>
+        <div class="row"><label>Quality</label><output id="qualO">92</output></div>
         <input id="quality" type="range" min="30" max="100" value="92">
-        <div class="row">
-          <label>Target size</label>
+        <div class="row"><label>Target size</label>
           <select id="targetSize" style="flex:1.6;width:auto">
             <option value="0">Best quality</option>
             <option value="20">≤ 20 KB</option>
@@ -573,48 +378,35 @@ select:focus,input:focus{
             <option value="500">≤ 500 KB</option>
           </select>
         </div>
-        <div class="actions">
-          <button class="ghost small kbBtn" data-kb="20">20 KB</button>
-          <button class="ghost small kbBtn" data-kb="50">50 KB</button>
-          <button class="ghost small kbBtn" data-kb="100">100 KB</button>
-          <button class="ghost small kbBtn" data-kb="0">Best</button>
-        </div>
-        <div class="notice warn" id="pngNote" style="display:none">⚠️ PNG lossless है — target size पूरा करने के लिए image downscale हो सकती है।</div>
-        <div class="row">
-          <label>Print DPI</label>
+        <div class="row"><label>Print DPI</label>
           <select id="dpi" style="flex:1.6;width:auto">
-            <option value="72">72</option>
-            <option value="150">150</option>
-            <option value="300" selected>300</option>
-            <option value="600">600</option>
+            <option value="72">72</option><option value="150">150</option>
+            <option value="300" selected>300</option><option value="600">600</option>
           </select>
         </div>
-        <div class="row">
-          <label>Filename</label>
-          <input id="fileNameInput" type="text" value="image-no-bg" style="flex:1.6">
+        <div class="notice" style="font-size:10px">ℹ️ DPI सिर्फ print size hint है — pixel quality नहीं बदलती।</div>
+        <div class="row"><label>Filename</label>
+          <input id="fileNameInput" type="text" value="image" style="flex:1.6">
         </div>
         <div class="sizeInfo">
           <span>📏 <b id="pxInfo">— × —</b></span>
-          <span>🖨️ <b id="mmInfo">— × — mm</b></span>
+          <span>🖨️ <b id="mmInfo">— mm</b></span>
           <span>💾 <b id="kbInfo">—</b></span>
         </div>
+        <div class="actions single"><button id="downloadBtn2" class="primary" style="padding:14px;font-size:14px">⬇ Download (current)</button></div>
         <div class="actions single">
-          <button id="downloadBtn2" class="primary" style="padding:14px;font-size:14px">⬇ Download</button>
+          <button id="downloadAllBtn" class="primary" style="background:linear-gradient(135deg,#059669,#10b981,#34d399);border-color:rgba(16,185,129,.55);padding:14px;font-size:14px">
+            ⬇⬇ सभी Images (Batch)
+          </button>
         </div>
       </div>
-
     </div>
   </div>
 </div>
 
-<footer class="footer">
-  Made for students, cyber cafés & everyday users<br>
-  Free • No signup • Browser-side processing
-</footer>
-
+<footer class="footer">Pro Matting Engine • 100% local • No signup</footer>
 </div>
 
-<!-- STICKY BOTTOM BAR -->
 <div class="stickyBar">
   <div class="inner">
     <button id="undoBtnBottom" class="ghost">↶</button>
@@ -624,39 +416,39 @@ select:focus,input:focus{
 </div>
 
 <div class="toast" id="toast"></div>
+<div id="confirmRoot"></div>
 
 <script type="module">
-/* ========================================================
-   CORE SETUP
-   ======================================================== */
+/* ============================================================
+   CORE
+   ============================================================ */
 const $ = id => document.getElementById(id);
 const c = $('c');
 const ctx = c.getContext('2d', { willReadFrequently: true });
+
+let queue = [];
+let activeId = null;
+let idCounter = 0;
 
 let original = null;
 let work = null;
 let maskBackup = null;
 let undoStack = [];
-let fileBase = 'image';
-let compareMode = false;
-let isProcessing = false;
 let hasResult = false;
-let sourceW = 0, sourceH = 0;
+let fileBase = 'image';
 
-const engineCache = { imgly: null, tf: null, isnet: {}, birefnet: null };
+let compareMode = false;
+let compareSliderPos = 0.5;
+let isProcessing = false;
+let batchMode = false;
+
+const engineCache = { imgly: null, tf: null, birefnet: null };
 
 const state = {
-  bg: 'checker',
-  customColor: '#f5f5f5',
-  brightness: 1,
-  contrast: 1,
-  rotate: 0,
-  flipH: false,
-  flipV: false,
-  zoom: 1,
-  brushMode: 'keep',
-  brushSize: 32,
-  brushStrength: 100,
+  bg: 'checker', customColor: '#f5f5f5',
+  brightness: 1, contrast: 1, rotate: 0,
+  flipH: false, flipV: false, zoom: 1,
+  brushMode: 'keep', brushSize: 32, brushHard: 60, brushStrength: 100,
   autoCrop: false
 };
 
@@ -667,11 +459,41 @@ let currentQuality = 0.92;
 let currentTargetKB = 0;
 
 const MAX_FILE_MB = 25;
-const MAX_MP = 12;
+const MAX_MP = 20;
 
-/* ========================================================
+/* ============================================================
+   MEMORY
+   ============================================================ */
+function releaseCanvas(canvas) {
+  if (!canvas) return;
+  try { canvas.width = 0; canvas.height = 0; } catch (_) {}
+}
+function forceGC() {
+  if (window.gc) { try { window.gc(); } catch (_) {} }
+}
+
+/* ============================================================
+   RETRY
+   ============================================================ */
+async function withRetry(fn, maxRetries = 2, delayMs = 1500) {
+  let lastErr;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try { return await fn(); }
+    catch (e) {
+      lastErr = e;
+      if (attempt < maxRetries) {
+        console.warn(`Retry ${attempt + 1}…`, e);
+        await new Promise(r => setTimeout(r, delayMs));
+        delayMs *= 1.5;
+      }
+    }
+  }
+  throw lastErr;
+}
+
+/* ============================================================
    UTILITIES
-   ======================================================== */
+   ============================================================ */
 function status(msg, p) {
   $('status').textContent = msg;
   if (p !== undefined) $('progress').style.width = Math.max(0, Math.min(100, p)) + '%';
@@ -686,25 +508,29 @@ function toast(msg, ms = 2400) {
   toastTimer = setTimeout(() => el.classList.remove('on'), ms);
 }
 
-function setLoading(on, text) {
-  $('stageLoaderText').textContent = text || 'Processing…';
-  $('stageLoader').classList.toggle('hidden', !on);
+/* STAGE-BASED LOADER */
+function setStage(name, detail, pct) {
+  $('stageLoaderName').textContent = name;
+  $('stageLoaderText').textContent = detail || '';
+  $('stageLoader').classList.remove('hidden');
+  if (pct !== undefined) {
+    $('batchProgressBar').classList.remove('hidden');
+    $('batchProgressFill').style.width = Math.max(0, Math.min(100, pct)) + '%';
+  }
+}
+function hideStage() {
+  $('stageLoader').classList.add('hidden');
 }
 
-/* Deep clone with fallback for older Safari */
 function cloneState(s) {
   if (typeof structuredClone === 'function') return structuredClone(s);
   return JSON.parse(JSON.stringify(s));
 }
-
-/* ============ FIXED: snapshot accepts optional source ============ */
 function snapshot(img) {
   const source = img || work;
   if (!source) return null;
   return new ImageData(new Uint8ClampedArray(source.data), source.width, source.height);
 }
-
-/* Alpha-only backup — 4x less memory than full ImageData */
 function captureAlpha(img) {
   if (!img) return null;
   const n = img.width * img.height;
@@ -712,318 +538,686 @@ function captureAlpha(img) {
   for (let i = 0, p = 3; i < n; i++, p += 4) mask[i] = img.data[p];
   return mask;
 }
-
 function applyAlpha(img, mask) {
   if (!mask || !img) return;
   const n = img.width * img.height;
   if (mask.length !== n) return;
   for (let i = 0, p = 3; i < n; i++, p += 4) img.data[p] = mask[i];
 }
-
 function pushHistory() {
   if (!work) return;
   undoStack.push({
-    work: snapshot(),
-    state: cloneState(state),
-    hasResult,
+    work: snapshot(), state: cloneState(state), hasResult,
     maskBackup: maskBackup ? new Uint8ClampedArray(maskBackup) : null
   });
   if (undoStack.length > 12) undoStack.shift();
 }
-
-/* EXIF-aware image decoding */
 async function decodeImage(file) {
   if (typeof createImageBitmap === 'function') {
-    try {
-      return await createImageBitmap(file, { imageOrientation: 'from-image' });
-    } catch (_) { /* fall through */ }
+    try { return await createImageBitmap(file, { imageOrientation: 'from-image' }); } catch (_) {}
   }
   return await loadImage(file);
 }
-
 function loadImage(file) {
   return new Promise((res, rej) => {
     const u = URL.createObjectURL(file);
     const im = new Image();
     im.onload = () => { URL.revokeObjectURL(u); res(im); };
-    im.onerror = () => { URL.revokeObjectURL(u); rej(new Error('Image decode नहीं हुआ')); };
+    im.onerror = () => { URL.revokeObjectURL(u); rej(new Error('Decode fail')); };
     im.src = u;
   });
 }
+function makeThumb(imgData, maxDim = 100) {
+  try {
+    const scale = Math.min(1, maxDim / Math.max(imgData.width, imgData.height));
+    const w = Math.max(1, Math.round(imgData.width * scale));
+    const h = Math.max(1, Math.round(imgData.height * scale));
+    const tmp = document.createElement('canvas');
+    tmp.width = imgData.width; tmp.height = imgData.height;
+    tmp.getContext('2d').putImageData(imgData, 0, 0);
+    const t = document.createElement('canvas');
+    t.width = w; t.height = h;
+    t.getContext('2d').drawImage(tmp, 0, 0, w, h);
+    const url = t.toDataURL('image/jpeg', 0.7);
+    releaseCanvas(tmp); releaseCanvas(t);
+    return url;
+  } catch (_) { return ''; }
+}
+function showConfirm(title, message, onConfirm) {
+  const root = $('confirmRoot');
+  root.innerHTML = `
+    <div class="confirmModal">
+      <div class="confirmBox">
+        <h3>${title}</h3><p>${message}</p>
+        <div class="actions">
+          <button id="cNo" class="ghost">Cancel</button>
+          <button id="cYes" class="danger">Delete</button>
+        </div>
+      </div>
+    </div>`;
+  $('cNo').onclick = () => root.innerHTML = '';
+  $('cYes').onclick = () => { root.innerHTML = ''; onConfirm(); };
+}
 
-/* ========================================================
-   UI HELPERS
-   ======================================================== */
+/* ============================================================
+   BOX FILTER
+   ============================================================ */
+function boxFilterFloat(src, w, h, r) {
+  const out = new Float32Array(w * h);
+  const win = 2 * r + 1;
+  const tmp = new Float32Array(w * h);
+  for (let y = 0; y < h; y++) {
+    const row = y * w;
+    let sum = 0;
+    for (let x = -r; x <= r; x++) sum += src[row + Math.max(0, Math.min(w - 1, x))];
+    for (let x = 0; x < w; x++) {
+      tmp[row + x] = sum / win;
+      sum -= src[row + Math.max(0, Math.min(w - 1, x - r))];
+      sum += src[row + Math.max(0, Math.min(w - 1, x + r + 1))];
+    }
+  }
+  for (let x = 0; x < w; x++) {
+    let sum = 0;
+    for (let y = -r; y <= r; y++) sum += tmp[Math.max(0, Math.min(h - 1, y)) * w + x];
+    for (let y = 0; y < h; y++) {
+      out[y * w + x] = sum / win;
+      sum -= tmp[Math.max(0, Math.min(h - 1, y - r)) * w + x];
+      sum += tmp[Math.max(0, Math.min(h - 1, y + r + 1)) * w + x];
+    }
+  }
+  return out;
+}
+
+/* ============================================================
+   GUIDED FILTER MATTING
+   ============================================================ */
+function guidedFilterMatting(imgData, alpha, radius, eps) {
+  const w = imgData.width, h = imgData.height, n = w * h;
+  const d = imgData.data;
+  const gray = new Float32Array(n);
+  for (let i = 0, p = 0; i < n; i++, p += 4) {
+    gray[i] = (d[p] * 0.299 + d[p + 1] * 0.587 + d[p + 2] * 0.114) / 255;
+  }
+  const meanG = boxFilterFloat(gray, w, h, radius);
+  const meanA = boxFilterFloat(alpha, w, h, radius);
+  const gg = new Float32Array(n), ga = new Float32Array(n);
+  for (let i = 0; i < n; i++) { gg[i] = gray[i] * gray[i]; ga[i] = gray[i] * alpha[i]; }
+  const meanGG = boxFilterFloat(gg, w, h, radius);
+  const meanGA = boxFilterFloat(ga, w, h, radius);
+  const a = new Float32Array(n), b = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    const varG = meanGG[i] - meanG[i] * meanG[i];
+    const covGA = meanGA[i] - meanG[i] * meanA[i];
+    a[i] = covGA / (varG + eps);
+    b[i] = meanA[i] - a[i] * meanG[i];
+  }
+  const meanA2 = boxFilterFloat(a, w, h, radius);
+  const meanB2 = boxFilterFloat(b, w, h, radius);
+  const refined = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    let v = meanA2[i] * gray[i] + meanB2[i];
+    refined[i] = v < 0 ? 0 : (v > 1 ? 1 : v);
+  }
+  return refined;
+}
+
+/* ============================================================
+   EDGE BAND
+   ============================================================ */
+function detectEdgeBand(alpha, w, h, bandWidth) {
+  const n = w * h;
+  const band = new Uint8Array(n);
+  const edge = new Uint8Array(n);
+  for (let i = 0; i < n; i++) {
+    const a = alpha[i];
+    if (a > 0.02 && a < 0.98) edge[i] = 1;
+  }
+  const bw = bandWidth;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const i = y * w + x;
+      if (!edge[i]) continue;
+      const y0 = Math.max(0, y - bw), y1 = Math.min(h - 1, y + bw);
+      const x0 = Math.max(0, x - bw), x1 = Math.min(w - 1, x + bw);
+      for (let yy = y0; yy <= y1; yy++) {
+        for (let xx = x0; xx <= x1; xx++) band[yy * w + xx] = 1;
+      }
+    }
+  }
+  return band;
+}
+
+/* ============================================================
+   IMPROVED HAIR/FUR RECOVERY
+   Multi-radius, adaptive weighting
+   ============================================================ */
+function hairFurRecovery(imgData, alpha, band, strength) {
+  const w = imgData.width, h = imgData.height;
+  const d = imgData.data;
+  const out = new Float32Array(alpha);
+
+  // Two-scale approach — small for thin strands, larger for context
+  const R_INNER = 2, R_OUTER = 5;
+
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const i = y * w + x;
+      if (!band[i]) continue;
+      const a = alpha[i];
+      if (a <= 0.02 || a >= 0.98) continue;
+
+      let fgR = 0, fgG = 0, fgB = 0, fgW = 0;
+      let bgR = 0, bgG = 0, bgB = 0, bgW = 0;
+
+      for (let dy = -R_OUTER; dy <= R_OUTER; dy++) {
+        const ny = y + dy;
+        if (ny < 0 || ny >= h) continue;
+        for (let dx = -R_OUTER; dx <= R_OUTER; dx++) {
+          const nx = x + dx;
+          if (nx < 0 || nx >= w) continue;
+          const ni = ny * w + nx;
+          const na = alpha[ni];
+          const dist2 = dx * dx + dy * dy;
+          if (dist2 === 0 || dist2 > R_OUTER * R_OUTER) continue;
+
+          // Weight: inner pixels get more weight
+          const dist = Math.sqrt(dist2);
+          const wgt = (dist <= R_INNER ? 3 : 1) / (dist * dist);
+
+          if (na > 0.9) {
+            const p = ni * 4;
+            fgR += d[p] * wgt; fgG += d[p + 1] * wgt; fgB += d[p + 2] * wgt; fgW += wgt;
+          } else if (na < 0.1) {
+            const p = ni * 4;
+            bgR += d[p] * wgt; bgG += d[p + 1] * wgt; bgB += d[p + 2] * wgt; bgW += wgt;
+          }
+        }
+      }
+
+      if (fgW < 1e-3 || bgW < 1e-3) continue;
+
+      fgR /= fgW; fgG /= fgW; fgB /= fgW;
+      bgR /= bgW; bgG /= bgW; bgB /= bgW;
+
+      const p = i * 4;
+      const cR = d[p], cG = d[p + 1], cB = d[p + 2];
+      const fgDiffR = fgR - bgR, fgDiffG = fgG - bgG, fgDiffB = fgB - bgB;
+      const cDiffR = cR - bgR, cDiffG = cG - bgG, cDiffB = cB - bgB;
+      const denom = fgDiffR * fgDiffR + fgDiffG * fgDiffG + fgDiffB * fgDiffB;
+
+      if (denom > 4) {
+        let est = (cDiffR * fgDiffR + cDiffG * fgDiffG + cDiffB * fgDiffB) / denom;
+        est = Math.max(0, Math.min(1, est));
+        out[i] = a * (1 - strength) + est * strength;
+      }
+    }
+  }
+  return out;
+}
+
+/* ============================================================
+   MULTI-DIRECTIONAL DECONTAMINATION
+   ============================================================ */
+function decontaminateEdges(imgData, alpha, strength) {
+  const w = imgData.width, h = imgData.height;
+  const d = imgData.data;
+  const out = new Uint8ClampedArray(d);
+  const R = 6;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const i = y * w + x;
+      const a = alpha[i];
+      if (a <= 0.05 || a >= 0.95) continue;
+
+      let fgR = 0, fgG = 0, fgB = 0, totalW = 0;
+
+      // Multi-radius sampling for smoother color estimate
+      for (let dy = -R; dy <= R; dy++) {
+        const ny = y + dy;
+        if (ny < 0 || ny >= h) continue;
+        for (let dx = -R; dx <= R; dx++) {
+          const nx = x + dx;
+          if (nx < 0 || nx >= w) continue;
+          const ni = ny * w + nx;
+          const na = alpha[ni];
+          if (na < 0.85) continue;
+          const dist2 = dx * dx + dy * dy;
+          if (dist2 === 0 || dist2 > R * R) continue;
+          const wgt = (1 / dist2) * na;
+          const p = ni * 4;
+          fgR += d[p] * wgt; fgG += d[p + 1] * wgt; fgB += d[p + 2] * wgt;
+          totalW += wgt;
+        }
+      }
+
+      if (totalW < 1e-6) continue;
+
+      fgR /= totalW; fgG /= totalW; fgB /= totalW;
+
+      const p = i * 4;
+      const blend = strength * (1 - a);
+      out[p]     = Math.round(d[p]     * (1 - blend) + fgR * blend);
+      out[p + 1] = Math.round(d[p + 1] * (1 - blend) + fgG * blend);
+      out[p + 2] = Math.round(d[p + 2] * (1 - blend) + fgB * blend);
+    }
+  }
+  return new ImageData(out, w, h);
+}
+
+/* ============================================================
+   ★ HALO REMOVAL — detects and removes bright/dark outlines
+   ============================================================ */
+function haloRemoval(imgData, alpha, strength) {
+  const w = imgData.width, h = imgData.height;
+  const d = imgData.data;
+  const out = new Uint8ClampedArray(d);
+
+  // Pass 1: Detect halo (edge pixels that are much brighter/darker than FG)
+  const R = 4;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const i = y * w + x;
+      const a = alpha[i];
+      if (a <= 0.1 || a >= 0.9) continue;
+
+      // Estimate FG luminance
+      let fgLum = 0, cnt = 0;
+      for (let dy = -R; dy <= R; dy++) {
+        const ny = y + dy;
+        if (ny < 0 || ny >= h) continue;
+        for (let dx = -R; dx <= R; dx++) {
+          const nx = x + dx;
+          if (nx < 0 || nx >= w) continue;
+          const ni = ny * w + nx;
+          if (alpha[ni] < 0.9) continue;
+          const p = ni * 4;
+          fgLum += 0.299 * d[p] + 0.587 * d[p + 1] + 0.114 * d[p + 2];
+          cnt++;
+        }
+      }
+      if (cnt === 0) continue;
+      fgLum /= cnt;
+
+      const p = i * 4;
+      const lum = 0.299 * d[p] + 0.587 * d[p + 1] + 0.114 * d[p + 2];
+      const diff = Math.abs(lum - fgLum);
+
+      // If this edge pixel is significantly different from FG → halo
+      if (diff > 35) {
+        const haloFactor = Math.min(1, (diff - 35) / 60);
+        const blend = haloFactor * strength;
+
+        // Pull color towards FG
+        let fgR = 0, fgG = 0, fgB = 0, totW = 0;
+        for (let dy = -R; dy <= R; dy++) {
+          const ny = y + dy;
+          if (ny < 0 || ny >= h) continue;
+          for (let dx = -R; dx <= R; dx++) {
+            const nx = x + dx;
+            if (nx < 0 || nx >= w) continue;
+            const ni = ny * w + nx;
+            if (alpha[ni] < 0.9) continue;
+            const dist2 = dx * dx + dy * dy;
+            if (dist2 === 0) continue;
+            const wgt = 1 / dist2;
+            const np = ni * 4;
+            fgR += d[np] * wgt; fgG += d[np + 1] * wgt; fgB += d[np + 2] * wgt;
+            totW += wgt;
+          }
+        }
+        if (totW < 1e-6) continue;
+        fgR /= totW; fgG /= totW; fgB /= totW;
+
+        out[p]     = Math.round(d[p]     * (1 - blend) + fgR * blend);
+        out[p + 1] = Math.round(d[p + 1] * (1 - blend) + fgG * blend);
+        out[p + 2] = Math.round(d[p + 2] * (1 - blend) + fgB * blend);
+      }
+    }
+  }
+  return new ImageData(out, w, h);
+}
+
+/* ============================================================
+   QUEUE
+   ============================================================ */
+function saveActiveToQueue() {
+  const item = queue.find(x => x.id === activeId);
+  if (!item) return;
+  item.original = original;
+  item.work = work;
+  item.hasResult = hasResult;
+  item.maskBackup = maskBackup;
+  item.state = cloneState(state);
+  item.undoStack = undoStack;
+  item.fileBase = fileBase;
+}
+function loadActiveFromQueue() {
+  const item = queue.find(x => x.id === activeId);
+  if (!item) {
+    original = null; work = null; maskBackup = null; hasResult = false; undoStack = [];
+    return;
+  }
+  original = item.original;
+  work = item.work;
+  hasResult = item.hasResult;
+  maskBackup = item.maskBackup ? new Uint8ClampedArray(item.maskBackup) : null;
+  undoStack = item.undoStack || [];
+  fileBase = item.fileBase || 'image';
+  Object.assign(state, item.state || {
+    bg: 'checker', customColor: '#f5f5f5', brightness: 1, contrast: 1,
+    rotate: 0, flipH: false, flipV: false, zoom: 1,
+    brushMode: 'keep', brushSize: 32, brushHard: 60, brushStrength: 100, autoCrop: false
+  });
+}
+function updateQueueUI() {
+  const strip = $('queueStrip');
+  const wrap = $('queueWrap');
+  const info = $('queueInfo');
+  strip.innerHTML = '';
+  if (!queue.length) {
+    wrap.classList.add('empty'); info.classList.add('hidden'); return;
+  }
+  wrap.classList.remove('empty'); info.classList.remove('hidden');
+  $('queueCount').textContent = queue.length;
+
+  queue.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'qItem';
+    if (item.id === activeId) el.classList.add('on');
+    if (item.status === 'done') el.classList.add('done');
+    if (item.status === 'processing') el.classList.add('processing');
+
+    const img = document.createElement('img');
+    img.src = item.thumb || '';
+    el.appendChild(img);
+
+    const del = document.createElement('button');
+    del.className = 'qDel';
+    del.innerHTML = '×';
+    del.onclick = (e) => { e.stopPropagation(); deleteItem(item.id); };
+    el.appendChild(del);
+
+    const st = document.createElement('div');
+    st.className = 'qStatus';
+    if (item.status === 'done') { st.classList.add('done'); st.textContent = 'Done'; }
+    else if (item.status === 'processing') { st.classList.add('processing'); st.textContent = '...'; }
+    else if (item.status === 'error') { st.classList.add('error'); st.textContent = 'Err'; }
+    else { st.textContent = 'New'; }
+    el.appendChild(st);
+
+    el.onclick = () => {
+      if (item.id === activeId || isProcessing) return;
+      switchActive(item.id);
+    };
+    strip.appendChild(el);
+  });
+
+  const add = document.createElement('label');
+  add.className = 'qAdd';
+  add.htmlFor = 'fileMulti';
+  add.innerHTML = '+';
+  strip.appendChild(add);
+}
+function switchActive(id) {
+  saveActiveToQueue();
+  activeId = id;
+  loadActiveFromQueue();
+  syncAllUI(); render(); updateQueueUI();
+}
+function deleteItem(id) {
+  if (isProcessing) return toast('Processing चल रही है');
+  const idx = queue.findIndex(x => x.id === id);
+  if (idx < 0) return;
+  showConfirm('Delete image?', `"${queue[idx].name}" को हटाएँ?`, () => {
+    queue.splice(idx, 1);
+    if (id === activeId) {
+      activeId = queue.length ? queue[Math.max(0, idx - 1)].id : null;
+    }
+    loadActiveFromQueue();
+    syncAllUI();
+    if (work) render(); else clearCanvas();
+    updateQueueUI();
+    forceGC();
+    toast('🗑 Deleted');
+  });
+}
+function clearCanvas() {
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.fillStyle = '#1a1a26'; ctx.fillRect(0, 0, c.width, c.height);
+  ctx.fillStyle = '#6b6b7c'; ctx.textAlign = 'center';
+  ctx.font = 'bold 18px Inter, sans-serif';
+  ctx.fillText('📷 Images upload करें', c.width / 2, c.height / 2);
+  $('modeBadge').textContent = 'READY';
+  $('liveBadge').classList.add('hidden');
+}
+
+/* ============================================================
+   UI
+   ============================================================ */
 function resetCompare() {
   if (compareMode) {
     compareMode = false;
+    $('compareSlider').classList.remove('on');
     $('compareBtn').innerHTML = '<span class="ico">◐</span><span>Compare</span>';
   }
   updateLiveBadge();
 }
-
 function updateLiveBadge() {
   $('liveBadge').classList.toggle('hidden', !hasResult || compareMode);
 }
-
 function switchTab(tab) {
   document.querySelectorAll('#featureNav button').forEach(b =>
-    b.classList.toggle('on', b.dataset.tab === tab)
-  );
+    b.classList.toggle('on', b.dataset.tab === tab));
   document.querySelectorAll('.panel').forEach(p =>
-    p.classList.toggle('active', p.dataset.panel === tab)
-  );
+    p.classList.toggle('active', p.dataset.panel === tab));
   updateCanvasTouchAction();
 }
-
 function updateCanvasTouchAction() {
   const brushPanelActive = document.querySelector('.panel.active')?.dataset.panel === 'brush';
   const brushOn = brushPanelActive && state.brushMode !== 'off' && hasResult;
   c.classList.toggle('brushing', brushOn);
+  if (!brushOn) hideBrushCursor();
 }
-
 function showNextSteps(isSignature) {
   const el = $('nextSteps');
-  if (!el) return;
   el.classList.remove('hidden');
   $('goAI').onclick = () => switchTab('ai');
   $('goSign').onclick = () => switchTab('sign');
   if (isSignature) {
-    $('goSign').classList.remove('ghost');
-    $('goSign').classList.add('primary');
-    $('goAI').classList.remove('primary');
-    $('goAI').classList.add('ghost');
+    $('goSign').classList.add('primary'); $('goSign').classList.remove('ghost');
+    $('goAI').classList.add('ghost'); $('goAI').classList.remove('primary');
   } else {
-    $('goAI').classList.remove('ghost');
-    $('goAI').classList.add('primary');
-    $('goSign').classList.remove('primary');
-    $('goSign').classList.add('ghost');
+    $('goAI').classList.add('primary'); $('goAI').classList.remove('ghost');
+    $('goSign').classList.add('ghost'); $('goSign').classList.remove('primary');
   }
 }
-
-function hideNextSteps() {
-  const el = $('nextSteps');
-  if (el) el.classList.add('hidden');
-}
-
 document.querySelectorAll('#featureNav button').forEach(b => {
   b.onclick = () => switchTab(b.dataset.tab);
 });
 
-/* ========================================================
-   RENDERING
-   ======================================================== */
+/* ============================================================
+   RENDER
+   ============================================================ */
 function render() {
-  if (!work) return;
-
+  if (!work) { clearCanvas(); return; }
   const swap = state.rotate % 180 !== 0;
   const w = swap ? work.height : work.width;
   const h = swap ? work.width : work.height;
-
-  if (c.width !== w || c.height !== h) {
-    c.width = w;
-    c.height = h;
-  }
-
+  if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, w, h);
-
-  if (state.bg === 'white') {
-    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);
-  } else if (state.bg === 'blue') {
-    ctx.fillStyle = '#2471d8'; ctx.fillRect(0, 0, w, h);
-  } else if (state.bg === 'custom') {
-    ctx.fillStyle = state.customColor; ctx.fillRect(0, 0, w, h);
-  }
-
+  if (state.bg === 'white') { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); }
+  else if (state.bg === 'black') { ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, h); }
+  else if (state.bg === 'custom') { ctx.fillStyle = state.customColor; ctx.fillRect(0, 0, w, h); }
   ctx.save();
   ctx.translate(w / 2, h / 2);
   ctx.rotate(state.rotate * Math.PI / 180);
   ctx.scale(state.flipH ? -1 : 1, state.flipV ? -1 : 1);
-
   const filters = [];
   if (state.brightness !== 1) filters.push(`brightness(${state.brightness})`);
   if (state.contrast !== 1) filters.push(`contrast(${state.contrast})`);
   ctx.filter = filters.length ? filters.join(' ') : 'none';
-
   const tmp = document.createElement('canvas');
-  tmp.width = work.width;
-  tmp.height = work.height;
+  tmp.width = work.width; tmp.height = work.height;
   tmp.getContext('2d').putImageData(work, 0, 0);
   ctx.drawImage(tmp, -work.width / 2, -work.height / 2);
-
+  releaseCanvas(tmp);
   ctx.restore();
   ctx.filter = 'none';
-
   $('canvasBox').style.transform = state.zoom !== 1 ? `scale(${state.zoom})` : '';
   updateSizeInfo(w, h);
   updateLiveBadge();
+  if (compareMode) updateCompareBefore();
 }
-
+function updateCompareBefore() {
+  if (!original) return;
+  const host = $('cBeforeHost');
+  const swap = state.rotate % 180 !== 0;
+  const w = swap ? original.height : original.width;
+  const h = swap ? original.width : original.height;
+  const beforeCanvas = host.querySelector('canvas');
+  if (!beforeCanvas || beforeCanvas.width !== w || beforeCanvas.height !== h) {
+    host.innerHTML = '';
+    const bc = document.createElement('canvas');
+    bc.width = w; bc.height = h;
+    host.appendChild(bc);
+  }
+  const bc = host.querySelector('canvas');
+  const bctx = bc.getContext('2d');
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, w, h);
+  if (state.bg === 'white') { bctx.fillStyle = '#fff'; bctx.fillRect(0, 0, w, h); }
+  else if (state.bg === 'black') { bctx.fillStyle = '#000'; bctx.fillRect(0, 0, w, h); }
+  else if (state.bg === 'custom') { bctx.fillStyle = state.customColor; bctx.fillRect(0, 0, w, h); }
+  bctx.save();
+  bctx.translate(w / 2, h / 2);
+  bctx.rotate(state.rotate * Math.PI / 180);
+  bctx.scale(state.flipH ? -1 : 1, state.flipV ? -1 : 1);
+  const tmp = document.createElement('canvas');
+  tmp.width = original.width; tmp.height = original.height;
+  tmp.getContext('2d').putImageData(original, 0, 0);
+  bctx.drawImage(tmp, -original.width / 2, -original.height / 2);
+  releaseCanvas(tmp);
+  bctx.restore();
+  // Clip to slider position
+  const pct = compareSliderPos * 100;
+  host.style.clipPath = `polygon(0 0, ${pct}% 0, ${pct}% 100%, 0 100%)`;
+}
 function updateSizeInfo(w, h) {
   $('pxInfo').textContent = w + ' × ' + h;
-  $('mmInfo').textContent =
-    (w / currentDpi * 25.4).toFixed(1) + ' × ' +
-    (h / currentDpi * 25.4).toFixed(1) + ' mm';
-  $('kbInfo').textContent = work
-    ? '~' + Math.round(work.width * work.height * 4 * 0.15 / 1024) + ' KB'
-    : '—';
+  $('mmInfo').textContent = (w / currentDpi * 25.4).toFixed(1) + ' × ' + (h / currentDpi * 25.4).toFixed(1) + ' mm';
+  $('kbInfo').textContent = work ? '~' + Math.round(work.width * work.height * 4 * 0.15 / 1024) + ' KB' : '—';
 }
-
-function syncUI() {
+function syncAllUI() {
   $('bright').value = state.brightness;
   $('contrast').value = state.contrast;
   $('brightO').textContent = state.brightness.toFixed(2);
   $('contrastO').textContent = state.contrast.toFixed(2);
   $('brushSize').value = state.brushSize;
   $('brushSizeO').textContent = state.brushSize;
+  $('brushHard').value = state.brushHard;
+  $('brushHardO').textContent = state.brushHard;
   $('brushStrength').value = state.brushStrength;
   $('brushStrengthO').textContent = state.brushStrength;
   $('autoCrop').checked = state.autoCrop;
-
+  $('customColor').style.display = state.bg === 'custom' ? 'block' : 'none';
+  $('customColor').value = state.customColor;
   document.querySelectorAll('.brushModes button').forEach(b => b.classList.remove('on'));
   if (state.brushMode === 'keep') $('keepBrush').classList.add('on');
   else if (state.brushMode === 'remove') $('removeBrush').classList.add('on');
   else $('brushOff').classList.add('on');
-
+  document.querySelectorAll('#bgOpts button').forEach(b =>
+    b.classList.toggle('on', b.dataset.bg === state.bg));
+  $('fileNameInput').value = fileBase + '-no-bg';
   updateCanvasTouchAction();
 }
 
-/* ========================================================
-   FILE OPEN — FIXED
-   ======================================================== */
-async function openFile(file) {
-  if (!file) return;
-  if (!file.type.startsWith('image/')) return toast('❌ केवल image file चुनें');
-  if (file.size > MAX_FILE_MB * 1024 * 1024) {
-    return toast(`❌ File बहुत बड़ी है. Max ${MAX_FILE_MB} MB`);
+/* ============================================================
+   FILE UPLOAD
+   ============================================================ */
+async function addFiles(files) {
+  if (!files || !files.length || isProcessing) return;
+  const fileArray = Array.from(files).filter(f => f.type.startsWith('image/'));
+  if (!fileArray.length) return toast('❌ केवल image files');
+  const validFiles = fileArray.filter(f => f.size <= MAX_FILE_MB * 1024 * 1024);
+  if (!validFiles.length) return toast('❌ File बहुत बड़ी');
+  status(`Loading ${validFiles.length}…`, 5);
+  let loaded = 0;
+  for (const file of validFiles) {
+    try {
+      await addSingleFileToQueue(file);
+      loaded++;
+      status(`Loaded ${loaded}/${validFiles.length}`, (loaded / validFiles.length) * 100);
+    } catch (e) { console.error(e); }
   }
-  if (isProcessing) return toast('⏳ Processing चल रही है');
-
-  try {
-    status('Image load हो रही है…', 10);
-    const im = await decodeImage(file);
-
-    const nw = im.width || im.naturalWidth;
-    const nh = im.height || im.naturalHeight;
-
-    sourceW = nw;
-    sourceH = nh;
-
-    const mp = sourceW * sourceH / 1e6;
-    if (mp > MAX_MP) {
-      const sc = Math.sqrt(MAX_MP / mp);
-      sourceW = Math.round(sourceW * sc);
-      sourceH = Math.round(sourceH * sc);
-      status(`Large image: ${sourceW}×${sourceH} पर optimized`, 55);
-    }
-
-    const src = document.createElement('canvas');
-    src.width = sourceW;
-    src.height = sourceH;
-    src.getContext('2d').drawImage(im, 0, 0, sourceW, sourceH);
-
-    original = src.getContext('2d').getImageData(0, 0, sourceW, sourceH);
-
-    /* ============ FIX: pass original explicitly ============ */
-    work = snapshot(original);
-    /* ===================================================== */
-
-    maskBackup = null;
-    undoStack = [];
-    hasResult = false;
-
-    /* Reset ALL state */
-    Object.assign(state, {
-      bg: 'checker',
-      customColor: '#f5f5f5',
-      brightness: 1,
-      contrast: 1,
-      rotate: 0,
-      flipH: false,
-      flipV: false,
-      zoom: 1,
-      brushMode: 'keep',
-      brushSize: 32,
-      brushStrength: 100,
-      autoCrop: false
-    });
-
-    /* Reset UI */
-    $('autoCrop').checked = false;
-    $('customColor').style.display = 'none';
-    $('customColor').value = '#f5f5f5';
-
-    fileBase = (file.name || 'image').replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_') || 'image';
-    $('fileNameInput').value = fileBase + '-no-bg';
-
-    document.querySelectorAll('#bgOpts button').forEach(b =>
-      b.classList.toggle('on', b.dataset.bg === 'checker')
-    );
-    document.querySelectorAll('#presets button').forEach(b =>
-      b.classList.toggle('on', b.dataset.w === '0')
-    );
-    currentSize = { w: 0, h: 0 };
-
-    compareMode = false;
-    $('compareBtn').innerHTML = '<span class="ico">◐</span><span>Compare</span>';
-
-    syncUI();
-    render();
-    $('modeBadge').textContent = 'READY';
-
-    /* Show next steps — STAY on upload tab */
-    const aspect = sourceW / sourceH;
-    const likelySign = aspect > 1.8 || (aspect > 1.4 && sourceH < 400);
-    showNextSteps(likelySign);
-
-    status('✅ Image ready — नीचे से action चुनें।', 100);
-    toast('✅ Image loaded');
-    switchTab('upload');
-  } catch (e) {
-    console.error(e);
-    status('Image load error: ' + (e.message || e), 0);
-    toast('❌ Image load नहीं हुई');
+  if (!activeId && queue.length) { activeId = queue[0].id; loadActiveFromQueue(); }
+  updateQueueUI(); syncAllUI(); render();
+  status(`✅ ${validFiles.length} loaded`, 100);
+  toast(`✅ ${validFiles.length} images`);
+  switchTab('upload');
+  if (queue.length === 1 && original) {
+    const aspect = original.width / original.height;
+    showNextSteps(aspect > 1.8 || (aspect > 1.4 && original.height < 400));
+  } else {
+    $('nextSteps').classList.add('hidden');
   }
 }
-
-/* File input with double-fire prevention */
-let lastFileTime = 0;
-$('file').onchange = e => {
+async function addSingleFileToQueue(file) {
+  const im = await decodeImage(file);
+  let sw = im.width || im.naturalWidth;
+  let sh = im.height || im.naturalHeight;
+  const mp = sw * sh / 1e6;
+  if (mp > MAX_MP) {
+    const sc = Math.sqrt(MAX_MP / mp);
+    sw = Math.round(sw * sc); sh = Math.round(sh * sc);
+  }
+  const src = document.createElement('canvas');
+  src.width = sw; src.height = sh;
+  src.getContext('2d').drawImage(im, 0, 0, sw, sh);
+  const imgData = src.getContext('2d').getImageData(0, 0, sw, sh);
+  releaseCanvas(src);
+  if (im.close) try { im.close(); } catch (_) {}
+  const id = 'img-' + (++idCounter);
+  const thumb = makeThumb(imgData, 100);
+  const defaultState = {
+    bg: 'checker', customColor: '#f5f5f5', brightness: 1, contrast: 1,
+    rotate: 0, flipH: false, flipV: false, zoom: 1,
+    brushMode: 'keep', brushSize: 32, brushHard: 60, brushStrength: 100, autoCrop: false
+  };
+  queue.push({
+    id, name: file.name || 'image',
+    original: imgData,
+    work: new ImageData(new Uint8ClampedArray(imgData.data), imgData.width, imgData.height),
+    hasResult: false, maskBackup: null,
+    state: defaultState, undoStack: [], thumb, status: 'pending',
+    fileBase: (file.name || 'image').replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_') || 'image'
+  });
+  updateQueueUI();
+}
+let lastAddTime = 0;
+$('fileMulti').onchange = e => {
   const now = Date.now();
-  if (now - lastFileTime < 300) return;
-  lastFileTime = now;
-  const f = e.target.files?.[0];
-  if (f) openFile(f);
+  if (now - lastAddTime < 400) return;
+  lastAddTime = now;
+  const files = Array.from(e.target.files || []);
+  if (files.length) addFiles(files);
   setTimeout(() => { try { e.target.value = ''; } catch (_) {} }, 500);
 };
-
-/* Drag & drop */
 const drop = $('drop');
 ['dragenter', 'dragover'].forEach(ev =>
-  drop.addEventListener(ev, e => {
-    e.preventDefault();
-    drop.classList.add('dragover');
-  })
-);
+  drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('dragover'); }));
 ['dragleave', 'drop'].forEach(ev =>
-  drop.addEventListener(ev, e => {
-    e.preventDefault();
-    drop.classList.remove('dragover');
-  })
-);
+  drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('dragover'); }));
 drop.addEventListener('drop', e => {
-  const f = e.dataTransfer?.files?.[0];
-  if (f) openFile(f);
+  const files = Array.from(e.dataTransfer?.files || []);
+  if (files.length) addFiles(files);
 });
 window.addEventListener('dragover', e => e.preventDefault());
-window.addEventListener('drop', e => {
-  if (!drop.contains(e.target)) e.preventDefault();
-});
+window.addEventListener('drop', e => { if (!drop.contains(e.target)) e.preventDefault(); });
 
-/* ========================================================
+/* ============================================================
    SLIDERS
-   ======================================================== */
+   ============================================================ */
 function bindRange(id, out, cb) {
   const el = $(id);
   if (!el) return;
@@ -1037,537 +1231,628 @@ bindRange('sigThresh', 'sigThreshO');
 bindRange('sigSmooth', 'sigSmoothO');
 bindRange('feather', 'featherO');
 bindRange('def', 'defO');
+bindRange('halo', 'haloO');
 bindRange('quality', 'qualO', v => currentQuality = v / 100);
+$('bright').oninput = () => { state.brightness = +$('bright').value; saveActiveToQueue(); syncAllUI(); render(); };
+$('contrast').oninput = () => { state.contrast = +$('contrast').value; saveActiveToQueue(); syncAllUI(); render(); };
 
-$('bright').oninput = () => {
-  state.brightness = +$('bright').value;
-  syncUI();
-  render();
-};
-$('contrast').oninput = () => {
-  state.contrast = +$('contrast').value;
-  syncUI();
-  render();
-};
-
-/* ========================================================
-   AI ENGINES
-   ======================================================== */
+/* ============================================================
+   AI
+   ============================================================ */
 async function loadImgly() {
   if (engineCache.imgly) return engineCache.imgly;
   status('AI engine load…', 15);
-  engineCache.imgly = await import('https://esm.sh/@imgly/background-removal@1.7.0');
+  engineCache.imgly = await withRetry(() => import('https://esm.sh/@imgly/background-removal@1.7.0'));
   return engineCache.imgly;
 }
 async function loadTF() {
   if (engineCache.tf) return engineCache.tf;
   status('AI engine load…', 15);
-  engineCache.tf = await import('https://esm.sh/@huggingface/transformers@3.8.1');
+  engineCache.tf = await withRetry(() => import('https://esm.sh/@huggingface/transformers@3.8.1'));
   return engineCache.tf;
 }
-
-async function runISNet(blob, model) {
+async function buildAIInput(imgData, maxDim) {
+  const scale = Math.min(1, maxDim / Math.max(imgData.width, imgData.height));
+  const srcCanvas = document.createElement('canvas');
+  srcCanvas.width = imgData.width; srcCanvas.height = imgData.height;
+  srcCanvas.getContext('2d').putImageData(imgData, 0, 0);
+  if (scale >= 1) {
+    const blob = await new Promise(r => srcCanvas.toBlob(b => r(b), 'image/png'));
+    releaseCanvas(srcCanvas);
+    return blob;
+  }
+  const aw = Math.max(1, Math.round(imgData.width * scale));
+  const ah = Math.max(1, Math.round(imgData.height * scale));
+  const small = document.createElement('canvas');
+  small.width = aw; small.height = ah;
+  const sctx = small.getContext('2d');
+  sctx.imageSmoothingQuality = 'high';
+  sctx.drawImage(srcCanvas, 0, 0, aw, ah);
+  const blob = await new Promise(r => small.toBlob(b => r(b), 'image/png'));
+  releaseCanvas(srcCanvas); releaseCanvas(small);
+  return blob;
+}
+async function getAlphaAtRes(maskBlob, w, h) {
+  const maskIm = await loadImage(maskBlob);
+  const scaled = document.createElement('canvas');
+  scaled.width = w; scaled.height = h;
+  const sctx = scaled.getContext('2d');
+  sctx.imageSmoothingEnabled = true;
+  sctx.imageSmoothingQuality = 'high';
+  sctx.drawImage(maskIm, 0, 0, w, h);
+  const md = sctx.getImageData(0, 0, w, h).data;
+  releaseCanvas(scaled);
+  const alpha = new Float32Array(w * h);
+  for (let i = 0, p = 3; i < w * h; i++, p += 4) alpha[i] = md[p] / 255;
+  return alpha;
+}
+async function runISNet(blob, model, onProgress) {
   const m = await loadImgly();
   return m.removeBackground(blob, {
     model,
     output: { format: 'image/png', quality: 1, type: 'foreground' },
     publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.7.0/dist/',
     proxyToWorker: false,
-    progress: (name, a, b) => {
-      if (b) {
-        const pct = Math.min(99, Math.round(a / b * 90));
-        status('AI processing… ' + pct + '%', pct);
-        setLoading(true, 'AI processing… ' + pct + '%');
-      }
-    }
+    progress: (name, a, b) => { if (b && onProgress) onProgress(a / b); }
   });
 }
-
 async function runBiRefNet(blob) {
   const { pipeline } = await loadTF();
   if (!engineCache.birefnet) {
     try {
-      engineCache.birefnet = await pipeline(
-        'image-segmentation',
-        'studioludens/birefnet-lite-512',
-        { device: 'webgpu', dtype: 'fp16' }
-      );
+      engineCache.birefnet = await pipeline('image-segmentation', 'studioludens/birefnet-lite-512', { device: 'webgpu', dtype: 'fp16' });
     } catch (e) {
-      console.warn('WebGPU fallback:', e);
-      engineCache.birefnet = await pipeline(
-        'image-segmentation',
-        'studioludens/birefnet-lite-512',
-        { device: 'wasm', dtype: 'fp32' }
-      );
+      engineCache.birefnet = await pipeline('image-segmentation', 'studioludens/birefnet-lite-512', { device: 'wasm', dtype: 'fp32' });
     }
   }
-  status('BiRefNet processing…', 45);
   const result = await engineCache.birefnet(blob);
-  if (!result?.length || !result[0]?.mask) throw new Error('Mask नहीं मिला');
-  const mask = await result[0].mask.resize(original.width, original.height);
-  const md = mask.data;
-  const out = new ImageData(new Uint8ClampedArray(original.data), original.width, original.height);
-  for (let i = 0, p = 0; i < original.width * original.height; i++, p += 4) {
-    let a = md[i];
-    if (mask.channels > 1) a = md[i * mask.channels];
-    out.data[p + 3] = a;
-  }
-  return out;
+  if (!result?.length || !result[0]?.mask) throw new Error('Mask fail');
+  const maskCanvas = await result[0].mask.toCanvas();
+  const blobOut = await new Promise(r => maskCanvas.toBlob(b => r(b), 'image/png'));
+  releaseCanvas(maskCanvas);
+  return blobOut;
 }
 
-async function applyResult(result) {
-  if (!result) throw new Error('Result missing');
-  if (result instanceof ImageData) {
-    work = result;
-    return;
-  }
-  const im = await loadImage(result);
-  const tmp = document.createElement('canvas');
-  tmp.width = im.naturalWidth || im.width;
-  tmp.height = im.naturalHeight || im.height;
-  tmp.getContext('2d').drawImage(im, 0, 0);
-  work = tmp.getContext('2d').getImageData(0, 0, tmp.width, tmp.height);
+/* SMART RESOLUTION */
+function smartResolution(imgW, imgH, choice, detail) {
+  const maxDim = Math.max(imgW, imgH);
+  if (choice === 'quality') return maxDim;
+  if (detail === 'full') return maxDim;
+  if (detail === 'max') return Math.min(2048, maxDim);
+  if (detail === 'high') return Math.min(1536, maxDim);
+  if (detail === 'standard') return Math.min(1024, maxDim);
+  // AUTO: choose based on image size
+  if (maxDim <= 1024) return maxDim;
+  if (maxDim <= 1600) return 1280;
+  if (maxDim <= 2400) return 1536;
+  if (maxDim <= 4000) return 1792;
+  return 2048;
 }
 
+/* ============================================================
+   MAIN PIPELINE — Stage-based
+   ============================================================ */
+async function processAISingle(item, onStage) {
+  const choice = $('engine').value;
+  const detail = $('detailLevel').value;
+  const useMatting = $('mattingMode').checked;
+  const useHair = $('hairMode').checked;
+  const useHalo = $('haloMode').checked;
+  const useDecon = $('deconMode').checked;
+
+  const aiDim = smartResolution(item.original.width, item.original.height, choice, detail);
+
+  onStage && onStage('preparing', 'Optimizing image for AI', 0.05);
+
+  const blob = await buildAIInput(item.original, aiDim);
+
+  onStage && onStage('ai', choice === 'quality' ? 'Slow engine — full resolution' : 'AI segmentation running', 0.15);
+
+  let maskBlob;
+  if (choice === 'quality') {
+    try {
+      maskBlob = await withRetry(() => runBiRefNet(blob), 1, 800);
+    } catch (e) {
+      console.warn('Slow failed, using Medium:', e);
+      maskBlob = await withRetry(() =>
+        runISNet(blob, 'isnet_fp16', p => onStage && onStage('ai', 'Medium engine fallback', 0.15 + p * 0.35)), 2, 1500);
+    }
+  } else {
+    const model = choice === 'isnet' ? 'isnet_fp16' : 'isnet_quint8';
+    maskBlob = await withRetry(() =>
+      runISNet(blob, model, p => onStage && onStage('ai', 'Segmentation ' + Math.round(p * 100) + '%', 0.15 + p * 0.35)), 2, 1500);
+  }
+
+  const w = item.original.width, h = item.original.height;
+  let alpha = await getAlphaAtRes(maskBlob, w, h);
+
+  onStage && onStage('matting', 'Refining edge transparency', 0.55);
+
+  if (useMatting) {
+    const edgeBand = detectEdgeBand(alpha, w, h, 6);
+    const refined = guidedFilterMatting(item.original, alpha, 8, 1e-4);
+    for (let i = 0; i < alpha.length; i++) {
+      if (edgeBand[i]) alpha[i] = refined[i];
+    }
+    onStage && onStage('matting', 'Alpha matting applied', 0.7);
+  }
+
+  if (useHair) {
+    onStage && onStage('hair', 'Recovering hair/fur details', 0.75);
+    const band = detectEdgeBand(alpha, w, h, 4);
+    alpha = hairFurRecovery(item.original, alpha, band, 0.65);
+    onStage && onStage('hair', 'Hair/fur refined', 0.82);
+  }
+
+  let result = new ImageData(new Uint8ClampedArray(item.original.data), w, h);
+  for (let i = 0, p = 3; i < w * h; i++, p += 4) result.data[p] = Math.round(alpha[i] * 255);
+
+  if (useDecon) {
+    onStage && onStage('decon', 'Removing background color spill', 0.87);
+    result = decontaminateEdges(result, alpha, 0.65);
+  }
+
+  if (useHalo) {
+    onStage && onStage('halo', 'Detecting and removing halo', 0.93);
+    result = haloRemoval(result, alpha, 0.75);
+  }
+
+  onStage && onStage('final', 'Finalizing cutout', 0.98);
+
+  item.work = result;
+  item.hasResult = true;
+  item.maskBackup = captureAlpha(result);
+  item.status = 'done';
+  onStage && onStage('done', 'Complete', 1);
+}
+
+/* ============================================================
+   AI — current
+   ============================================================ */
 $('aiRemove').onclick = async () => {
-  if (!original) return toast('❌ पहले image upload करें');
+  if (!activeId) return toast('❌ पहले image upload करें');
   if (isProcessing) return;
   isProcessing = true;
-  pushHistory();
-  resetCompare();
+  saveActiveToQueue();
+  const item = queue.find(x => x.id === activeId);
+  item.status = 'processing'; updateQueueUI();
+  pushHistory(); resetCompare();
   $('aiRemove').disabled = true;
-  setLoading(true, 'AI prepare…');
 
+  const t0 = performance.now();
   try {
-    const tmp = document.createElement('canvas');
-    tmp.width = original.width;
-    tmp.height = original.height;
-    tmp.getContext('2d').putImageData(original, 0, 0);
-    const blob = await new Promise((r, j) =>
-      tmp.toBlob(b => b ? r(b) : j(new Error('PNG conversion failed')), 'image/png')
-    );
-
-    let result;
-    if ($('engine').value === 'quality') {
-      try {
-        result = await runBiRefNet(blob);
-      } catch (e) {
-        console.warn('BiRefNet failed:', e);
-        toast('BiRefNet failed — ISNet fallback');
-        result = await runISNet(blob, 'isnet_fp16');
-      }
-    } else {
-      result = await runISNet(blob, $('engine').value === 'isnet' ? 'isnet_fp16' : 'isnet_quint8');
-    }
-
-    await applyResult(result);
-    hasResult = true;
-    maskBackup = captureAlpha(work);
+    await processAISingle(item, (stage, detail, pct) => {
+      setStage(stageNameMap[stage] || 'Processing', detail, pct * 100);
+    });
+    loadActiveFromQueue();
     $('modeBadge').textContent = 'BG REMOVED';
-    status('✅ Background हट गया!', 100);
-    toast('✅ Background removed');
+    const secs = ((performance.now() - t0) / 1000).toFixed(1);
+    status('✅ Done in ' + secs + 's', 100);
+    toast('✅ Done in ' + secs + 's');
     switchTab('bg');
   } catch (e) {
     console.error(e);
+    item.status = 'error';
     undoStack.pop();
     status('AI error: ' + (e.message || e), 0);
-    toast('❌ AI processing failed');
+    toast('❌ AI failed');
   } finally {
     isProcessing = false;
     $('aiRemove').disabled = false;
-    setLoading(false);
+    hideStage();
+    saveActiveToQueue();
+    updateQueueUI();
+    forceGC();
   }
 };
 
-/* ========================================================
-   SIGNATURE CLEAN
-   ======================================================== */
-function sigClean() {
-  if (!original) return toast('❌ पहले image upload करें');
+const stageNameMap = {
+  preparing: '📦 Preparing',
+  ai: '🤖 AI Detection',
+  matting: '✨ Alpha Matting',
+  hair: '💇 Hair Refinement',
+  decon: '🎨 Color Decontamination',
+  halo: '🔆 Halo Removal',
+  final: '🎯 Finalizing',
+  done: '✅ Complete'
+};
+
+/* ============================================================
+   AI — batch
+   ============================================================ */
+$('aiRemoveAll').onclick = async () => {
+  if (!queue.length) return toast('❌ कोई image नहीं');
   if (isProcessing) return;
-  isProcessing = true;
-  pushHistory();
-  setLoading(true, 'Signature clean…');
+  const pending = queue.filter(x => x.status !== 'done');
+  if (!pending.length) return toast('सब ready हैं!');
+  isProcessing = true; batchMode = true;
+  saveActiveToQueue();
+  const origText = $('aiRemoveAll').innerHTML;
+  $('aiRemoveAll').disabled = true;
+  $('aiRemoveAll').innerHTML = '<span class="spinner"></span> Processing…';
+  const engine = $('engine').value;
+  const speedName = engine === 'quality' ? 'Slow' : engine === 'isnet' ? 'Medium' : 'Fast';
+  let done = 0;
+  const total = pending.length;
+  const t0 = performance.now();
 
-  setTimeout(() => {
-    const w = original.width, h = original.height;
-    const src = original.data;
-    const out = new ImageData(new Uint8ClampedArray(src), w, h);
-    const th = +$('sigThresh').value;
-    const r = Math.round(+$('sigSmooth').value);
-    const alpha = new Uint8ClampedArray(w * h);
+  for (const item of pending) {
+    activeId = item.id;
+    loadActiveFromQueue();
+    item.status = 'processing'; updateQueueUI();
+    const pctBase = (done / total) * 100;
+    const pctRange = 100 / total;
 
-    for (let i = 0, p = 0; i < w * h; i++, p += 4) {
-      const lum = 0.299 * src[p] + 0.587 * src[p + 1] + 0.114 * src[p + 2];
-      alpha[i] = Math.max(0, Math.min(255, 255 - (lum - (255 - th)) * 255 / th));
-    }
+    setStage(`📸 Image ${done + 1}/${total}`, item.name, pctBase);
 
-    if (r) {
-      const tmp = new Float32Array(w * h);
-      const sm = new Uint8ClampedArray(w * h);
-      const win = 2 * r + 1;
-      for (let y = 0; y < h; y++) {
-        const row = y * w;
-        let sum = 0;
-        for (let x = -r; x <= r; x++) sum += alpha[row + Math.max(0, Math.min(w - 1, x))];
-        for (let x = 0; x < w; x++) {
-          tmp[row + x] = sum / win;
-          sum -= alpha[row + Math.max(0, Math.min(w - 1, x - r))];
-          sum += alpha[row + Math.max(0, Math.min(w - 1, x + r + 1))];
+    try {
+      await processAISingle(item, (stage, detail, pct) => {
+        const overall = pctBase + pct * pctRange;
+        const elapsed = (performance.now() - t0) / 1000;
+        let eta = '';
+        if (overall > 5 && overall < 98) {
+          const totalEst = elapsed / (overall / 100);
+          eta = ` (~${Math.ceil(Math.max(0, totalEst - elapsed))}s left)`;
         }
-      }
+        setStage(`${speedName} • ${done + 1}/${total}${eta}`, stageNameMap[stage] + ' — ' + detail, overall);
+      });
+      saveActiveToQueue();
+    } catch (e) {
+      console.error('Batch item failed:', item.name, e);
+      item.status = 'error';
+    }
+    done++;
+    updateQueueUI();
+    forceGC();
+    await new Promise(r => setTimeout(r, 50));
+  }
+
+  batchMode = false;
+  isProcessing = false;
+  $('aiRemoveAll').disabled = false;
+  $('aiRemoveAll').innerHTML = origText;
+  hideStage();
+  if (activeId) { loadActiveFromQueue(); render(); }
+  const success = queue.filter(x => x.status === 'done').length;
+  const secs = ((performance.now() - t0) / 1000).toFixed(1);
+  status(`✅ ${success}/${queue.length} done in ${secs}s`, 100);
+  toast(`🚀 ${success} done in ${secs}s`);
+  switchTab('bg');
+};
+
+/* ============================================================
+   SIGNATURE
+   ============================================================ */
+function sigCleanItem(item) {
+  const w = item.original.width, h = item.original.height;
+  const src = item.original.data;
+  const out = new ImageData(new Uint8ClampedArray(src), w, h);
+  const th = +$('sigThresh').value;
+  const r = Math.round(+$('sigSmooth').value);
+  const alpha = new Uint8ClampedArray(w * h);
+  for (let i = 0, p = 0; i < w * h; i++, p += 4) {
+    const lum = 0.299 * src[p] + 0.587 * src[p + 1] + 0.114 * src[p + 2];
+    alpha[i] = Math.max(0, Math.min(255, 255 - (lum - (255 - th)) * 255 / th));
+  }
+  if (r) {
+    const tmp = new Float32Array(w * h);
+    const sm = new Uint8ClampedArray(w * h);
+    const win = 2 * r + 1;
+    for (let y = 0; y < h; y++) {
+      const row = y * w; let sum = 0;
+      for (let x = -r; x <= r; x++) sum += alpha[row + Math.max(0, Math.min(w - 1, x))];
       for (let x = 0; x < w; x++) {
-        let sum = 0;
-        for (let y = -r; y <= r; y++) sum += tmp[Math.max(0, Math.min(h - 1, y)) * w + x];
-        for (let y = 0; y < h; y++) {
-          sm[y * w + x] = sum / win;
-          sum -= tmp[Math.max(0, Math.min(h - 1, y - r)) * w + x];
-          sum += tmp[Math.max(0, Math.min(h - 1, y + r + 1)) * w + x];
-        }
+        tmp[row + x] = sum / win;
+        sum -= alpha[row + Math.max(0, Math.min(w - 1, x - r))];
+        sum += alpha[row + Math.max(0, Math.min(w - 1, x + r + 1))];
       }
-      alpha.set(sm);
     }
-
-    for (let i = 0, p = 0; i < w * h; i++, p += 4) out.data[p + 3] = alpha[i];
-
-    work = out;
-    hasResult = true;
-    maskBackup = captureAlpha(out);
-    render();
-    $('modeBadge').textContent = 'SIGNATURE';
-    status('✅ Signature clean!', 100);
-    toast('✍️ Signature clean');
-    switchTab('bg');
-    isProcessing = false;
-    setLoading(false);
-  }, 30);
+    for (let x = 0; x < w; x++) {
+      let sum = 0;
+      for (let y = -r; y <= r; y++) sum += tmp[Math.max(0, Math.min(h - 1, y)) * w + x];
+      for (let y = 0; y < h; y++) {
+        sm[y * w + x] = sum / win;
+        sum -= tmp[Math.max(0, Math.min(h - 1, y - r)) * w + x];
+        sum += tmp[Math.max(0, Math.min(h - 1, y + r + 1)) * w + x];
+      }
+    }
+    alpha.set(sm);
+  }
+  for (let i = 0, p = 0; i < w * h; i++, p += 4) out.data[p + 3] = alpha[i];
+  item.work = out;
+  item.hasResult = true;
+  item.maskBackup = captureAlpha(out);
+  item.status = 'done';
 }
-$('sigAuto').onclick = sigClean;
+$('sigAuto').onclick = () => {
+  if (!activeId || isProcessing) return;
+  isProcessing = true;
+  saveActiveToQueue();
+  const item = queue.find(x => x.id === activeId);
+  pushHistory();
+  setStage('✍️ Signature Clean', 'Extracting ink from paper', 50);
+  setTimeout(() => {
+    try {
+      sigCleanItem(item);
+      loadActiveFromQueue(); render();
+      $('modeBadge').textContent = 'SIGNATURE';
+      status('✅ Signature clean!', 100);
+      toast('✍️ Signature clean');
+      switchTab('bg');
+    } catch (e) { console.error(e); toast('❌ Failed'); }
+    finally {
+      isProcessing = false; hideStage();
+      saveActiveToQueue(); updateQueueUI();
+    }
+  }, 30);
+};
+$('sigAutoAll').onclick = () => {
+  if (!queue.length || isProcessing) return;
+  isProcessing = true;
+  saveActiveToQueue();
+  const origText = $('sigAutoAll').innerHTML;
+  $('sigAutoAll').disabled = true;
+  $('sigAutoAll').innerHTML = '<span class="spinner"></span> …';
+  setStage('✍️ Processing all', 'Cleaning signatures', 50);
+  setTimeout(() => {
+    let done = 0;
+    for (const item of queue) {
+      try { item.status = 'processing'; sigCleanItem(item); done++; }
+      catch (e) { console.error(e); item.status = 'error'; }
+    }
+    isProcessing = false;
+    $('sigAutoAll').disabled = false;
+    $('sigAutoAll').innerHTML = origText;
+    hideStage();
+    loadActiveFromQueue(); render(); updateQueueUI();
+    status(`✅ ${done} cleaned`, 100);
+    toast(`🚀 ${done} cleaned!`);
+    switchTab('bg');
+  }, 50);
+};
 
-/* ========================================================
-   BACKGROUND
-   ======================================================== */
+/* ============================================================
+   BG / ADJUST / ZOOM
+   ============================================================ */
 document.querySelectorAll('#bgOpts button').forEach(b => {
   b.onclick = () => {
     resetCompare();
     state.bg = b.dataset.bg;
-    document.querySelectorAll('#bgOpts button').forEach(x =>
-      x.classList.toggle('on', x === b)
-    );
+    document.querySelectorAll('#bgOpts button').forEach(x => x.classList.toggle('on', x === b));
     $('customColor').style.display = state.bg === 'custom' ? 'block' : 'none';
-    render();
+    saveActiveToQueue(); render();
   };
 });
-$('customColor').oninput = e => {
-  state.customColor = e.target.value;
-  render();
-};
-
-/* ========================================================
-   ADJUSTMENTS
-   ======================================================== */
-$('rotL').onclick = () => { pushHistory(); state.rotate = (state.rotate + 270) % 360; render(); };
-$('rotR').onclick = () => { pushHistory(); state.rotate = (state.rotate + 90) % 360; render(); };
-$('flipH').onclick = () => { pushHistory(); state.flipH = !state.flipH; render(); };
-$('flipV').onclick = () => { pushHistory(); state.flipV = !state.flipV; render(); };
-$('resetAdj').onclick = () => {
-  pushHistory();
-  state.rotate = 0;
-  state.flipH = false;
-  state.flipV = false;
-  state.brightness = 1;
-  state.contrast = 1;
-  state.zoom = 1;
-  syncUI();
-  render();
-};
-
-/* ========================================================
-   ZOOM
-   ======================================================== */
+$('customColor').oninput = e => { state.customColor = e.target.value; saveActiveToQueue(); render(); };
+function adjChange(fn) { pushHistory(); fn(); saveActiveToQueue(); render(); }
+$('rotL').onclick = () => adjChange(() => state.rotate = (state.rotate + 270) % 360);
+$('rotR').onclick = () => adjChange(() => state.rotate = (state.rotate + 90) % 360);
+$('flipH').onclick = () => adjChange(() => state.flipH = !state.flipH);
+$('flipV').onclick = () => adjChange(() => state.flipV = !state.flipV);
+$('resetAdj').onclick = () => adjChange(() => {
+  state.rotate = 0; state.flipH = false; state.flipV = false;
+  state.brightness = 1; state.contrast = 1; state.zoom = 1;
+  syncAllUI();
+});
 $('zoomIn').onclick = () => { state.zoom = Math.min(4, state.zoom * 1.2); render(); };
 $('zoomOut').onclick = () => { state.zoom = Math.max(0.5, state.zoom / 1.2); render(); };
 $('zoomReset').onclick = () => { state.zoom = 1; render(); };
 
-/* ========================================================
-   FULLSCREEN
-   ======================================================== */
-$('fullscreenBtn').onclick = () => {
-  const el = $('stage');
-  if (!document.fullscreenElement) {
-    const fn = el.requestFullscreen || el.webkitRequestFullscreen;
-    if (fn) fn.call(el).catch(() => toast('❌ Fullscreen not supported'));
-  } else {
-    document.exitFullscreen?.();
-  }
-};
-
-/* ========================================================
-   COMPARE
-   ======================================================== */
+/* ============================================================
+   ★ BEFORE/AFTER SLIDER
+   ============================================================ */
 $('compareBtn').onclick = () => {
   if (!original || !work) return toast('❌ कोई image नहीं');
   compareMode = !compareMode;
-
   if (compareMode) {
-    const swap = state.rotate % 180 !== 0;
-    const w = swap ? original.height : original.width;
-    const h = swap ? original.width : original.height;
-    c.width = w;
-    c.height = h;
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, w, h);
-
-    if (state.bg === 'white') { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); }
-    else if (state.bg === 'blue') { ctx.fillStyle = '#2471d8'; ctx.fillRect(0, 0, w, h); }
-    else if (state.bg === 'custom') { ctx.fillStyle = state.customColor; ctx.fillRect(0, 0, w, h); }
-
-    ctx.save();
-    ctx.translate(w / 2, h / 2);
-    ctx.rotate(state.rotate * Math.PI / 180);
-    ctx.scale(state.flipH ? -1 : 1, state.flipV ? -1 : 1);
-
-    const tmp = document.createElement('canvas');
-    tmp.width = original.width;
-    tmp.height = original.height;
-    tmp.getContext('2d').putImageData(original, 0, 0);
-    ctx.drawImage(tmp, -original.width / 2, -original.height / 2);
-    ctx.restore();
-
+    compareSliderPos = 0.5;
+    $('compareSlider').classList.add('on');
     $('compareBtn').innerHTML = '<span class="ico">▶</span><span>After</span>';
-    $('modeBadge').textContent = 'BEFORE';
+    $('modeBadge').textContent = 'COMPARE';
+    updateCompareBefore();
+    setComparePos(0.5);
   } else {
-    render();
+    $('compareSlider').classList.remove('on');
     $('compareBtn').innerHTML = '<span class="ico">◐</span><span>Compare</span>';
+    $('modeBadge').textContent = 'AFTER';
   }
   updateLiveBadge();
 };
 
-/* ========================================================
-   UNDO / RESET
-   ======================================================== */
+function setComparePos(frac) {
+  compareSliderPos = Math.max(0, Math.min(1, frac));
+  $('cDivider').style.left = (compareSliderPos * 100) + '%';
+  $('cHandle').style.left = (compareSliderPos * 100) + '%';
+  updateCompareBefore();
+}
+
+let sliderDrag = false;
+$('compareSlider').addEventListener('pointerdown', e => {
+  sliderDrag = true;
+  $('compareSlider').setPointerCapture?.(e.pointerId);
+  const rect = $('compareSlider').getBoundingClientRect();
+  setComparePos((e.clientX - rect.left) / rect.width);
+});
+$('compareSlider').addEventListener('pointermove', e => {
+  if (!sliderDrag) return;
+  const rect = $('compareSlider').getBoundingClientRect();
+  setComparePos((e.clientX - rect.left) / rect.width);
+});
+$('compareSlider').addEventListener('pointerup', e => {
+  sliderDrag = false;
+  $('compareSlider').releasePointerCapture?.(e.pointerId);
+});
+$('compareSlider').addEventListener('pointercancel', () => { sliderDrag = false; });
+
+/* ============================================================
+   UNDO / RESET / DELETE
+   ============================================================ */
 function doUndo() {
   if (!undoStack.length) return toast('कुछ undo नहीं है');
   const s = undoStack.pop();
-  work = s.work;
-  Object.assign(state, s.state);
+  work = s.work; Object.assign(state, s.state);
   hasResult = s.hasResult;
   maskBackup = s.maskBackup ? new Uint8ClampedArray(s.maskBackup) : null;
-  compareMode = false;
-  $('compareBtn').innerHTML = '<span class="ico">◐</span><span>Compare</span>';
-  syncUI();
-  render();
+  saveActiveToQueue(); syncAllUI(); render();
   toast('↶ Undo');
 }
 $('undoBtn').onclick = doUndo;
 $('undoBtnBottom').onclick = doUndo;
-
 function doReset() {
-  if (!original) return toast('❌ कोई image नहीं');
+  if (!original) return;
   pushHistory();
   work = new ImageData(new Uint8ClampedArray(original.data), original.width, original.height);
-  hasResult = false;
-  maskBackup = null;
+  hasResult = false; maskBackup = null;
   Object.assign(state, {
-    bg: 'checker',
-    customColor: '#f5f5f5',
-    brightness: 1,
-    contrast: 1,
-    rotate: 0,
-    flipH: false,
-    flipV: false,
-    zoom: 1,
-    brushMode: 'keep',
-    brushSize: 32,
-    brushStrength: 100,
-    autoCrop: false
+    bg: 'checker', customColor: '#f5f5f5', brightness: 1, contrast: 1,
+    rotate: 0, flipH: false, flipV: false, zoom: 1,
+    brushMode: 'keep', brushSize: 32, brushHard: 60, brushStrength: 100, autoCrop: false
   });
-  $('autoCrop').checked = false;
-  $('customColor').style.display = 'none';
-  document.querySelectorAll('#bgOpts button').forEach(b =>
-    b.classList.toggle('on', b.dataset.bg === 'checker')
-  );
-  compareMode = false;
-  $('compareBtn').innerHTML = '<span class="ico">◐</span><span>Compare</span>';
-  syncUI();
-  render();
+  saveActiveToQueue(); syncAllUI(); render();
   toast('↻ Reset');
 }
 $('resetBtn').onclick = doReset;
 $('resetBtnBottom').onclick = doReset;
+$('deleteCurrentBtn').onclick = () => { if (activeId) deleteItem(activeId); else toast('कोई image नहीं'); };
 
-/* ========================================================
-   EDGE REFINE
-   ======================================================== */
+/* ============================================================
+   EDGE REFINE with halo
+   ============================================================ */
 $('applyEdge').onclick = () => {
-  if (!work) return toast('❌ कोई image नहीं');
+  if (!work) return;
   pushHistory();
-  setLoading(true, 'Refining edges…');
-
+  setStage('✨ Edge Refine', 'Applying feather + decontamination + halo removal', 30);
   setTimeout(() => {
-    const w = work.width, h = work.height;
-    const n = w * h;
+    const w = work.width, h = work.height, n = w * h;
     const s = work.data;
-
-    const alpha = new Uint8ClampedArray(n);
-    for (let i = 0, p = 3; i < n; i++, p += 4) alpha[i] = s[p];
-
     const fe = Math.round(+$('feather').value);
+    const alpha = new Float32Array(n);
+    for (let i = 0, p = 3; i < n; i++, p += 4) alpha[i] = s[p] / 255;
     let a = alpha;
-    if (fe) {
-      const tmp = new Float32Array(n);
-      const o = new Uint8ClampedArray(n);
-      const win = 2 * fe + 1;
-      for (let y = 0; y < h; y++) {
-        const row = y * w;
-        let sum = 0;
-        for (let x = -fe; x <= fe; x++) sum += a[row + Math.max(0, Math.min(w - 1, x))];
-        for (let x = 0; x < w; x++) {
-          tmp[row + x] = sum / win;
-          sum -= a[row + Math.max(0, Math.min(w - 1, x - fe))];
-          sum += a[row + Math.max(0, Math.min(w - 1, x + fe + 1))];
-        }
-      }
-      for (let x = 0; x < w; x++) {
-        let sum = 0;
-        for (let y = -fe; y <= fe; y++) sum += tmp[Math.max(0, Math.min(h - 1, y)) * w + x];
-        for (let y = 0; y < h; y++) {
-          o[y * w + x] = sum / win;
-          sum -= tmp[Math.max(0, Math.min(h - 1, y - fe)) * w + x];
-          sum += tmp[Math.max(0, Math.min(h - 1, y + fe + 1)) * w + x];
-        }
-      }
-      a = o;
+    if (fe > 0) {
+      a = boxFilterFloat(alpha, w, h, fe);
+      for (let i = 0; i < n; i++) a[i] = alpha[i] * 0.35 + a[i] * 0.65;
     }
-
     const def = +$('def').value / 100;
-    const out = new Uint8ClampedArray(s);
-
-    if (def > 0) {
-      const RADIUS = 4;
-      for (let y = 0; y < h; y++) {
-        for (let x = 0; x < w; x++) {
-          const i = y * w + x;
-          const av = a[i];
-          if (av === 0 || av === 255) continue;
-          let bestA = 0, bpx = -1, bpy = -1;
-          for (let dy = -RADIUS; dy <= RADIUS; dy++) {
-            const ny = y + dy;
-            if (ny < 0 || ny >= h) continue;
-            for (let dx = -RADIUS; dx <= RADIUS; dx++) {
-              const nx = x + dx;
-              if (nx < 0 || nx >= w) continue;
-              const ni = ny * w + nx;
-              if (a[ni] > bestA) {
-                bestA = a[ni];
-                bpx = nx;
-                bpy = ny;
-                if (bestA === 255) break;
-              }
-            }
-            if (bestA === 255) break;
-          }
-          if (bpx < 0 || bestA < 200) continue;
-          const bp = (bpy * w + bpx) * 4;
-          const p = i * 4;
-          out[p]     = Math.round(s[p]     * (1 - def) + s[bp]     * def);
-          out[p + 1] = Math.round(s[p + 1] * (1 - def) + s[bp + 1] * def);
-          out[p + 2] = Math.round(s[p + 2] * (1 - def) + s[bp + 2] * def);
-        }
-      }
+    const halo = +$('halo').value / 100;
+    let out = new Uint8ClampedArray(s);
+    for (let i = 0, p = 3; i < n; i++, p += 4) out[p] = Math.round(a[i] * 255);
+    let img = new ImageData(out, w, h);
+    setStage('✨ Edge Refine', 'Removing color spill…', 60);
+    if (def > 0) img = decontaminateEdges(img, a, def);
+    if (halo > 0) {
+      setStage('🔆 Halo Removal', 'Detecting bright/dark outlines…', 80);
+      img = haloRemoval(img, a, halo);
     }
-
-    for (let i = 0, p = 3; i < n; i++, p += 4) out[p] = a[i];
-
-    work = new ImageData(out, w, h);
-    hasResult = true;
+    work = img; hasResult = true;
     maskBackup = captureAlpha(work);
-    render();
+    saveActiveToQueue(); render();
     $('modeBadge').textContent = 'REFINED';
     status('✅ Edge refined!', 100);
     toast('✨ Edge refined');
     switchTab('bg');
-    setLoading(false);
+    hideStage();
   }, 30);
 };
 
-/* ========================================================
-   MANUAL BRUSH — rotation & flip aware
-   ======================================================== */
-let drawing = false;
-let lastPt = null;
+/* ============================================================
+   BRUSH with preview circle
+   ============================================================ */
+let drawing = false, lastPt = null;
+const brushCursor = $('brushCursor');
+
+function updateBrushCursorDisplay(e) {
+  if (!hasResult || state.brushMode === 'off' || isProcessing) {
+    hideBrushCursor(); return;
+  }
+  if (document.querySelector('.panel.active')?.dataset.panel !== 'brush') {
+    hideBrushCursor(); return;
+  }
+  const rect = c.getBoundingClientRect();
+  const screenX = e.clientX - rect.left;
+  const screenY = e.clientY - rect.top;
+  if (screenX < 0 || screenY < 0 || screenX > rect.width || screenY > rect.height) {
+    hideBrushCursor(); return;
+  }
+  const displaySize = state.brushSize * (rect.width / c.width);
+  brushCursor.style.display = 'block';
+  brushCursor.style.width = displaySize + 'px';
+  brushCursor.style.height = displaySize + 'px';
+  const stageRect = $('stage').getBoundingClientRect();
+  brushCursor.style.left = (e.clientX - stageRect.left - displaySize / 2) + 'px';
+  brushCursor.style.top = (e.clientY - stageRect.top - displaySize / 2) + 'px';
+}
+function hideBrushCursor() { brushCursor.style.display = 'none'; }
+
+c.addEventListener('pointermove', e => {
+  if (state.brushMode !== 'off' && hasResult) updateBrushCursorDisplay(e);
+  if (!drawing) return;
+  e.preventDefault();
+  const p = canvasPoint(e);
+  stroke(lastPt, p);
+  lastPt = p;
+  render();
+});
+c.addEventListener('pointerleave', hideBrushCursor);
 
 function canvasPoint(e) {
   if (!work) return { x: 0, y: 0 };
   const rect = c.getBoundingClientRect();
   let px = (e.clientX - rect.left) * (c.width / rect.width);
   let py = (e.clientY - rect.top) * (c.height / rect.height);
-
   const swap = state.rotate % 180 !== 0;
   const cw = swap ? work.height : work.width;
   const ch = swap ? work.width : work.height;
-
-  let dx = px - cw / 2;
-  let dy = py - ch / 2;
-
+  let dx = px - cw / 2, dy = py - ch / 2;
   if (state.flipH) dx = -dx;
   if (state.flipV) dy = -dy;
-
   const rad = -state.rotate * Math.PI / 180;
-  const cos = Math.cos(rad);
-  const sin = Math.sin(rad);
-  const rx = dx * cos - dy * sin;
-  const ry = dx * sin + dy * cos;
-
-  let wx = rx + work.width / 2;
-  let wy = ry + work.height / 2;
-
+  const cos = Math.cos(rad), sin = Math.sin(rad);
+  const rx = dx * cos - dy * sin, ry = dx * sin + dy * cos;
+  let wx = rx + work.width / 2, wy = ry + work.height / 2;
   wx = Math.max(0, Math.min(work.width - 1, wx));
   wy = Math.max(0, Math.min(work.height - 1, wy));
   return { x: wx, y: wy };
 }
-
 function paintAt(x, y) {
   if (!work || state.brushMode === 'off') return;
   const r = Math.max(2, state.brushSize / 2);
+  const hard = state.brushHard / 100;
   const strength = state.brushStrength / 100;
   const d = work.data;
-  const w = work.width;
-  const h = work.height;
+  const w = work.width, h = work.height;
   const x0 = Math.max(0, Math.floor(x - r));
   const x1 = Math.min(w - 1, Math.ceil(x + r));
   const y0 = Math.max(0, Math.floor(y - r));
   const y1 = Math.min(h - 1, Math.ceil(y + r));
   const target = state.brushMode === 'keep' ? 255 : 0;
-
   for (let yy = y0; yy <= y1; yy++) {
     for (let xx = x0; xx <= x1; xx++) {
-      const dx = xx - x;
-      const dy = yy - y;
+      const dx = xx - x, dy = yy - y;
       const dist = Math.sqrt(dx * dx + dy * dy);
       if (dist > r) continue;
-      const fall = (1 - dist / r) * strength;
+      // Hardness: soft falloff vs sharp
+      const inner = r * hard;
+      let fall;
+      if (dist <= inner) fall = 1;
+      else fall = (r - dist) / Math.max(0.001, r - inner);
+      fall *= strength;
       const p = (yy * w + xx) * 4;
       d[p + 3] = Math.round(d[p + 3] + (target - d[p + 3]) * fall);
     }
   }
 }
-
 function stroke(a, b) {
-  const dx = b.x - a.x;
-  const dy = b.y - a.y;
+  const dx = b.x - a.x, dy = b.y - a.y;
   const len = Math.max(1, Math.ceil(Math.hypot(dx, dy) / (state.brushSize * 0.25)));
   for (let i = 0; i <= len; i++) {
     const t = i / len;
     paintAt(a.x + dx * t, a.y + dy * t);
   }
 }
-
 c.addEventListener('pointerdown', e => {
-  if (!work || isProcessing) return;
-  if (state.brushMode === 'off') return;
+  if (!work || isProcessing || state.brushMode === 'off') return;
   if (!hasResult) { toast('पहले AI या Signature चलाएँ'); return; }
-
   e.preventDefault();
   pushHistory();
   drawing = true;
@@ -1578,237 +1863,136 @@ c.addEventListener('pointerdown', e => {
   hasResult = true;
   updateLiveBadge();
 });
-
-c.addEventListener('pointermove', e => {
-  if (!drawing) return;
-  e.preventDefault();
-  const p = canvasPoint(e);
-  stroke(lastPt, p);
-  lastPt = p;
-  render();
-});
-
 c.addEventListener('pointerup', e => {
   if (!drawing) return;
-  drawing = false;
-  lastPt = null;
+  drawing = false; lastPt = null;
   c.releasePointerCapture?.(e.pointerId);
   maskBackup = captureAlpha(work);
+  saveActiveToQueue();
   $('modeBadge').textContent = 'EDITED';
 });
+c.addEventListener('pointercancel', () => { drawing = false; lastPt = null; });
 
-c.addEventListener('pointercancel', () => {
-  drawing = false;
-  lastPt = null;
-});
-
-$('keepBrush').onclick = () => {
-  state.brushMode = 'keep';
-  syncUI();
-  $('brushHint').textContent = '🟢 Keep mode';
-  $('brushHint').classList.remove('hidden');
-};
-$('removeBrush').onclick = () => {
-  state.brushMode = 'remove';
-  syncUI();
-  $('brushHint').textContent = '🔴 Remove mode';
-  $('brushHint').classList.remove('hidden');
-};
-$('brushOff').onclick = () => {
-  state.brushMode = 'off';
-  syncUI();
-  $('brushHint').classList.add('hidden');
-};
+$('keepBrush').onclick = () => { state.brushMode = 'keep'; syncAllUI(); $('brushHint').textContent = '🟢 Keep'; $('brushHint').classList.remove('hidden'); };
+$('removeBrush').onclick = () => { state.brushMode = 'remove'; syncAllUI(); $('brushHint').textContent = '🔴 Remove'; $('brushHint').classList.remove('hidden'); };
+$('brushOff').onclick = () => { state.brushMode = 'off'; syncAllUI(); $('brushHint').classList.add('hidden'); hideBrushCursor(); };
 $('brushReset').onclick = () => {
-  if (!maskBackup) return toast('पहले AI/Signature result बनाएं');
+  if (!maskBackup) return toast('पहले AI result बनाएं');
   pushHistory();
   const restored = new ImageData(new Uint8ClampedArray(work.data), work.width, work.height);
   applyAlpha(restored, maskBackup);
   work = restored;
-  render();
+  saveActiveToQueue(); render();
   toast('↺ Mask reset');
 };
+$('brushSize').oninput = e => { state.brushSize = +e.target.value; syncAllUI(); };
+$('brushHard').oninput = e => { state.brushHard = +e.target.value; syncAllUI(); };
+$('brushStrength').oninput = e => { state.brushStrength = +e.target.value; syncAllUI(); };
 
-$('brushSize').oninput = e => {
-  state.brushSize = +e.target.value;
-  syncUI();
-};
-$('brushStrength').oninput = e => {
-  state.brushStrength = +e.target.value;
-  syncUI();
-};
-
-/* ========================================================
-   SIZE PRESETS
-   ======================================================== */
+/* ============================================================
+   SIZE / DOWNLOAD
+   ============================================================ */
 document.querySelectorAll('#presets button').forEach(b => {
   b.onclick = () => {
     document.querySelectorAll('#presets button').forEach(x => x.classList.remove('on'));
     b.classList.add('on');
     currentSize = { w: +b.dataset.w, h: +b.dataset.h };
     updateSizeInfo(c.width, c.height);
-    toast(currentSize.w ? `📐 ${currentSize.w}×${currentSize.h}` : '📐 Original');
   };
 });
-$('autoCrop').onchange = e => {
-  state.autoCrop = e.target.checked;
-};
-
-/* ========================================================
-   DOWNLOAD OPTIONS
-   ======================================================== */
+$('autoCrop').onchange = e => { state.autoCrop = e.target.checked; saveActiveToQueue(); };
 $('format').onchange = e => {
   currentFormat = e.target.value;
   if (currentFormat === 'image/jpeg' && state.bg === 'checker') {
     state.bg = 'white';
-    document.querySelectorAll('#bgOpts button').forEach(b =>
-      b.classList.toggle('on', b.dataset.bg === 'white')
-    );
-    render();
-    toast('JPG के लिए White background लगाया');
+    document.querySelectorAll('#bgOpts button').forEach(b => b.classList.toggle('on', b.dataset.bg === 'white'));
+    saveActiveToQueue(); render();
+    toast('JPG → White bg');
   }
 };
+$('targetSize').onchange = e => currentTargetKB = +e.target.value;
+$('dpi').onchange = e => { currentDpi = +e.target.value; updateSizeInfo(c.width, c.height); };
+$('fileNameInput').oninput = e => { fileBase = e.target.value.replace(/[^a-zA-Z0-9_-]/g, '_') || 'image'; };
 
-$('targetSize').onchange = e => {
-  currentTargetKB = +e.target.value;
-  $('pngNote').style.display =
-    currentTargetKB > 0 && currentFormat === 'image/png' ? 'block' : 'none';
-};
-document.querySelectorAll('.kbBtn').forEach(b => {
-  b.onclick = () => {
-    $('targetSize').value = b.dataset.kb;
-    currentTargetKB = +b.dataset.kb;
-    $('pngNote').style.display =
-      currentTargetKB > 0 && currentFormat === 'image/png' ? 'block' : 'none';
-  };
-});
-
-$('dpi').onchange = e => {
-  currentDpi = +e.target.value;
-  updateSizeInfo(c.width, c.height);
-};
-$('fileNameInput').oninput = e => {
-  fileBase = e.target.value.replace(/[^a-zA-Z0-9_-]/g, '_') || 'image';
-};
-
-/* ========================================================
-   DOWNLOAD PIPELINE
-   ======================================================== */
 function trimImage(im) {
   const d = im.data, w = im.width, h = im.height;
   let minX = w, minY = h, maxX = -1, maxY = -1;
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      if (d[(y * w + x) * 4 + 3] > 4) {
-        if (x < minX) minX = x;
-        if (x > maxX) maxX = x;
-        if (y < minY) minY = y;
-        if (y > maxY) maxY = y;
-      }
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    if (d[(y * w + x) * 4 + 3] > 4) {
+      if (x < minX) minX = x; if (x > maxX) maxX = x;
+      if (y < minY) minY = y; if (y > maxY) maxY = y;
     }
   }
   if (maxX < 0) return im;
   const q = new ImageData(maxX - minX + 1, maxY - minY + 1);
-  for (let y = 0; y < q.height; y++) {
-    for (let x = 0; x < q.width; x++) {
-      const a = ((y + minY) * w + (x + minX)) * 4;
-      const b = (y * q.width + x) * 4;
-      q.data[b] = d[a];
-      q.data[b + 1] = d[a + 1];
-      q.data[b + 2] = d[a + 2];
-      q.data[b + 3] = d[a + 3];
-    }
+  for (let y = 0; y < q.height; y++) for (let x = 0; x < q.width; x++) {
+    const a = ((y + minY) * w + (x + minX)) * 4;
+    const b = (y * q.width + x) * 4;
+    q.data[b] = d[a]; q.data[b+1] = d[a+1]; q.data[b+2] = d[a+2]; q.data[b+3] = d[a+3];
   }
   return q;
 }
-
-async function buildOutputCanvas() {
-  let im = work;
-  if (state.autoCrop && state.bg === 'checker' && currentFormat !== 'image/jpeg') {
-    im = trimImage(work);
-  }
-
-  const swap = state.rotate % 180 !== 0;
+async function buildOutputCanvas(item) {
+  let im = item.work;
+  if (item.state.autoCrop && item.state.bg === 'checker' && currentFormat !== 'image/jpeg') im = trimImage(item.work);
+  const swap = item.state.rotate % 180 !== 0;
   const baseW = swap ? im.height : im.width;
   const baseH = swap ? im.width : im.height;
-
   const canvas = document.createElement('canvas');
-  canvas.width = baseW;
-  canvas.height = baseH;
+  canvas.width = baseW; canvas.height = baseH;
   const cx = canvas.getContext('2d');
-
-  const bg = state.bg === 'white' ? '#fff'
-    : state.bg === 'blue' ? '#2471d8'
-    : state.bg === 'custom' ? state.customColor
-    : null;
-
-  if (bg) {
-    cx.fillStyle = bg;
-    cx.fillRect(0, 0, baseW, baseH);
-  }
-
+  const bg = item.state.bg === 'white' ? '#fff'
+    : item.state.bg === 'black' ? '#000'
+    : item.state.bg === 'custom' ? item.state.customColor : null;
+  if (bg) { cx.fillStyle = bg; cx.fillRect(0, 0, baseW, baseH); }
   cx.save();
   cx.translate(baseW / 2, baseH / 2);
-  cx.rotate(state.rotate * Math.PI / 180);
-  cx.scale(state.flipH ? -1 : 1, state.flipV ? -1 : 1);
-
+  cx.rotate(item.state.rotate * Math.PI / 180);
+  cx.scale(item.state.flipH ? -1 : 1, item.state.flipV ? -1 : 1);
   const filters = [];
-  if (state.brightness !== 1) filters.push(`brightness(${state.brightness})`);
-  if (state.contrast !== 1) filters.push(`contrast(${state.contrast})`);
+  if (item.state.brightness !== 1) filters.push(`brightness(${item.state.brightness})`);
+  if (item.state.contrast !== 1) filters.push(`contrast(${item.state.contrast})`);
   cx.filter = filters.length ? filters.join(' ') : 'none';
-
   const tmp = document.createElement('canvas');
-  tmp.width = im.width;
-  tmp.height = im.height;
+  tmp.width = im.width; tmp.height = im.height;
   tmp.getContext('2d').putImageData(im, 0, 0);
   cx.drawImage(tmp, -im.width / 2, -im.height / 2);
-
+  releaseCanvas(tmp);
   cx.restore();
-
   if (currentSize.w && currentSize.h) {
     const out = document.createElement('canvas');
-    out.width = currentSize.w;
-    out.height = currentSize.h;
+    out.width = currentSize.w; out.height = currentSize.h;
     const o = out.getContext('2d');
     o.imageSmoothingQuality = 'high';
-    if (bg) {
-      o.fillStyle = bg;
-      o.fillRect(0, 0, out.width, out.height);
-    }
-    const sa = canvas.width / canvas.height;
-    const da = out.width / out.height;
+    if (bg) { o.fillStyle = bg; o.fillRect(0, 0, out.width, out.height); }
+    const sa = canvas.width / canvas.height, da = out.width / out.height;
     let sx = 0, sy = 0, sw = canvas.width, sh = canvas.height;
     if (sa > da) { sw = canvas.height * da; sx = (canvas.width - sw) / 2; }
     else { sh = canvas.width / da; sy = (canvas.height - sh) / 2; }
     o.drawImage(canvas, sx, sy, sw, sh, 0, 0, out.width, out.height);
+    releaseCanvas(canvas);
     return out;
   }
   return canvas;
 }
-
 async function compressToTarget(canvas, format, targetKB) {
   if (targetKB <= 0) {
     const blob = await new Promise(r => canvas.toBlob(r, format, currentQuality));
     return { blob, metTarget: true };
   }
-
   const target = targetKB * 1024;
   let lo = 0.05, hi = 1, best = null;
   for (let i = 0; i < 11; i++) {
     const q = (lo + hi) / 2;
     const blob = await new Promise(r => canvas.toBlob(r, format, q));
     if (!blob) break;
-    if (blob.size <= target) { best = blob; lo = q; }
-    else hi = q;
+    if (blob.size <= target) { best = blob; lo = q; } else hi = q;
     if (hi - lo < 0.01) break;
   }
   if (best) return { blob: best, metTarget: true };
-
-  let currentCanvas = canvas;
   let scale = 0.9;
-  let blob = await new Promise(r => currentCanvas.toBlob(r, format, 0.9));
-
-  while (blob && blob.size > target && currentCanvas.width > 80 && currentCanvas.height > 80 && scale > 0.15) {
+  let blob = await new Promise(r => canvas.toBlob(r, format, 0.9));
+  while (blob && blob.size > target && canvas.width * scale > 80 && scale > 0.15) {
     const smaller = document.createElement('canvas');
     smaller.width = Math.max(1, Math.round(canvas.width * scale));
     smaller.height = Math.max(1, Math.round(canvas.height * scale));
@@ -1816,91 +2000,106 @@ async function compressToTarget(canvas, format, targetKB) {
     sctx.imageSmoothingQuality = 'high';
     sctx.drawImage(canvas, 0, 0, smaller.width, smaller.height);
     blob = await new Promise(r => smaller.toBlob(r, format, 0.85));
+    releaseCanvas(smaller);
     scale -= 0.08;
   }
   return { blob, metTarget: blob ? blob.size <= target : false };
 }
-
+function triggerDownload(blob, name) {
+  const u = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = u; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(u), 3000);
+}
+async function downloadItem(item, index, total) {
+  const canvas = await buildOutputCanvas(item);
+  const { blob, metTarget } = await compressToTarget(canvas, currentFormat, currentTargetKB);
+  releaseCanvas(canvas);
+  if (!blob) throw new Error('Export failed');
+  const ext = currentFormat === 'image/png' ? 'png' : currentFormat === 'image/jpeg' ? 'jpg' : 'webp';
+  const suffix = currentSize.w ? `-${currentSize.w}x${currentSize.h}` : '-no-bg';
+  const base = item.fileBase || 'image';
+  const name = total > 1 ? `${fileBase || base}-${index + 1}${suffix}.${ext}` : `${base}${suffix}.${ext}`;
+  triggerDownload(blob, name);
+  return { size: blob.size, metTarget };
+}
 async function doDownload(btn) {
-  if (!work) return toast('❌ पहले image upload करें');
-  if (isProcessing) return;
-
+  if (!work || isProcessing) return;
+  saveActiveToQueue();
   isProcessing = true;
   btn.disabled = true;
   const old = btn.innerHTML;
-  btn.innerHTML = '<span class="spinner"></span> Preparing…';
-  setLoading(true, 'Preparing download…');
-
+  btn.innerHTML = '<span class="spinner"></span> …';
+  setStage('⬇ Download', 'Preparing file…', 40);
   try {
-    const canvas = await buildOutputCanvas();
-    const { blob, metTarget } = await compressToTarget(canvas, currentFormat, currentTargetKB);
-    if (!blob) throw new Error('Export failed');
-
-    const ext = currentFormat === 'image/png' ? 'png'
-      : currentFormat === 'image/jpeg' ? 'jpg' : 'webp';
-    const suffix = currentSize.w ? `-${currentSize.w}x${currentSize.h}` : '-no-bg';
-    const name = (fileBase || 'image') + suffix + '.' + ext;
-
-    const u = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = u;
-    a.download = name;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(u), 3000);
-
-    const kb = Math.round(blob.size / 1024);
-    $('kbInfo').textContent = kb + ' KB';
+    const item = queue.find(x => x.id === activeId);
+    const { size } = await downloadItem(item, 0, 1);
+    const kb = Math.round(size / 1024);
     status(`✅ Downloaded (${kb} KB)`, 100);
-    toast(`⬇ ${kb} KB downloaded`);
-
-    if (currentTargetKB > 0 && !metTarget) {
-      toast(`⚠️ Target ${currentTargetKB} KB तक नहीं पहुँच पाया (${kb} KB)`, 3500);
-    }
-  } catch (e) {
-    console.error(e);
-    status('Export error: ' + (e.message || e), 0);
-    toast('❌ Export error');
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = old;
-    isProcessing = false;
-    setLoading(false);
+    toast(`⬇ ${kb} KB`);
+  } catch (e) { console.error(e); toast('❌ Export error'); }
+  finally {
+    btn.disabled = false; btn.innerHTML = old;
+    isProcessing = false; hideStage();
   }
 }
-
 $('downloadBtn').onclick = () => doDownload($('downloadBtn'));
 $('downloadBtn2').onclick = () => doDownload($('downloadBtn2'));
+$('downloadAllBtn').onclick = async () => {
+  if (!queue.length || isProcessing) return;
+  saveActiveToQueue();
+  const readyItems = queue.filter(x => x.hasResult);
+  if (!readyItems.length) return toast('कोई processed image नहीं');
+  isProcessing = true;
+  const origText = $('downloadAllBtn').innerHTML;
+  $('downloadAllBtn').disabled = true;
+  $('downloadAllBtn').innerHTML = '<span class="spinner"></span> …';
+  let done = 0;
+  const total = readyItems.length;
+  for (const item of readyItems) {
+    try {
+      setStage(`⬇ Downloading ${done + 1}/${total}`, item.name, (done / total) * 100);
+      await downloadItem(item, done, total);
+      await new Promise(r => setTimeout(r, 350));
+    } catch (e) { console.error(e); }
+    done++;
+    forceGC();
+  }
+  setStage('✅ All done', `${total} images saved`, 100);
+  await new Promise(r => setTimeout(r, 500));
+  isProcessing = false;
+  $('downloadAllBtn').disabled = false;
+  $('downloadAllBtn').innerHTML = origText;
+  hideStage();
+  status(`✅ ${total} downloaded`, 100);
+  toast(`⬇⬇ ${total} images`);
+};
 
-/* ========================================================
-   KEYBOARD SHORTCUTS
-   ======================================================== */
+/* ============================================================
+   KEYBOARD
+   ============================================================ */
 window.addEventListener('keydown', e => {
   const tag = (e.target.tagName || '').toLowerCase();
-  const typing = tag === 'input' || tag === 'select' || tag === 'textarea';
-  if (typing) return;
-
+  if (tag === 'input' || tag === 'select' || tag === 'textarea') return;
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
-    e.preventDefault();
-    doUndo();
+    e.preventDefault(); doUndo();
   }
-  if (e.key === 'Escape' && compareMode) {
-    $('compareBtn').click();
-  }
+  if (e.key === 'Escape' && compareMode) $('compareBtn').click();
+  if (e.key === 'Delete' && activeId && !isProcessing) deleteItem(activeId);
 });
 
-/* ========================================================
+/* ============================================================
    INIT
-   ======================================================== */
-ctx.fillStyle = '#1a1a26';
-ctx.fillRect(0, 0, c.width, c.height);
-ctx.fillStyle = '#6b6b7c';
-ctx.textAlign = 'center';
-ctx.font = 'bold 18px Inter, sans-serif';
-ctx.fillText('📷 Image upload करें', c.width / 2, c.height / 2);
-
-syncUI();
+   ============================================================ */
+clearCanvas(); syncAllUI(); updateQueueUI();
+setTimeout(() => {
+  if (!engineCache.imgly) {
+    import('https://esm.sh/@imgly/background-removal@1.7.0')
+      .then(m => { engineCache.imgly = m; })
+      .catch(() => {});
+  }
+}, 1500);
 </script>
 </body>
 </html>
