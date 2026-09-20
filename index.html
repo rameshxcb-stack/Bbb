@@ -235,11 +235,21 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
           <button class="cHelp" id="cacheHelp" title="Help">?</button>
         </div>
 
+        <!-- ✅ ENGINE DROPDOWN — वापस जोड़ा गया -->
+        <div class="row">
+          <label>🎯 AI Engine</label>
+          <select id="engine" style="flex:1.4;width:auto">
+            <option value="fast" selected>⚡ Fast — सबसे तेज़</option>
+            <option value="isnet">🧠 Medium — बेहतर quality</option>
+            <option value="quality">🏆 Slow — Best quality</option>
+          </select>
+        </div>
+
         <div id="aiErrorBox" class="notice error hidden" style="margin-bottom:10px">
           <div id="aiErrorText" style="font-size:11px;word-wrap:break-word;margin-bottom:8px"></div>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
             <button id="aiRetryBtn" class="small primary" style="min-height:32px;padding:6px 12px;font-size:11px">🔄 Retry</button>
-            <button id="aiClearCacheBtn" class="small ghost" style="min-height:32px;padding:6px 12px;font-size:11px">🧹 Clear Cache & Retry</button>
+            <button id="aiClearCacheBtn" class="small ghost" style="min-height:32px;padding:6px 12px;font-size:11px">🧹 Clear Cache</button>
           </div>
         </div>
 
@@ -437,16 +447,11 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
 
 <script type="module">
 /* ============================================================
-   ★ SAFE CACHE SYSTEM
-   Only caches small JS modules (< 5MB). 
-   Skips large model weight files (browser handles via HTTP cache).
+   SAFE CACHE SYSTEM
    ============================================================ */
-
-const CACHE_NAME = 'bg-remover-js-cache-v2';
-const MAX_CACHE_BYTES = 5 * 1024 * 1024; // 5 MB per file max
-const CACHE_HOSTS = ['esm.sh', 'cdn.jsdelivr.net']; // Only JS module CDNs
-
-// Detected features
+const CACHE_NAME = 'bg-remover-js-cache-v3';
+const MAX_CACHE_BYTES = 5 * 1024 * 1024;
+const CACHE_HOSTS = ['esm.sh', 'cdn.jsdelivr.net'];
 const CACHE_SUPPORT = typeof caches !== 'undefined';
 
 async function requestPersistentStorage() {
@@ -459,50 +464,37 @@ async function requestPersistentStorage() {
 
 async function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return false;
-  // Skip SW in unsafe contexts
   if (location.protocol === 'file:') return false;
   if (!location.protocol.startsWith('http')) return false;
-
   try {
     const swCode = `
       const CACHE_NAME = '${CACHE_NAME}';
       const MAX_BYTES = ${MAX_CACHE_BYTES};
       const HOSTS = ${JSON.stringify(CACHE_HOSTS)};
-
       self.addEventListener('install', e => self.skipWaiting());
       self.addEventListener('activate', e => e.waitUntil(
         caches.keys().then(keys => Promise.all(
           keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
         )).then(() => self.clients.claim())
       ));
-
       self.addEventListener('fetch', event => {
         const req = event.request;
         if (req.method !== 'GET') return;
         let url;
         try { url = new URL(req.url); } catch (_) { return; }
         if (!HOSTS.some(h => url.hostname.includes(h))) return;
-
         event.respondWith((async () => {
           try {
             const cache = await caches.open(CACHE_NAME);
             const cached = await cache.match(req);
             if (cached) return cached;
-            
             const response = await fetch(req);
             if (!response || response.status !== 200) return response;
-            
-            // Only cache small responses (avoid huge model files)
             const len = response.headers.get('content-length');
             if (len && parseInt(len, 10) > MAX_BYTES) return response;
-
-            // Clone before we can measure
-            const clone = response.clone();
-            // Cache in background (don't block)
-            cache.put(req, clone).catch(() => {});
+            cache.put(req, response.clone()).catch(() => {});
             return response;
           } catch (err) {
-            // Network error — try cache fallback
             try {
               const cache = await caches.open(CACHE_NAME);
               const fallback = await cache.match(req, { ignoreSearch: true });
@@ -515,13 +507,9 @@ async function registerServiceWorker() {
     `;
     const blob = new Blob([swCode], { type: 'application/javascript' });
     const swUrl = URL.createObjectURL(blob);
-    const reg = await navigator.serviceWorker.register(swUrl, { scope: './' });
-    console.log('✅ Service Worker registered:', reg.scope);
+    await navigator.serviceWorker.register(swUrl, { scope: './' });
     return true;
-  } catch (e) {
-    console.warn('⚠️ Service Worker registration failed (non-fatal):', e);
-    return false;
-  }
+  } catch (e) { return false; }
 }
 
 async function updateCacheStatus() {
@@ -529,7 +517,6 @@ async function updateCacheStatus() {
   const icon = document.getElementById('cacheIcon');
   const text = document.getElementById('cacheText');
   if (!box || !icon || !text) return;
-
   let persistent = false, usageMB = 0;
   try {
     if (navigator.storage) {
@@ -540,12 +527,7 @@ async function updateCacheStatus() {
       }
     }
   } catch (_) {}
-
   box.classList.remove('ok','warn','new');
-
-  // Detect incognito
-  const isPrivate = !persistent && usageMB < 1 && !('serviceWorker' in navigator);
-
   if (persistent && usageMB > 5) {
     icon.textContent = '✅';
     text.textContent = `Cache saved (${usageMB} MB) — दूसरी बार instant load`;
@@ -561,24 +543,18 @@ async function updateCacheStatus() {
   }
 }
 
-/* Clear all caches and unregister SW */
 async function clearAllCaches() {
   try {
     if (CACHE_SUPPORT) {
       const keys = await caches.keys();
       await Promise.all(keys.map(k => caches.delete(k)));
-      console.log('✅ Caches cleared:', keys);
     }
     if ('serviceWorker' in navigator) {
       const regs = await navigator.serviceWorker.getRegistrations();
       await Promise.all(regs.map(r => r.unregister()));
-      console.log('✅ SW unregistered');
     }
     return true;
-  } catch (e) {
-    console.warn('Cache clear error:', e);
-    return false;
-  }
+  } catch (e) { return false; }
 }
 
 document.getElementById('cacheHelp')?.addEventListener('click', async () => {
@@ -589,44 +565,41 @@ document.getElementById('cacheHelp')?.addEventListener('click', async () => {
       return Math.round((est.usage || 0) / (1024 * 1024)) + ' MB';
     } catch (_) { return '?'; }
   })();
-
   const doClear = confirm(
     '💾 Cache Info:\n\n' +
     `अभी use: ${usage}\n\n` +
-    'Cache कैसे काम करता है:\n' +
-    '• पहली बार: model download (40-100 MB)\n' +
-    '• दूसरी बार से: instant load\n' +
-    '• हर बार download नहीं होगा\n\n' +
-    '⚠️ अगर हर बार download हो रहा है:\n' +
-    '• Incognito mode बंद करें\n' +
-    '• Browser में "Clear on close" बंद करें\n' +
-    '• Storage permission दें\n\n' +
-    'क्या cache अभी clear करें? (अगर AI fail हो रहा है तो हाँ दबाएँ)'
+    'Cache clear करें? (AI fail हो तो हाँ दबाएँ)'
   );
-
   if (doClear) {
     await clearAllCaches();
-    toast('🧹 Cache cleared — page reload होगा');
     setTimeout(() => location.reload(), 800);
   }
 });
 
-// Init
 (async () => {
   try {
     await requestPersistentStorage();
     await registerServiceWorker();
     await updateCacheStatus();
     setInterval(updateCacheStatus, 30000);
-  } catch (e) {
-    console.warn('Init non-fatal:', e);
-  }
+  } catch (e) { console.warn('Init non-fatal:', e); }
 })();
 
 /* ============================================================
    CORE
    ============================================================ */
 const $ = id => document.getElementById(id);
+
+// ✅ Defensive helpers
+function $val(id, def = '') {
+  const el = $(id);
+  return el ? el.value : def;
+}
+function $checked(id, def = false) {
+  const el = $(id);
+  return el ? el.checked : def;
+}
+
 const c = $('c');
 const ctx = c.getContext('2d', { willReadFrequently: true });
 
@@ -678,24 +651,30 @@ async function withRetry(fn, maxRetries = 2, delayMs = 1500) {
 }
 
 function status(msg, p) {
-  $('status').textContent = msg;
-  if (p !== undefined) $('progress').style.width = Math.max(0, Math.min(100, p)) + '%';
+  const el = $('status');
+  if (el) el.textContent = msg;
+  if (p !== undefined) {
+    const bar = $('progress');
+    if (bar) bar.style.width = Math.max(0, Math.min(100, p)) + '%';
+  }
 }
 let toastTimer = null;
 function toast(msg, ms = 2400) {
-  const el = $('toast'); el.textContent = msg; el.classList.add('on');
+  const el = $('toast');
+  if (!el) return;
+  el.textContent = msg; el.classList.add('on');
   clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('on'), ms);
 }
 function setStage(name, detail, pct) {
-  $('stageLoaderName').textContent = name;
-  $('stageLoaderText').textContent = detail || '';
-  $('stageLoader').classList.remove('hidden');
+  const n = $('stageLoaderName'); if (n) n.textContent = name;
+  const d = $('stageLoaderText'); if (d) d.textContent = detail || '';
+  const s = $('stageLoader'); if (s) s.classList.remove('hidden');
   if (pct !== undefined) {
-    $('batchProgressBar').classList.remove('hidden');
-    $('batchProgressFill').style.width = Math.max(0, Math.min(100, pct)) + '%';
+    const bp = $('batchProgressBar'); if (bp) bp.classList.remove('hidden');
+    const bf = $('batchProgressFill'); if (bf) bf.style.width = Math.max(0, Math.min(100, pct)) + '%';
   }
 }
-function hideStage() { $('stageLoader').classList.add('hidden'); }
+function hideStage() { const s = $('stageLoader'); if (s) s.classList.add('hidden'); }
 function cloneState(s) {
   if (typeof structuredClone === 'function') return structuredClone(s);
   return JSON.parse(JSON.stringify(s));
@@ -755,6 +734,7 @@ function makeThumb(imgData, maxDim = 100) {
 }
 function showConfirm(title, message, onConfirm, confirmText = 'Delete') {
   const root = $('confirmRoot');
+  if (!root) return;
   root.innerHTML = `
     <div class="confirmModal">
       <div class="confirmBox">
@@ -988,7 +968,9 @@ function haloRemoval(imgData, alpha, strength) {
   return new ImageData(out, w, h);
 }
 
-/* QUEUE */
+/* ============================================================
+   QUEUE
+   ============================================================ */
 function saveActiveToQueue() {
   const item = queue.find(x => x.id === activeId); if (!item) return;
   item.original = original; item.work = work;
@@ -996,6 +978,15 @@ function saveActiveToQueue() {
   item.state = cloneState(state); item.undoStack = undoStack;
   item.fileBase = fileBase;
 }
+
+// ✅ State-only save — batch में work/original touch नहीं करता
+function saveActiveStateOnly() {
+  const item = queue.find(x => x.id === activeId); if (!item) return;
+  item.state = cloneState(state);
+  item.undoStack = undoStack;
+  item.fileBase = fileBase;
+}
+
 function loadActiveFromQueue() {
   const item = queue.find(x => x.id === activeId);
   if (!item) {
@@ -1017,12 +1008,13 @@ function updateQueueUI() {
   const strip = $('queueStrip');
   const wrap = $('queueWrap');
   const info = $('queueInfo');
+  if (!strip || !wrap || !info) return;
   strip.innerHTML = '';
   if (!queue.length) {
     wrap.classList.add('empty'); info.classList.add('hidden'); return;
   }
   wrap.classList.remove('empty'); info.classList.remove('hidden');
-  $('queueCount').textContent = queue.length;
+  const qc = $('queueCount'); if (qc) qc.textContent = queue.length;
   queue.forEach(item => {
     const el = document.createElement('div');
     el.className = 'qItem';
@@ -1072,20 +1064,24 @@ function clearCanvas() {
   ctx.fillStyle = '#6b6b7c'; ctx.textAlign = 'center';
   ctx.font = 'bold 18px Inter, sans-serif';
   ctx.fillText('📷 Images upload करें', c.width / 2, c.height / 2);
-  $('modeBadge').textContent = 'READY';
-  $('liveBadge').classList.add('hidden');
+  const b = $('modeBadge'); if (b) b.textContent = 'READY';
+  const lb = $('liveBadge'); if (lb) lb.classList.add('hidden');
 }
 
-/* UI */
+/* ============================================================
+   UI
+   ============================================================ */
 function resetCompare() {
   if (compareMode) {
     compareMode = false;
-    $('compareSlider').classList.remove('on');
-    $('compareBtn').innerHTML = '<span class="ico">◐</span><span>Compare</span>';
+    const cs = $('compareSlider'); if (cs) cs.classList.remove('on');
+    const cb = $('compareBtn'); if (cb) cb.innerHTML = '<span class="ico">◐</span><span>Compare</span>';
   }
   updateLiveBadge();
 }
-function updateLiveBadge() { $('liveBadge').classList.toggle('hidden', !hasResult || compareMode); }
+function updateLiveBadge() {
+  const lb = $('liveBadge'); if (lb) lb.classList.toggle('hidden', !hasResult || compareMode);
+}
 function switchTab(tab) {
   document.querySelectorAll('#featureNav button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
   document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.dataset.panel === tab));
@@ -1098,15 +1094,17 @@ function updateCanvasTouchAction() {
   if (!brushOn) hideBrushCursor();
 }
 function showNextSteps(isSignature) {
-  const el = $('nextSteps'); el.classList.remove('hidden');
-  $('goAI').onclick = () => switchTab('ai');
-  $('goSign').onclick = () => switchTab('sign');
+  const el = $('nextSteps'); if (!el) return;
+  el.classList.remove('hidden');
+  const ga = $('goAI'), gs = $('goSign');
+  if (ga) ga.onclick = () => switchTab('ai');
+  if (gs) gs.onclick = () => switchTab('sign');
   if (isSignature) {
-    $('goSign').classList.add('primary'); $('goSign').classList.remove('ghost');
-    $('goAI').classList.add('ghost'); $('goAI').classList.remove('primary');
+    gs?.classList.add('primary'); gs?.classList.remove('ghost');
+    ga?.classList.add('ghost'); ga?.classList.remove('primary');
   } else {
-    $('goAI').classList.add('primary'); $('goAI').classList.remove('ghost');
-    $('goSign').classList.add('ghost'); $('goSign').classList.remove('primary');
+    ga?.classList.add('primary'); ga?.classList.remove('ghost');
+    gs?.classList.add('ghost'); gs?.classList.remove('primary');
   }
 }
 document.querySelectorAll('#featureNav button').forEach(b => {
@@ -1139,14 +1137,14 @@ function render() {
   releaseCanvas(tmp);
   ctx.restore();
   ctx.filter = 'none';
-  $('canvasBox').style.transform = state.zoom !== 1 ? `scale(${state.zoom})` : '';
+  const cb = $('canvasBox'); if (cb) cb.style.transform = state.zoom !== 1 ? `scale(${state.zoom})` : '';
   updateSizeInfo(w, h);
   updateLiveBadge();
   if (compareMode) updateCompareBefore();
 }
 function updateCompareBefore() {
   if (!original) return;
-  const host = $('cBeforeHost');
+  const host = $('cBeforeHost'); if (!host) return;
   const swap = state.rotate % 180 !== 0;
   const w = swap ? original.height : original.width;
   const h = swap ? original.width : original.height;
@@ -1177,30 +1175,34 @@ function updateCompareBefore() {
   host.style.clipPath = `polygon(0 0, ${pct}% 0, ${pct}% 100%, 0 100%)`;
 }
 function updateSizeInfo(w, h) {
-  $('pxInfo').textContent = w + ' × ' + h;
-  $('mmInfo').textContent = (w / currentDpi * 25.4).toFixed(1) + ' × ' + (h / currentDpi * 25.4).toFixed(1) + ' mm';
-  $('kbInfo').textContent = work ? '~' + Math.round(work.width * work.height * 4 * 0.15 / 1024) + ' KB' : '—';
+  const pi = $('pxInfo'); if (pi) pi.textContent = w + ' × ' + h;
+  const mi = $('mmInfo'); if (mi) mi.textContent = (w / currentDpi * 25.4).toFixed(1) + ' × ' + (h / currentDpi * 25.4).toFixed(1) + ' mm';
+  const ki = $('kbInfo'); if (ki) ki.textContent = work ? '~' + Math.round(work.width * work.height * 4 * 0.15 / 1024) + ' KB' : '—';
 }
 function syncAllUI() {
-  $('bright').value = state.brightness;
-  $('contrast').value = state.contrast;
-  $('brightO').textContent = state.brightness.toFixed(2);
-  $('contrastO').textContent = state.contrast.toFixed(2);
-  $('brushSize').value = state.brushSize;
-  $('brushSizeO').textContent = state.brushSize;
-  $('brushHard').value = state.brushHard;
-  $('brushHardO').textContent = state.brushHard;
-  $('brushStrength').value = state.brushStrength;
-  $('brushStrengthO').textContent = state.brushStrength;
-  $('autoCrop').checked = state.autoCrop;
-  $('customColor').style.display = state.bg === 'custom' ? 'block' : 'none';
-  $('customColor').value = state.customColor;
+  const bind = (id, val) => { const el = $(id); if (el) el.value = val; };
+  const set = (id, val) => { const el = $(id); if (el) el.textContent = val; };
+  bind('bright', state.brightness);
+  bind('contrast', state.contrast);
+  set('brightO', state.brightness.toFixed(2));
+  set('contrastO', state.contrast.toFixed(2));
+  bind('brushSize', state.brushSize);
+  set('brushSizeO', state.brushSize);
+  bind('brushHard', state.brushHard);
+  set('brushHardO', state.brushHard);
+  bind('brushStrength', state.brushStrength);
+  set('brushStrengthO', state.brushStrength);
+  const ac = $('autoCrop'); if (ac) ac.checked = state.autoCrop;
+  const cc = $('customColor'); if (cc) {
+    cc.style.display = state.bg === 'custom' ? 'block' : 'none';
+    cc.value = state.customColor;
+  }
   document.querySelectorAll('.brushModes button').forEach(b => b.classList.remove('on'));
-  if (state.brushMode === 'keep') $('keepBrush').classList.add('on');
-  else if (state.brushMode === 'remove') $('removeBrush').classList.add('on');
-  else $('brushOff').classList.add('on');
+  if (state.brushMode === 'keep') $('keepBrush')?.classList.add('on');
+  else if (state.brushMode === 'remove') $('removeBrush')?.classList.add('on');
+  else $('brushOff')?.classList.add('on');
   document.querySelectorAll('#bgOpts button').forEach(b => b.classList.toggle('on', b.dataset.bg === state.bg));
-  $('fileNameInput').value = fileBase + '-no-bg';
+  const fi = $('fileNameInput'); if (fi) fi.value = fileBase + '-no-bg';
   updateCanvasTouchAction();
 }
 
@@ -1227,7 +1229,7 @@ async function addFiles(files) {
   if (queue.length === 1 && original) {
     const aspect = original.width / original.height;
     showNextSteps(aspect > 1.8 || (aspect > 1.4 && original.height < 400));
-  } else $('nextSteps').classList.add('hidden');
+  } else $('nextSteps')?.classList.add('hidden');
 }
 async function addSingleFileToQueue(file) {
   const im = await decodeImage(file);
@@ -1280,7 +1282,7 @@ function bindRange(id, out, cb) {
   const el = $(id); if (!el) return;
   el.oninput = () => {
     const v = +el.value;
-    $(out).textContent = (id === 'bright' || id === 'contrast') ? v.toFixed(2) : v;
+    const o = $(out); if (o) o.textContent = (id === 'bright' || id === 'contrast') ? v.toFixed(2) : v;
     if (cb) cb(v);
   };
 }
@@ -1294,9 +1296,8 @@ $('bright').oninput = () => { state.brightness = +$('bright').value; saveActiveT
 $('contrast').oninput = () => { state.contrast = +$('contrast').value; saveActiveToQueue(); syncAllUI(); render(); };
 
 /* ============================================================
-   ★ AI LOADING — SIMPLIFIED, NO CACHES API INTERFERENCE
+   AI LOADING
    ============================================================ */
-
 async function loadImgly() {
   if (engineCache.imgly) return engineCache.imgly;
   if (loadingEngine.imgly) return loadingEngine.imgly;
@@ -1415,15 +1416,16 @@ function smartResolution(imgW, imgH, choice, detail, speedMode) {
   return 2048;
 }
 
+// ✅ Defensive reads — कोई crash नहीं
 async function processAISingle(item, onStage) {
-  const choice = $('engine').value;
-  const detail = $('detailLevel').value;
-  const speedMode = $('speedMode').value;
+  const choice = $val('engine', 'fast');
+  const detail = $val('detailLevel', 'auto');
+  const speedMode = $val('speedMode', 'balanced');
 
-  const useMatting = speedMode !== 'ultra' && $('mattingMode').checked;
-  const useHair = speedMode !== 'ultra' && $('hairMode').checked;
-  const useHalo = speedMode !== 'ultra' && $('haloMode').checked;
-  const useDecon = speedMode !== 'ultra' && $('deconMode').checked;
+  const useMatting = speedMode !== 'ultra' && $checked('mattingMode', true);
+  const useHair = speedMode !== 'ultra' && $checked('hairMode', true);
+  const useHalo = speedMode !== 'ultra' && $checked('haloMode', true);
+  const useDecon = speedMode !== 'ultra' && $checked('deconMode', true);
 
   const aiDim = smartResolution(item.original.width, item.original.height, choice, detail, speedMode);
 
@@ -1435,13 +1437,12 @@ async function processAISingle(item, onStage) {
 
   let maskBlob;
   const effectiveChoice = speedMode === 'ultra' ? 'fast' : choice;
-  
+
   try {
     if (effectiveChoice === 'quality') {
-      try { 
-        maskBlob = await withRetry(() => runBiRefNet(blob), 1, 800); 
-      }
-      catch (e) {
+      try {
+        maskBlob = await withRetry(() => runBiRefNet(blob), 1, 800);
+      } catch (e) {
         console.warn('Slow failed, fallback Medium:', e);
         onStage && onStage('ai', 'Fallback to Medium…', 0.3);
         maskBlob = await withRetry(() => runISNet(blob, 'isnet_fp16', p => onStage && onStage('ai', 'Segmenting ' + Math.round(p * 100) + '%', 0.3 + p * 0.25)), 2, 1500);
@@ -1509,22 +1510,23 @@ function hideAIError() {
   if (box) box.classList.add('hidden');
 }
 
-$('aiRetryBtn').onclick = () => {
+$('aiRetryBtn')?.addEventListener('click', () => {
   hideAIError();
-  $('aiRemove').click();
-};
-$('aiClearCacheBtn').onclick = () => {
+  $('aiRemove')?.click();
+});
+$('aiClearCacheBtn')?.addEventListener('click', () => {
   showConfirm(
     'Clear Cache & Retry?',
-    'Cache clear होगा और page reload होगा। फिर से AI try करें।',
+    'Cache clear होगा और page reload होगा।',
     async () => {
       await clearAllCaches();
       setTimeout(() => location.reload(), 500);
     },
     'Clear & Reload'
   );
-};
+});
 
+/* AI — Current */
 $('aiRemove').onclick = async () => {
   if (!activeId) return toast('❌ पहले image upload करें');
   if (isProcessing) return;
@@ -1561,19 +1563,24 @@ $('aiRemove').onclick = async () => {
   }
 };
 
+/* AI — Batch (FIXED) */
 $('aiRemoveAll').onclick = async () => {
   if (!queue.length) return toast('❌ कोई image नहीं');
   if (isProcessing) return;
   const pending = queue.filter(x => x.status !== 'done');
   if (!pending.length) return toast('सब ready हैं!');
+
   isProcessing = true; batchMode = true;
   hideAIError();
   saveActiveToQueue();
+
   const origText = $('aiRemoveAll').innerHTML;
   $('aiRemoveAll').disabled = true;
-  $('aiRemoveAll').innerHTML = '<span class="spinner"></span> …';
-  const speedMode = $('speedMode').value;
+  $('aiRemoveAll').innerHTML = '<span class="spinner"></span> Processing…';
+
+  const speedMode = $val('speedMode', 'balanced');
   const speedName = speedMode === 'ultra' ? 'Ultra' : speedMode === 'quality' ? 'Max' : 'Balanced';
+
   let done = 0, failed = 0;
   const total = pending.length;
   const t0 = performance.now();
@@ -1581,11 +1588,15 @@ $('aiRemoveAll').onclick = async () => {
   for (const item of pending) {
     activeId = item.id;
     loadActiveFromQueue();
-    item.status = 'processing'; updateQueueUI();
+    item.status = 'processing';
+    updateQueueUI();
+
     const pctBase = (done / total) * 100;
     const pctRange = 100 / total;
     setStage(`📸 ${done + 1}/${total}`, item.name, pctBase);
+
     try {
+      // ✅ processAISingle सीधे item.work में result डालता है
       await processAISingle(item, (stage, detail, pct) => {
         const overall = pctBase + pct * pctRange;
         const elapsed = (performance.now() - t0) / 1000;
@@ -1596,9 +1607,10 @@ $('aiRemoveAll').onclick = async () => {
         }
         setStage(`${speedName} • ${done + 1}/${total}${eta}`, stageNameMap[stage] + ' — ' + detail, overall);
       });
-      saveActiveToQueue();
+      // ✅ BUG FIX: state-only save — work overwrite नहीं होगा
+      saveActiveStateOnly();
     } catch (e) {
-      console.error('Batch item failed:', item.name, e);
+      console.error('❌ Batch item failed:', item.name, e);
       item.status = 'error';
       failed++;
     }
@@ -1614,6 +1626,8 @@ $('aiRemoveAll').onclick = async () => {
   $('aiRemoveAll').innerHTML = origText;
   hideStage();
   if (activeId) { loadActiveFromQueue(); render(); }
+  updateQueueUI();
+
   const success = queue.filter(x => x.status === 'done').length;
   const secs = ((performance.now() - t0) / 1000).toFixed(1);
   status(`✅ ${success}/${queue.length} done in ${secs}s`, 100);
@@ -1621,12 +1635,13 @@ $('aiRemoveAll').onclick = async () => {
   switchTab('bg');
 };
 
+/* SIGNATURE */
 function sigCleanItem(item) {
   const w = item.original.width, h = item.original.height;
   const src = item.original.data;
   const out = new ImageData(new Uint8ClampedArray(src), w, h);
-  const th = +$('sigThresh').value;
-  const r = Math.round(+$('sigSmooth').value);
+  const th = +$val('sigThresh', 180);
+  const r = Math.round(+$val('sigSmooth', 1.2));
   const alpha = new Uint8ClampedArray(w * h);
   for (let i = 0, p = 0; i < w * h; i++, p += 4) {
     const lum = 0.299 * src[p] + 0.587 * src[p + 1] + 0.114 * src[p + 2];
@@ -1661,6 +1676,7 @@ function sigCleanItem(item) {
   item.maskBackup = captureAlpha(out);
   item.status = 'done';
 }
+
 $('sigAuto').onclick = () => {
   if (!activeId || isProcessing) return;
   isProcessing = true;
@@ -1680,6 +1696,7 @@ $('sigAuto').onclick = () => {
     finally { isProcessing = false; hideStage(); saveActiveToQueue(); updateQueueUI(); }
   }, 30);
 };
+
 $('sigAutoAll').onclick = () => {
   if (!queue.length || isProcessing) return;
   isProcessing = true;
@@ -1689,10 +1706,10 @@ $('sigAutoAll').onclick = () => {
   $('sigAutoAll').innerHTML = '<span class="spinner"></span> …';
   setStage('✍️ Processing all', 'Cleaning', 50);
   setTimeout(() => {
-    let done = 0;
+    let done = 0, failed = 0;
     for (const item of queue) {
       try { item.status = 'processing'; sigCleanItem(item); done++; }
-      catch (e) { console.error(e); item.status = 'error'; }
+      catch (e) { console.error(e); item.status = 'error'; failed++; }
     }
     isProcessing = false;
     $('sigAutoAll').disabled = false;
@@ -1700,17 +1717,18 @@ $('sigAutoAll').onclick = () => {
     hideStage();
     loadActiveFromQueue(); render(); updateQueueUI();
     status(`✅ ${done} cleaned`, 100);
-    toast(`🚀 ${done} cleaned!`);
+    toast(`🚀 ${done} cleaned${failed > 0 ? ' • ' + failed + ' failed' : ''}`);
     switchTab('bg');
   }, 50);
 };
 
+/* BG / ADJUST / ZOOM */
 document.querySelectorAll('#bgOpts button').forEach(b => {
   b.onclick = () => {
     resetCompare();
     state.bg = b.dataset.bg;
     document.querySelectorAll('#bgOpts button').forEach(x => x.classList.toggle('on', x === b));
-    $('customColor').style.display = state.bg === 'custom' ? 'block' : 'none';
+    const cc = $('customColor'); if (cc) cc.style.display = state.bg === 'custom' ? 'block' : 'none';
     saveActiveToQueue(); render();
   };
 });
@@ -1729,6 +1747,7 @@ $('zoomIn').onclick = () => { state.zoom = Math.min(4, state.zoom * 1.2); render
 $('zoomOut').onclick = () => { state.zoom = Math.max(0.5, state.zoom / 1.2); render(); };
 $('zoomReset').onclick = () => { state.zoom = 1; render(); };
 
+/* COMPARE */
 $('compareBtn').onclick = () => {
   if (!original || !work) return toast('❌ कोई image नहीं');
   compareMode = !compareMode;
@@ -1770,6 +1789,7 @@ $('compareSlider').addEventListener('pointerup', e => {
 });
 $('compareSlider').addEventListener('pointercancel', () => { sliderDrag = false; });
 
+/* UNDO / RESET */
 function doUndo() {
   if (!undoStack.length) return toast('कुछ undo नहीं है');
   const s = undoStack.pop();
@@ -1798,6 +1818,7 @@ $('resetBtn').onclick = doReset;
 $('resetBtnBottom').onclick = doReset;
 $('deleteCurrentBtn').onclick = () => { if (activeId) deleteItem(activeId); else toast('कोई image नहीं'); };
 
+/* EDGE */
 $('applyEdge').onclick = () => {
   if (!work) return;
   pushHistory();
@@ -1805,7 +1826,7 @@ $('applyEdge').onclick = () => {
   setTimeout(() => {
     const w = work.width, h = work.height, n = w * h;
     const s = work.data;
-    const fe = Math.round(+$('feather').value);
+    const fe = Math.round(+$val('feather', 1.5));
     const alpha = new Float32Array(n);
     for (let i = 0, p = 3; i < n; i++, p += 4) alpha[i] = s[p] / 255;
     let a = alpha;
@@ -1813,8 +1834,8 @@ $('applyEdge').onclick = () => {
       a = boxFilterFloat(alpha, w, h, fe);
       for (let i = 0; i < n; i++) a[i] = alpha[i] * 0.35 + a[i] * 0.65;
     }
-    const def = +$('def').value / 100;
-    const halo = +$('halo').value / 100;
+    const def = +$val('def', 60) / 100;
+    const halo = +$val('halo', 70) / 100;
     let out = new Uint8ClampedArray(s);
     for (let i = 0, p = 3; i < n; i++, p += 4) out[p] = Math.round(a[i] * 255);
     let img = new ImageData(out, w, h);
@@ -1831,6 +1852,7 @@ $('applyEdge').onclick = () => {
   }, 30);
 };
 
+/* BRUSH */
 let drawing = false, lastPt = null;
 const brushCursor = $('brushCursor');
 function updateBrushCursorDisplay(e) {
@@ -1847,7 +1869,7 @@ function updateBrushCursorDisplay(e) {
   brushCursor.style.left = (e.clientX - stageRect.left - displaySize / 2) + 'px';
   brushCursor.style.top = (e.clientY - stageRect.top - displaySize / 2) + 'px';
 }
-function hideBrushCursor() { brushCursor.style.display = 'none'; }
+function hideBrushCursor() { if (brushCursor) brushCursor.style.display = 'none'; }
 c.addEventListener('pointermove', e => {
   if (state.brushMode !== 'off' && hasResult) updateBrushCursorDisplay(e);
   if (!drawing) return;
@@ -1942,6 +1964,7 @@ $('brushSize').oninput = e => { state.brushSize = +e.target.value; syncAllUI(); 
 $('brushHard').oninput = e => { state.brushHard = +e.target.value; syncAllUI(); };
 $('brushStrength').oninput = e => { state.brushStrength = +e.target.value; syncAllUI(); };
 
+/* SIZE / DOWNLOAD */
 document.querySelectorAll('#presets button').forEach(b => {
   b.onclick = () => {
     document.querySelectorAll('#presets button').forEach(x => x.classList.remove('on'));
@@ -2121,6 +2144,7 @@ $('downloadAllBtn').onclick = async () => {
   toast(`⬇⬇ ${total} images`);
 };
 
+/* KEYBOARD */
 window.addEventListener('keydown', e => {
   const tag = (e.target.tagName || '').toLowerCase();
   if (tag === 'input' || tag === 'select' || tag === 'textarea') return;
@@ -2131,14 +2155,45 @@ window.addEventListener('keydown', e => {
   if (e.key === 'Delete' && activeId && !isProcessing) deleteItem(activeId);
 });
 
+/* ============================================================
+   INIT + SELF-CHECK
+   ============================================================ */
 clearCanvas(); syncAllUI(); updateQueueUI();
 
-// Preload AI engine in background (optional)
+// ✅ Self-check — सभी required elements present हैं या नहीं
+(function selfCheck() {
+  const REQUIRED = [
+    'c','status','progress','toast','confirmRoot',
+    'engine','speedMode','detailLevel','hairMode','mattingMode','haloMode','deconMode',
+    'aiRemove','aiRemoveAll','aiErrorBox','aiErrorText','aiRetryBtn','aiClearCacheBtn',
+    'cacheStatus','cacheIcon','cacheText','cacheHelp',
+    'queueStrip','queueWrap','queueInfo','queueCount',
+    'modeBadge','liveBadge','compareBtn','compareSlider','cBeforeHost','cDivider','cHandle',
+    'undoBtn','undoBtnBottom','resetBtn','resetBtnBottom','deleteCurrentBtn',
+    'zoomIn','zoomOut','zoomReset',
+    'brushSize','brushHard','brushStrength','brushCursor','brushHint',
+    'keepBrush','removeBrush','brushOff','brushReset',
+    'applyEdge','feather','def','halo',
+    'bgOpts','customColor','autoCrop','format','targetSize','dpi','quality',
+    'fileNameInput','downloadBtn','downloadBtn2','downloadAllBtn',
+    'fileMulti','drop','featureNav','nextSteps','goAI','goSign',
+    'bright','contrast','brightO','contrastO',
+    'sigThresh','sigSmooth','sigThreshO','sigSmoothO',
+    'rotL','rotR','flipH','flipV','resetAdj',
+    'presets','pxInfo','mmInfo','kbInfo'
+  ];
+  const missing = REQUIRED.filter(id => !document.getElementById(id));
+  if (missing.length) {
+    console.error('❌ MISSING ELEMENTS:', missing);
+    console.warn('Missing IDs:', missing.join(', '));
+  } else {
+    console.log('✅ Self-check OK — all', REQUIRED.length, 'elements present');
+  }
+})();
+
 setTimeout(() => {
   if (!engineCache.imgly && !loadingEngine.imgly) {
-    loadImgly().catch(() => {
-      // Silent fail on preload — real load happens on user click
-    });
+    loadImgly().catch(() => {});
   }
 }, 3000);
 </script>
