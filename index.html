@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5">
 <meta name="theme-color" content="#07070d">
-<meta name="description" content="Free private photo and signature background remover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <title>Photo & Signature BG Remover — Pro</title>
@@ -93,6 +92,7 @@ button:active{transform:scale(.97)}button:disabled{opacity:.5;cursor:not-allowed
 .notice{padding:9px 11px;border-radius:var(--r2);background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.22);font-size:10.5px;color:var(--muted);line-height:1.55;margin-top:10px}
 .notice.warn{border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.08)}
 .notice.green{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.06)}
+.notice.error{border-color:rgba(239,68,68,.45);background:rgba(239,68,68,.1);color:#fecaca}
 .nextSteps{margin-top:12px;padding:12px;background:linear-gradient(135deg,rgba(16,185,129,.10),rgba(34,211,238,.06));border:1px solid rgba(16,185,129,.35);border-radius:var(--r2);animation:fadeIn .3s var(--ease) both}
 .nextSteps .nsTitle{font-size:11.5px;color:var(--muted);margin-bottom:10px;text-align:center;font-weight:600}
 .row{display:flex;align-items:center;gap:10px;margin:8px 0}
@@ -111,16 +111,13 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
 .actions.single{grid-template-columns:1fr}
 .sizeInfo{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:10.5px;color:var(--muted);margin-top:8px;padding:7px 9px;background:rgba(10,10,20,.4);border-radius:10px;border:1px solid var(--stroke)}
-
-/* CACHE STATUS BOX */
-.cacheStatus{display:flex;align-items:center;gap:8px;padding:9px 11px;margin-bottom:10px;border-radius:10px;font-size:11px;line-height:1.4;transition:.3s}
+.cacheStatus{display:flex;align-items:center;gap:8px;padding:9px 11px;margin-bottom:10px;border-radius:10px;font-size:11px;line-height:1.4}
 .cacheStatus.ok{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.35)}
 .cacheStatus.warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.4)}
 .cacheStatus.new{background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.35)}
 .cacheStatus .cIcon{font-size:16px}
 .cacheStatus .cText{flex:1;color:#e2e8f0}
 .cacheStatus .cHelp{padding:2px 8px;min-height:24px;font-size:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:var(--muted);cursor:pointer}
-
 .stickyBar{position:fixed;left:0;right:0;bottom:0;z-index:50;padding:8px 10px;padding-bottom:calc(8px + var(--safe-bottom));background:linear-gradient(180deg,transparent,rgba(7,7,13,.95) 35%);backdrop-filter:blur(14px)}
 .stickyBar .inner{max-width:1400px;margin:auto;display:grid;grid-template-columns:auto auto 1fr;gap:6px}
 .stickyBar button{min-height:48px}
@@ -129,9 +126,9 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
 .footer{text-align:center;padding:14px 10px;color:var(--faint);font-size:10px;line-height:1.7}
 .hidden{display:none!important}
 .confirmModal{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s}
-.confirmBox{background:linear-gradient(160deg,#1a1a2e,#0f0f1a);border:1px solid var(--stroke);border-radius:var(--r);padding:20px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.confirmBox{background:linear-gradient(160deg,#1a1a2e,#0f0f1a);border:1px solid var(--stroke);border-radius:var(--r);padding:20px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.6)}
 .confirmBox h3{font-family:"Plus Jakarta Sans",sans-serif;font-size:16px;margin:0 0 8px}
-.confirmBox p{color:var(--muted);font-size:12.5px;margin:0 0 16px;line-height:1.55}
+.confirmBox p{color:var(--muted);font-size:12.5px;margin:0 0 16px;line-height:1.55;word-wrap:break-word}
 .confirmBox .actions{margin-top:0}
 @media(min-width:900px){
   .app{max-width:1360px;padding:16px;padding-bottom:90px}
@@ -232,11 +229,18 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
       <div class="panel" data-panel="ai">
         <h3>🤖 Background Remove</h3>
 
-        <!-- ★ CACHE STATUS DISPLAY -->
         <div class="cacheStatus new" id="cacheStatus">
           <span class="cIcon" id="cacheIcon">💾</span>
           <span class="cText" id="cacheText">Cache check हो रहा है…</span>
           <button class="cHelp" id="cacheHelp" title="Help">?</button>
+        </div>
+
+        <div id="aiErrorBox" class="notice error hidden" style="margin-bottom:10px">
+          <div id="aiErrorText" style="font-size:11px;word-wrap:break-word;margin-bottom:8px"></div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button id="aiRetryBtn" class="small primary" style="min-height:32px;padding:6px 12px;font-size:11px">🔄 Retry</button>
+            <button id="aiClearCacheBtn" class="small ghost" style="min-height:32px;padding:6px 12px;font-size:11px">🧹 Clear Cache & Retry</button>
+          </div>
         </div>
 
         <div class="row">
@@ -283,8 +287,7 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
           </button>
         </div>
         <div class="notice">
-          💡 <b>Ultra Fast</b> = 2-5 sec (cached) • <b>Balanced</b> = best result • <b>Max Quality</b> = full resolution<br>
-          <b>Auto</b> resolution image size के हिसाब से चुनता है।
+          💡 <b>Ultra Fast</b> = 2-5 sec (cached) • <b>Balanced</b> = best result • <b>Max Quality</b> = full resolution
         </div>
       </div>
 
@@ -337,7 +340,6 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
         <div class="row"><label>Halo removal strength</label><output id="haloO">70</output></div>
         <input id="halo" type="range" min="0" max="100" value="70">
         <div class="actions single"><button id="applyEdge">✨ Edge साफ़ करें</button></div>
-        <div class="notice">💡 Halo removal extra pass है जो bright/dark outlines हटाता है।</div>
       </div>
 
       <div class="panel" data-panel="brush">
@@ -354,7 +356,6 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
         <input id="brushHard" type="range" min="0" max="100" value="60">
         <div class="row"><label>Brush strength</label><output id="brushStrengthO">100</output></div>
         <input id="brushStrength" type="range" min="10" max="100" value="100">
-        <div class="notice">🟢 Keep • 🔴 Remove • ✋ Pan. Canvas पर circle दिखेगा।</div>
       </div>
 
       <div class="panel" data-panel="size">
@@ -436,59 +437,77 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
 
 <script type="module">
 /* ============================================================
-   ★ PERSISTENT CACHE SYSTEM
-   Service Worker + Persistent Storage + Status Display
+   ★ SAFE CACHE SYSTEM
+   Only caches small JS modules (< 5MB). 
+   Skips large model weight files (browser handles via HTTP cache).
    ============================================================ */
 
-const CACHE_NAME = 'bg-remover-model-cache-v1';
+const CACHE_NAME = 'bg-remover-js-cache-v2';
+const MAX_CACHE_BYTES = 5 * 1024 * 1024; // 5 MB per file max
+const CACHE_HOSTS = ['esm.sh', 'cdn.jsdelivr.net']; // Only JS module CDNs
+
+// Detected features
+const CACHE_SUPPORT = typeof caches !== 'undefined';
 
 async function requestPersistentStorage() {
   if (!navigator.storage || !navigator.storage.persist) return false;
   try {
-    const already = await navigator.storage.persisted();
-    if (already) return true;
-    const granted = await navigator.storage.persist();
-    return granted;
+    if (await navigator.storage.persisted()) return true;
+    return await navigator.storage.persist();
   } catch (_) { return false; }
 }
 
 async function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return false;
+  // Skip SW in unsafe contexts
+  if (location.protocol === 'file:') return false;
+  if (!location.protocol.startsWith('http')) return false;
+
   try {
     const swCode = `
       const CACHE_NAME = '${CACHE_NAME}';
-      const CACHE_HOSTS = [
-        'cdn.jsdelivr.net',
-        'esm.sh',
-        'huggingface.co',
-        'cdn-lfs.huggingface.co',
-        'staticimgly.com',
-        'cdn.imgly.com'
-      ];
+      const MAX_BYTES = ${MAX_CACHE_BYTES};
+      const HOSTS = ${JSON.stringify(CACHE_HOSTS)};
 
       self.addEventListener('install', e => self.skipWaiting());
-      self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+      self.addEventListener('activate', e => e.waitUntil(
+        caches.keys().then(keys => Promise.all(
+          keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+        )).then(() => self.clients.claim())
+      ));
 
       self.addEventListener('fetch', event => {
         const req = event.request;
         if (req.method !== 'GET') return;
-        const url = new URL(req.url);
-        const shouldCache = CACHE_HOSTS.some(h => url.hostname.includes(h));
-        if (!shouldCache) return;
+        let url;
+        try { url = new URL(req.url); } catch (_) { return; }
+        if (!HOSTS.some(h => url.hostname.includes(h))) return;
 
         event.respondWith((async () => {
-          const cache = await caches.open(CACHE_NAME);
-          const cached = await cache.match(req);
-          if (cached) return cached;
           try {
+            const cache = await caches.open(CACHE_NAME);
+            const cached = await cache.match(req);
+            if (cached) return cached;
+            
             const response = await fetch(req);
-            if (response && response.status === 200) {
-              cache.put(req, response.clone()).catch(()=>{});
-            }
+            if (!response || response.status !== 200) return response;
+            
+            // Only cache small responses (avoid huge model files)
+            const len = response.headers.get('content-length');
+            if (len && parseInt(len, 10) > MAX_BYTES) return response;
+
+            // Clone before we can measure
+            const clone = response.clone();
+            // Cache in background (don't block)
+            cache.put(req, clone).catch(() => {});
             return response;
           } catch (err) {
-            const fallback = await cache.match(req, { ignoreSearch: true });
-            if (fallback) return fallback;
+            // Network error — try cache fallback
+            try {
+              const cache = await caches.open(CACHE_NAME);
+              const fallback = await cache.match(req, { ignoreSearch: true });
+              if (fallback) return fallback;
+            } catch (_) {}
             throw err;
           }
         })());
@@ -496,10 +515,11 @@ async function registerServiceWorker() {
     `;
     const blob = new Blob([swCode], { type: 'application/javascript' });
     const swUrl = URL.createObjectURL(blob);
-    await navigator.serviceWorker.register(swUrl, { scope: './' });
+    const reg = await navigator.serviceWorker.register(swUrl, { scope: './' });
+    console.log('✅ Service Worker registered:', reg.scope);
     return true;
   } catch (e) {
-    console.warn('SW fail:', e);
+    console.warn('⚠️ Service Worker registration failed (non-fatal):', e);
     return false;
   }
 }
@@ -510,9 +530,7 @@ async function updateCacheStatus() {
   const text = document.getElementById('cacheText');
   if (!box || !icon || !text) return;
 
-  let persistent = false;
-  let usageMB = 0;
-
+  let persistent = false, usageMB = 0;
   try {
     if (navigator.storage) {
       if (navigator.storage.persisted) persistent = await navigator.storage.persisted();
@@ -525,9 +543,12 @@ async function updateCacheStatus() {
 
   box.classList.remove('ok','warn','new');
 
+  // Detect incognito
+  const isPrivate = !persistent && usageMB < 1 && !('serviceWorker' in navigator);
+
   if (persistent && usageMB > 5) {
     icon.textContent = '✅';
-    text.textContent = `AI model saved (${usageMB} MB) — अगली बार instant load`;
+    text.textContent = `Cache saved (${usageMB} MB) — दूसरी बार instant load`;
     box.classList.add('ok');
   } else if (usageMB > 5) {
     icon.textContent = '⚠️';
@@ -540,27 +561,66 @@ async function updateCacheStatus() {
   }
 }
 
-document.getElementById('cacheHelp')?.addEventListener('click', () => {
-  alert(
-    '💾 Cache कैसे काम करता है:\n\n' +
+/* Clear all caches and unregister SW */
+async function clearAllCaches() {
+  try {
+    if (CACHE_SUPPORT) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+      console.log('✅ Caches cleared:', keys);
+    }
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r => r.unregister()));
+      console.log('✅ SW unregistered');
+    }
+    return true;
+  } catch (e) {
+    console.warn('Cache clear error:', e);
+    return false;
+  }
+}
+
+document.getElementById('cacheHelp')?.addEventListener('click', async () => {
+  const usage = await (async () => {
+    try {
+      if (!navigator.storage?.estimate) return '?';
+      const est = await navigator.storage.estimate();
+      return Math.round((est.usage || 0) / (1024 * 1024)) + ' MB';
+    } catch (_) { return '?'; }
+  })();
+
+  const doClear = confirm(
+    '💾 Cache Info:\n\n' +
+    `अभी use: ${usage}\n\n` +
+    'Cache कैसे काम करता है:\n' +
     '• पहली बार: model download (40-100 MB)\n' +
-    '• दूसरी बार से: instant load (cache से, 0 MB)\n' +
-    '• कई बार खोलने पर भी दोबारा download नहीं होगा\n\n' +
+    '• दूसरी बार से: instant load\n' +
+    '• हर बार download नहीं होगा\n\n' +
     '⚠️ अगर हर बार download हो रहा है:\n' +
-    '1. Incognito/Private mode बंद करें\n' +
-    '2. Browser में "Clear on close" बंद करें\n' +
-    '3. Storage permission दें (popup आएगा)\n' +
-    '4. कम से कम 500 MB free storage रखें\n' +
-    '5. Brave browser में Shields बंद करें'
+    '• Incognito mode बंद करें\n' +
+    '• Browser में "Clear on close" बंद करें\n' +
+    '• Storage permission दें\n\n' +
+    'क्या cache अभी clear करें? (अगर AI fail हो रहा है तो हाँ दबाएँ)'
   );
+
+  if (doClear) {
+    await clearAllCaches();
+    toast('🧹 Cache cleared — page reload होगा');
+    setTimeout(() => location.reload(), 800);
+  }
 });
 
-/* Initialize cache system on load */
+// Init
 (async () => {
-  await requestPersistentStorage();
-  await registerServiceWorker();
-  await updateCacheStatus();
-  setInterval(updateCacheStatus, 30000);
+  try {
+    await requestPersistentStorage();
+    await registerServiceWorker();
+    await updateCacheStatus();
+    setInterval(updateCacheStatus, 30000);
+  } catch (e) {
+    console.warn('Init non-fatal:', e);
+  }
 })();
 
 /* ============================================================
@@ -579,6 +639,7 @@ let compareMode = false, compareSliderPos = 0.5;
 let isProcessing = false, batchMode = false;
 
 const engineCache = { imgly: null, tf: null, birefnet: null };
+const loadingEngine = { imgly: null, tf: null };
 
 const state = {
   bg: 'checker', customColor: '#f5f5f5',
@@ -607,7 +668,7 @@ async function withRetry(fn, maxRetries = 2, delayMs = 1500) {
     catch (e) {
       lastErr = e;
       if (attempt < maxRetries) {
-        console.warn(`Retry ${attempt + 1}…`, e);
+        console.warn(`Retry ${attempt + 1}/${maxRetries}…`, e);
         await new Promise(r => setTimeout(r, delayMs));
         delayMs *= 1.5;
       }
@@ -692,7 +753,7 @@ function makeThumb(imgData, maxDim = 100) {
     return url;
   } catch (_) { return ''; }
 }
-function showConfirm(title, message, onConfirm) {
+function showConfirm(title, message, onConfirm, confirmText = 'Delete') {
   const root = $('confirmRoot');
   root.innerHTML = `
     <div class="confirmModal">
@@ -700,7 +761,7 @@ function showConfirm(title, message, onConfirm) {
         <h3>${title}</h3><p>${message}</p>
         <div class="actions">
           <button id="cNo" class="ghost">Cancel</button>
-          <button id="cYes" class="danger">Delete</button>
+          <button id="cYes" class="danger">${confirmText}</button>
         </div>
       </div>
     </div>`;
@@ -1232,23 +1293,48 @@ bindRange('quality', 'qualO', v => currentQuality = v / 100);
 $('bright').oninput = () => { state.brightness = +$('bright').value; saveActiveToQueue(); syncAllUI(); render(); };
 $('contrast').oninput = () => { state.contrast = +$('contrast').value; saveActiveToQueue(); syncAllUI(); render(); };
 
-/* AI - CACHE AWARE */
+/* ============================================================
+   ★ AI LOADING — SIMPLIFIED, NO CACHES API INTERFERENCE
+   ============================================================ */
+
 async function loadImgly() {
   if (engineCache.imgly) return engineCache.imgly;
-  const cached = await caches?.has?.(CACHE_NAME) || false;
-  status(cached ? 'AI engine cache से…' : 'AI engine download…', 15);
-  engineCache.imgly = await withRetry(() => import('https://esm.sh/@imgly/background-removal@1.7.0'));
-  updateCacheStatus();
-  return engineCache.imgly;
+  if (loadingEngine.imgly) return loadingEngine.imgly;
+  loadingEngine.imgly = (async () => {
+    try {
+      status('AI engine load हो रहा है…', 15);
+      const mod = await withRetry(() => import('https://esm.sh/@imgly/background-removal@1.7.0'), 2, 2000);
+      engineCache.imgly = mod;
+      updateCacheStatus();
+      return mod;
+    } catch (e) {
+      console.error('❌ imgly load fail:', e);
+      loadingEngine.imgly = null;
+      throw new Error('AI library load नहीं हो पाई — internet check करें');
+    }
+  })();
+  return loadingEngine.imgly;
 }
+
 async function loadTF() {
   if (engineCache.tf) return engineCache.tf;
-  const cached = await caches?.has?.(CACHE_NAME) || false;
-  status(cached ? 'AI engine cache से…' : 'AI engine download…', 15);
-  engineCache.tf = await withRetry(() => import('https://esm.sh/@huggingface/transformers@3.8.1'));
-  updateCacheStatus();
-  return engineCache.tf;
+  if (loadingEngine.tf) return loadingEngine.tf;
+  loadingEngine.tf = (async () => {
+    try {
+      status('AI engine load हो रहा है…', 15);
+      const mod = await withRetry(() => import('https://esm.sh/@huggingface/transformers@3.8.1'), 2, 2000);
+      engineCache.tf = mod;
+      updateCacheStatus();
+      return mod;
+    } catch (e) {
+      console.error('❌ transformers load fail:', e);
+      loadingEngine.tf = null;
+      throw new Error('AI library load नहीं हो पाई — internet check करें');
+    }
+  })();
+  return loadingEngine.tf;
 }
+
 async function buildAIInput(imgData, maxDim) {
   const scale = Math.min(1, maxDim / Math.max(imgData.width, imgData.height));
   const srcCanvas = document.createElement('canvas');
@@ -1270,6 +1356,7 @@ async function buildAIInput(imgData, maxDim) {
   releaseCanvas(srcCanvas); releaseCanvas(small);
   return blob;
 }
+
 async function getAlphaAtRes(maskBlob, w, h) {
   const maskIm = await loadImage(maskBlob);
   const scaled = document.createElement('canvas');
@@ -1284,6 +1371,7 @@ async function getAlphaAtRes(maskBlob, w, h) {
   for (let i = 0, p = 3; i < w * h; i++, p += 4) alpha[i] = md[p] / 255;
   return alpha;
 }
+
 async function runISNet(blob, model, onProgress) {
   const m = await loadImgly();
   return m.removeBackground(blob, {
@@ -1294,21 +1382,24 @@ async function runISNet(blob, model, onProgress) {
     progress: (name, a, b) => { if (b && onProgress) onProgress(a / b); }
   });
 }
+
 async function runBiRefNet(blob) {
   const { pipeline } = await loadTF();
   if (!engineCache.birefnet) {
     try { engineCache.birefnet = await pipeline('image-segmentation', 'studioludens/birefnet-lite-512', { device: 'webgpu', dtype: 'fp16' }); }
-    catch (e) { engineCache.birefnet = await pipeline('image-segmentation', 'studioludens/birefnet-lite-512', { device: 'wasm', dtype: 'fp32' }); }
+    catch (e) {
+      console.warn('WebGPU fail, WASM try:', e);
+      engineCache.birefnet = await pipeline('image-segmentation', 'studioludens/birefnet-lite-512', { device: 'wasm', dtype: 'fp32' });
+    }
   }
   const result = await engineCache.birefnet(blob);
-  if (!result?.length || !result[0]?.mask) throw new Error('Mask fail');
+  if (!result?.length || !result[0]?.mask) throw new Error('AI ne mask नहीं दिया');
   const maskCanvas = await result[0].mask.toCanvas();
   const blobOut = await new Promise(r => maskCanvas.toBlob(b => r(b), 'image/png'));
   releaseCanvas(maskCanvas);
   return blobOut;
 }
 
-/* SMART RESOLUTION */
 function smartResolution(imgW, imgH, choice, detail, speedMode) {
   const maxDim = Math.max(imgW, imgH);
   if (speedMode === 'ultra') return Math.min(512, maxDim);
@@ -1329,7 +1420,6 @@ async function processAISingle(item, onStage) {
   const detail = $('detailLevel').value;
   const speedMode = $('speedMode').value;
 
-  // Ultra Fast: skip all refinements
   const useMatting = speedMode !== 'ultra' && $('mattingMode').checked;
   const useHair = speedMode !== 'ultra' && $('hairMode').checked;
   const useHalo = speedMode !== 'ultra' && $('haloMode').checked;
@@ -1341,19 +1431,28 @@ async function processAISingle(item, onStage) {
 
   const blob = await buildAIInput(item.original, aiDim);
 
-  onStage && onStage('ai', speedMode === 'ultra' ? 'Ultra Fast processing' : 'AI segmentation running', 0.15);
+  onStage && onStage('ai', 'AI segmentation running…', 0.15);
 
   let maskBlob;
   const effectiveChoice = speedMode === 'ultra' ? 'fast' : choice;
-  if (effectiveChoice === 'quality') {
-    try { maskBlob = await withRetry(() => runBiRefNet(blob), 1, 800); }
-    catch (e) {
-      console.warn('Slow failed:', e);
-      maskBlob = await withRetry(() => runISNet(blob, 'isnet_fp16', p => onStage && onStage('ai', 'Fallback', 0.15 + p * 0.35)), 2, 1500);
+  
+  try {
+    if (effectiveChoice === 'quality') {
+      try { 
+        maskBlob = await withRetry(() => runBiRefNet(blob), 1, 800); 
+      }
+      catch (e) {
+        console.warn('Slow failed, fallback Medium:', e);
+        onStage && onStage('ai', 'Fallback to Medium…', 0.3);
+        maskBlob = await withRetry(() => runISNet(blob, 'isnet_fp16', p => onStage && onStage('ai', 'Segmenting ' + Math.round(p * 100) + '%', 0.3 + p * 0.25)), 2, 1500);
+      }
+    } else {
+      const model = effectiveChoice === 'isnet' ? 'isnet_fp16' : 'isnet_quint8';
+      maskBlob = await withRetry(() => runISNet(blob, model, p => onStage && onStage('ai', 'Segmenting ' + Math.round(p * 100) + '%', 0.15 + p * 0.35)), 2, 1500);
     }
-  } else {
-    const model = effectiveChoice === 'isnet' ? 'isnet_fp16' : 'isnet_quint8';
-    maskBlob = await withRetry(() => runISNet(blob, model, p => onStage && onStage('ai', 'Segmentation ' + Math.round(p * 100) + '%', 0.15 + p * 0.35)), 2, 1500);
+  } catch (e) {
+    console.error('❌ Segmentation failed:', e);
+    throw new Error('AI segmentation fail: ' + (e.message || 'unknown'));
   }
 
   const w = item.original.width, h = item.original.height;
@@ -1364,14 +1463,12 @@ async function processAISingle(item, onStage) {
     const edgeBand = detectEdgeBand(alpha, w, h, 6);
     const refined = guidedFilterMatting(item.original, alpha, 8, 1e-4);
     for (let i = 0; i < alpha.length; i++) if (edgeBand[i]) alpha[i] = refined[i];
-    onStage && onStage('matting', 'Alpha matting applied', 0.7);
   }
 
   if (useHair) {
     onStage && onStage('hair', 'Recovering hair/fur', 0.75);
     const band = detectEdgeBand(alpha, w, h, 4);
     alpha = hairFurRecovery(item.original, alpha, band, 0.65);
-    onStage && onStage('hair', 'Hair refined', 0.82);
   }
 
   let result = new ImageData(new Uint8ClampedArray(item.original.data), w, h);
@@ -1386,8 +1483,6 @@ async function processAISingle(item, onStage) {
     result = haloRemoval(result, alpha, 0.75);
   }
 
-  onStage && onStage('final', 'Finalizing', 0.98);
-
   item.work = result;
   item.hasResult = true;
   item.maskBackup = captureAlpha(result);
@@ -1401,9 +1496,39 @@ const stageNameMap = {
   final: '🎯 Finalizing', done: '✅ Complete'
 };
 
+function showAIError(msg) {
+  const box = $('aiErrorBox');
+  const text = $('aiErrorText');
+  if (box && text) {
+    text.textContent = '❌ ' + msg;
+    box.classList.remove('hidden');
+  }
+}
+function hideAIError() {
+  const box = $('aiErrorBox');
+  if (box) box.classList.add('hidden');
+}
+
+$('aiRetryBtn').onclick = () => {
+  hideAIError();
+  $('aiRemove').click();
+};
+$('aiClearCacheBtn').onclick = () => {
+  showConfirm(
+    'Clear Cache & Retry?',
+    'Cache clear होगा और page reload होगा। फिर से AI try करें।',
+    async () => {
+      await clearAllCaches();
+      setTimeout(() => location.reload(), 500);
+    },
+    'Clear & Reload'
+  );
+};
+
 $('aiRemove').onclick = async () => {
   if (!activeId) return toast('❌ पहले image upload करें');
   if (isProcessing) return;
+  hideAIError();
   isProcessing = true;
   saveActiveToQueue();
   const item = queue.find(x => x.id === activeId);
@@ -1422,10 +1547,12 @@ $('aiRemove').onclick = async () => {
     toast('✅ Done in ' + secs + 's');
     switchTab('bg');
   } catch (e) {
-    console.error(e);
+    console.error('❌ AI FULL ERROR:', e);
     item.status = 'error'; undoStack.pop();
-    status('AI error: ' + (e.message || e), 0);
-    toast('❌ AI failed');
+    const msg = (e.message || 'AI failed').substring(0, 120);
+    status('❌ ' + msg, 0);
+    toast('❌ ' + msg.substring(0, 60), 3500);
+    showAIError(msg);
   } finally {
     isProcessing = false;
     $('aiRemove').disabled = false;
@@ -1440,13 +1567,14 @@ $('aiRemoveAll').onclick = async () => {
   const pending = queue.filter(x => x.status !== 'done');
   if (!pending.length) return toast('सब ready हैं!');
   isProcessing = true; batchMode = true;
+  hideAIError();
   saveActiveToQueue();
   const origText = $('aiRemoveAll').innerHTML;
   $('aiRemoveAll').disabled = true;
   $('aiRemoveAll').innerHTML = '<span class="spinner"></span> …';
   const speedMode = $('speedMode').value;
   const speedName = speedMode === 'ultra' ? 'Ultra' : speedMode === 'quality' ? 'Max' : 'Balanced';
-  let done = 0;
+  let done = 0, failed = 0;
   const total = pending.length;
   const t0 = performance.now();
 
@@ -1464,14 +1592,15 @@ $('aiRemoveAll').onclick = async () => {
         let eta = '';
         if (overall > 5 && overall < 98) {
           const totalEst = elapsed / (overall / 100);
-          eta = ` (~${Math.ceil(Math.max(0, totalEst - elapsed))}s left)`;
+          eta = ` (~${Math.ceil(Math.max(0, totalEst - elapsed))}s)`;
         }
         setStage(`${speedName} • ${done + 1}/${total}${eta}`, stageNameMap[stage] + ' — ' + detail, overall);
       });
       saveActiveToQueue();
     } catch (e) {
-      console.error('Failed:', item.name, e);
+      console.error('Batch item failed:', item.name, e);
       item.status = 'error';
+      failed++;
     }
     done++;
     updateQueueUI();
@@ -1488,7 +1617,7 @@ $('aiRemoveAll').onclick = async () => {
   const success = queue.filter(x => x.status === 'done').length;
   const secs = ((performance.now() - t0) / 1000).toFixed(1);
   status(`✅ ${success}/${queue.length} done in ${secs}s`, 100);
-  toast(`🚀 ${success} done in ${secs}s`);
+  toast(`🚀 ${success} done${failed > 0 ? ' • ' + failed + ' failed' : ''}`);
   switchTab('bg');
 };
 
@@ -2003,13 +2132,15 @@ window.addEventListener('keydown', e => {
 });
 
 clearCanvas(); syncAllUI(); updateQueueUI();
+
+// Preload AI engine in background (optional)
 setTimeout(() => {
-  if (!engineCache.imgly) {
-    import('https://esm.sh/@imgly/background-removal@1.7.0')
-      .then(m => { engineCache.imgly = m; updateCacheStatus(); })
-      .catch(() => {});
+  if (!engineCache.imgly && !loadingEngine.imgly) {
+    loadImgly().catch(() => {
+      // Silent fail on preload — real load happens on user click
+    });
   }
-}, 1500);
+}, 3000);
 </script>
 </body>
 </html>
