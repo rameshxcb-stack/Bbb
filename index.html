@@ -4,8 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5">
 <meta name="theme-color" content="#07070d">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
 <title>Photo & Signature BG Remover — Pro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,6 +19,7 @@ button:active{transform:scale(.97)}button:disabled{opacity:.5;cursor:not-allowed
 .primary{background:linear-gradient(135deg,#7c3aed,#8b5cf6 50%,#22d3ee 140%);border-color:rgba(167,139,250,.55);box-shadow:0 10px 30px -8px rgba(139,92,246,.55)}
 .ghost{background:rgba(30,30,48,.4)}.small{padding:8px 10px;font-size:12px;min-height:38px}
 .danger{background:linear-gradient(135deg,#e11d48,#f43f5e);border-color:rgba(244,63,94,.5)}
+.warnBtn{background:linear-gradient(135deg,#d97706,#f59e0b);border-color:rgba(245,158,11,.5)}
 .app{max-width:1400px;margin:auto;padding:8px;padding-top:calc(8px + var(--safe-top));padding-bottom:calc(80px + var(--safe-bottom))}
 .hero{text-align:center;padding:10px 10px 6px;margin-bottom:6px}
 .hero .logo{width:42px;height:42px;border-radius:12px;margin:0 auto 6px;background:linear-gradient(135deg,#8b5cf6,#22d3ee);display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 24px rgba(139,92,246,.5)}
@@ -59,6 +58,8 @@ button:active{transform:scale(.97)}button:disabled{opacity:.5;cursor:not-allowed
 @keyframes spin{to{transform:rotate(360deg)}}
 .batchProgressBar{width:min(280px,80vw);height:6px;background:rgba(148,163,184,.15);border-radius:99px;overflow:hidden}
 .batchProgressBar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8b5cf6,#22d3ee);transition:width .3s}
+.cancelBtn{margin-top:14px;background:rgba(220,38,38,.15);border:1px solid rgba(239,68,68,.5);color:#fecaca;padding:8px 20px;font-size:12.5px;min-height:40px;font-weight:600;border-radius:10px}
+.cancelBtn:hover{background:rgba(220,38,38,.3);border-color:rgba(239,68,68,.8)}
 .brushHint{position:absolute;right:8px;bottom:8px;z-index:6;padding:5px 9px;border-radius:9px;background:rgba(10,10,20,.85);border:1px solid var(--stroke);font-size:10px;color:var(--muted);pointer-events:none}
 .canvasActions{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:6px}
 .canvasActions button{padding:7px 4px;font-size:10.5px;min-height:40px;flex-direction:column;gap:2px}
@@ -130,6 +131,7 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
 .confirmBox h3{font-family:"Plus Jakarta Sans",sans-serif;font-size:16px;margin:0 0 8px}
 .confirmBox p{color:var(--muted);font-size:12.5px;margin:0 0 16px;line-height:1.55;word-wrap:break-word}
 .confirmBox .actions{margin-top:0}
+.kbd{display:inline-block;padding:2px 7px;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.4);border-radius:6px;font-family:monospace;font-size:10.5px;color:#c4b5fd;margin:0 2px}
 @media(min-width:900px){
   .app{max-width:1360px;padding:16px;padding-bottom:90px}
   .hero{padding:16px 12px 12px}.hero h1{font-size:24px}
@@ -181,13 +183,14 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
         <div class="stageName" id="stageLoaderName">Preparing…</div>
         <div class="stageDetail" id="stageLoaderText">Please wait</div>
         <div class="batchProgressBar hidden" id="batchProgressBar"><i id="batchProgressFill"></i></div>
+        <button class="cancelBtn hidden" id="cancelBtn">✕ Cancel</button>
       </div>
       <div class="brushHint hidden" id="brushHint">🖌️ Brush active</div>
     </div>
     <div class="canvasActions">
       <button id="compareBtn" class="ghost"><span class="ico">◐</span><span>Compare</span></button>
       <button id="undoBtn" class="ghost"><span class="ico">↶</span><span>Undo</span></button>
-      <button id="resetBtn" class="ghost"><span class="ico">↻</span><span>Reset</span></button>
+      <button id="redoBtn" class="ghost"><span class="ico">↷</span><span>Redo</span></button>
       <button id="deleteCurrentBtn" class="ghost"><span class="ico">🗑</span><span>Delete</span></button>
     </div>
   </div>
@@ -224,27 +227,26 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
           </div>
         </div>
         <div class="notice green">🔒 आपकी images server पर upload नहीं होतीं।</div>
+        <div class="notice">
+          ⌨️ <b>Keyboard:</b> <span class="kbd">Ctrl+Z</span> Undo • <span class="kbd">Ctrl+Y</span> Redo • <span class="kbd">Esc</span> Close compare • <span class="kbd">Del</span> Delete current
+        </div>
       </div>
 
       <div class="panel" data-panel="ai">
         <h3>🤖 Background Remove</h3>
-
         <div class="cacheStatus new" id="cacheStatus">
           <span class="cIcon" id="cacheIcon">💾</span>
           <span class="cText" id="cacheText">Cache check हो रहा है…</span>
           <button class="cHelp" id="cacheHelp" title="Help">?</button>
         </div>
-
-        <!-- ✅ ENGINE DROPDOWN — वापस जोड़ा गया -->
         <div class="row">
           <label>🎯 AI Engine</label>
           <select id="engine" style="flex:1.4;width:auto">
             <option value="fast" selected>⚡ Fast — सबसे तेज़</option>
             <option value="isnet">🧠 Medium — बेहतर quality</option>
-            <option value="quality">🏆 Slow — Best quality</option>
+            <option value="quality">🏆 Slow — Highest available quality</option>
           </select>
         </div>
-
         <div id="aiErrorBox" class="notice error hidden" style="margin-bottom:10px">
           <div id="aiErrorText" style="font-size:11px;word-wrap:break-word;margin-bottom:8px"></div>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -252,7 +254,6 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
             <button id="aiClearCacheBtn" class="small ghost" style="min-height:32px;padding:6px 12px;font-size:11px">🧹 Clear Cache</button>
           </div>
         </div>
-
         <div class="row">
           <label>⚡ Speed mode</label>
           <select id="speedMode" style="flex:1.4;width:auto">
@@ -261,7 +262,6 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
             <option value="quality">🏆 Max Quality (slow)</option>
           </select>
         </div>
-
         <div class="row" style="margin-top:10px">
           <label>Resolution</label>
           <select id="detailLevel" style="flex:1.4;width:auto">
@@ -272,7 +272,6 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
             <option value="full">Full resolution (slowest)</option>
           </select>
         </div>
-
         <div class="row">
           <label>Hair / Fur edge recovery</label>
           <input id="hairMode" type="checkbox" checked style="width:22px;height:22px;min-height:22px;accent-color:#8b5cf6">
@@ -289,7 +288,6 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
           <label>Color decontamination</label>
           <input id="deconMode" type="checkbox" checked style="width:22px;height:22px;min-height:22px;accent-color:#8b5cf6">
         </div>
-
         <div class="actions single"><button id="aiRemove" class="primary">✨ Background हटाएँ (current)</button></div>
         <div class="actions single">
           <button id="aiRemoveAll" class="primary" style="background:linear-gradient(135deg,#059669,#10b981,#34d399);border-color:rgba(16,185,129,.55)">
@@ -411,7 +409,6 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
             <option value="300" selected>300</option><option value="600">600</option>
           </select>
         </div>
-        <div class="notice" style="font-size:10px">ℹ️ DPI सिर्फ print size hint है — pixel quality नहीं बदलती।</div>
         <div class="row"><label>Filename</label>
           <input id="fileNameInput" type="text" value="image" style="flex:1.6">
         </div>
@@ -423,7 +420,7 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
         <div class="actions single"><button id="downloadBtn2" class="primary" style="padding:14px;font-size:14px">⬇ Download (current)</button></div>
         <div class="actions single">
           <button id="downloadAllBtn" class="primary" style="background:linear-gradient(135deg,#059669,#10b981,#34d399);border-color:rgba(16,185,129,.55);padding:14px;font-size:14px">
-            ⬇⬇ सभी Images (Batch)
+            📦 सभी Images (ZIP)
           </button>
         </div>
       </div>
@@ -437,7 +434,7 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
 <div class="stickyBar">
   <div class="inner">
     <button id="undoBtnBottom" class="ghost">↶</button>
-    <button id="resetBtnBottom" class="ghost">↻</button>
+    <button id="redoBtnBottom" class="ghost">↷</button>
     <button id="downloadBtn" class="primary">⬇ Download</button>
   </div>
 </div>
@@ -447,167 +444,311 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
 
 <script type="module">
 /* ============================================================
-   SAFE CACHE SYSTEM
-   ============================================================ */
-const CACHE_NAME = 'bg-remover-js-cache-v3';
-const MAX_CACHE_BYTES = 5 * 1024 * 1024;
-const CACHE_HOSTS = ['esm.sh', 'cdn.jsdelivr.net'];
-const CACHE_SUPPORT = typeof caches !== 'undefined';
-
-async function requestPersistentStorage() {
-  if (!navigator.storage || !navigator.storage.persist) return false;
-  try {
-    if (await navigator.storage.persisted()) return true;
-    return await navigator.storage.persist();
-  } catch (_) { return false; }
-}
-
-async function registerServiceWorker() {
-  if (!('serviceWorker' in navigator)) return false;
-  if (location.protocol === 'file:') return false;
-  if (!location.protocol.startsWith('http')) return false;
-  try {
-    const swCode = `
-      const CACHE_NAME = '${CACHE_NAME}';
-      const MAX_BYTES = ${MAX_CACHE_BYTES};
-      const HOSTS = ${JSON.stringify(CACHE_HOSTS)};
-      self.addEventListener('install', e => self.skipWaiting());
-      self.addEventListener('activate', e => e.waitUntil(
-        caches.keys().then(keys => Promise.all(
-          keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
-        )).then(() => self.clients.claim())
-      ));
-      self.addEventListener('fetch', event => {
-        const req = event.request;
-        if (req.method !== 'GET') return;
-        let url;
-        try { url = new URL(req.url); } catch (_) { return; }
-        if (!HOSTS.some(h => url.hostname.includes(h))) return;
-        event.respondWith((async () => {
-          try {
-            const cache = await caches.open(CACHE_NAME);
-            const cached = await cache.match(req);
-            if (cached) return cached;
-            const response = await fetch(req);
-            if (!response || response.status !== 200) return response;
-            const len = response.headers.get('content-length');
-            if (len && parseInt(len, 10) > MAX_BYTES) return response;
-            cache.put(req, response.clone()).catch(() => {});
-            return response;
-          } catch (err) {
-            try {
-              const cache = await caches.open(CACHE_NAME);
-              const fallback = await cache.match(req, { ignoreSearch: true });
-              if (fallback) return fallback;
-            } catch (_) {}
-            throw err;
-          }
-        })());
-      });
-    `;
-    const blob = new Blob([swCode], { type: 'application/javascript' });
-    const swUrl = URL.createObjectURL(blob);
-    await navigator.serviceWorker.register(swUrl, { scope: './' });
-    return true;
-  } catch (e) { return false; }
-}
-
-async function updateCacheStatus() {
-  const box = document.getElementById('cacheStatus');
-  const icon = document.getElementById('cacheIcon');
-  const text = document.getElementById('cacheText');
-  if (!box || !icon || !text) return;
-  let persistent = false, usageMB = 0;
-  try {
-    if (navigator.storage) {
-      if (navigator.storage.persisted) persistent = await navigator.storage.persisted();
-      if (navigator.storage.estimate) {
-        const est = await navigator.storage.estimate();
-        usageMB = Math.round((est.usage || 0) / (1024 * 1024));
-      }
-    }
-  } catch (_) {}
-  box.classList.remove('ok','warn','new');
-  if (persistent && usageMB > 5) {
-    icon.textContent = '✅';
-    text.textContent = `Cache saved (${usageMB} MB) — दूसरी बार instant load`;
-    box.classList.add('ok');
-  } else if (usageMB > 5) {
-    icon.textContent = '⚠️';
-    text.textContent = `Cache है (${usageMB} MB) — browser clear कर सकता है`;
-    box.classList.add('warn');
-  } else {
-    icon.textContent = '📥';
-    text.textContent = 'पहली बार: model download होगा (40-100 MB)';
-    box.classList.add('new');
-  }
-}
-
-async function clearAllCaches() {
-  try {
-    if (CACHE_SUPPORT) {
-      const keys = await caches.keys();
-      await Promise.all(keys.map(k => caches.delete(k)));
-    }
-    if ('serviceWorker' in navigator) {
-      const regs = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(regs.map(r => r.unregister()));
-    }
-    return true;
-  } catch (e) { return false; }
-}
-
-document.getElementById('cacheHelp')?.addEventListener('click', async () => {
-  const usage = await (async () => {
-    try {
-      if (!navigator.storage?.estimate) return '?';
-      const est = await navigator.storage.estimate();
-      return Math.round((est.usage || 0) / (1024 * 1024)) + ' MB';
-    } catch (_) { return '?'; }
-  })();
-  const doClear = confirm(
-    '💾 Cache Info:\n\n' +
-    `अभी use: ${usage}\n\n` +
-    'Cache clear करें? (AI fail हो तो हाँ दबाएँ)'
-  );
-  if (doClear) {
-    await clearAllCaches();
-    setTimeout(() => location.reload(), 800);
-  }
-});
-
-(async () => {
-  try {
-    await requestPersistentStorage();
-    await registerServiceWorker();
-    await updateCacheStatus();
-    setInterval(updateCacheStatus, 30000);
-  } catch (e) { console.warn('Init non-fatal:', e); }
-})();
-
-/* ============================================================
-   CORE
+   ★ FIX #1: HELPERS MOVED TO TOP (fixes TDZ error)
    ============================================================ */
 const $ = id => document.getElementById(id);
+function $val(id, def = '') { const el = $(id); return el ? el.value : def; }
+function $checked(id, def = false) { const el = $(id); return el ? el.checked : def; }
 
-// ✅ Defensive helpers
-function $val(id, def = '') {
-  const el = $(id);
-  return el ? el.value : def;
+/* ============================================================
+   CANCELLATION SYSTEM
+   ============================================================ */
+const cancellation = { current: null };
+function startCancelable() {
+  cancellation.current = { cancelled: false, onCancel: null };
+  return cancellation.current;
 }
-function $checked(id, def = false) {
-  const el = $(id);
-  return el ? el.checked : def;
+function isCancelled(token) { return token && token.cancelled; }
+function cancelActive() {
+  if (!cancellation.current) return;
+  cancellation.current.cancelled = true;
+  if (cancellation.current.onCancel) try { cancellation.current.onCancel(); } catch (_) {}
 }
 
+/* Cancel button listener — NOW $ is available */
+$('cancelBtn')?.addEventListener('click', () => {
+  cancelActive();
+  toast('⏹ Cancelling…');
+});
+
+/* ============================================================
+   WEB WORKER for post-processing
+   ============================================================ */
+const workerCode = `
+  function boxFilterFloat(src, w, h, r) {
+    const out = new Float32Array(w * h);
+    const win = 2 * r + 1;
+    const tmp = new Float32Array(w * h);
+    for (let y = 0; y < h; y++) {
+      const row = y * w; let sum = 0;
+      for (let x = -r; x <= r; x++) sum += src[row + Math.max(0, Math.min(w - 1, x))];
+      for (let x = 0; x < w; x++) {
+        tmp[row + x] = sum / win;
+        sum -= src[row + Math.max(0, Math.min(w - 1, x - r))];
+        sum += src[row + Math.max(0, Math.min(w - 1, x + r + 1))];
+      }
+    }
+    for (let x = 0; x < w; x++) {
+      let sum = 0;
+      for (let y = -r; y <= r; y++) sum += tmp[Math.max(0, Math.min(h - 1, y)) * w + x];
+      for (let y = 0; y < h; y++) {
+        out[y * w + x] = sum / win;
+        sum -= tmp[Math.max(0, Math.min(h - 1, y - r)) * w + x];
+        sum += tmp[Math.max(0, Math.min(h - 1, y + r + 1)) * w + x];
+      }
+    }
+    return out;
+  }
+  function guidedFilterMatting(imgData, alpha, radius, eps) {
+    const w = imgData.width, h = imgData.height, n = w * h;
+    const d = imgData.data;
+    const gray = new Float32Array(n);
+    for (let i = 0, p = 0; i < n; i++, p += 4) gray[i] = (d[p]*0.299 + d[p+1]*0.587 + d[p+2]*0.114)/255;
+    const meanG = boxFilterFloat(gray, w, h, radius);
+    const meanA = boxFilterFloat(alpha, w, h, radius);
+    const gg = new Float32Array(n), ga = new Float32Array(n);
+    for (let i = 0; i < n; i++) { gg[i] = gray[i]*gray[i]; ga[i] = gray[i]*alpha[i]; }
+    const meanGG = boxFilterFloat(gg, w, h, radius);
+    const meanGA = boxFilterFloat(ga, w, h, radius);
+    const a = new Float32Array(n), b = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      const varG = meanGG[i] - meanG[i]*meanG[i];
+      const covGA = meanGA[i] - meanG[i]*meanA[i];
+      a[i] = covGA / (varG + eps);
+      b[i] = meanA[i] - a[i]*meanG[i];
+    }
+    const meanA2 = boxFilterFloat(a, w, h, radius);
+    const meanB2 = boxFilterFloat(b, w, h, radius);
+    const refined = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      let v = meanA2[i]*gray[i] + meanB2[i];
+      refined[i] = v < 0 ? 0 : (v > 1 ? 1 : v);
+    }
+    return refined;
+  }
+  function detectEdgeBand(alpha, w, h, bandWidth) {
+    const n = w * h, band = new Uint8Array(n), edge = new Uint8Array(n);
+    for (let i = 0; i < n; i++) { const a = alpha[i]; if (a > 0.02 && a < 0.98) edge[i] = 1; }
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const i = y*w+x; if (!edge[i]) continue;
+      const y0=Math.max(0,y-bandWidth), y1=Math.min(h-1,y+bandWidth);
+      const x0=Math.max(0,x-bandWidth), x1=Math.min(w-1,x+bandWidth);
+      for (let yy=y0;yy<=y1;yy++) for (let xx=x0;xx<=x1;xx++) band[yy*w+xx]=1;
+    }
+    return band;
+  }
+  function hairFurRecovery(imgData, alpha, band, strength) {
+    const w = imgData.width, h = imgData.height, d = imgData.data;
+    const out = new Float32Array(alpha);
+    const RI = 2, RO = 5;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const i = y*w+x; if (!band[i]) continue;
+      const a = alpha[i]; if (a <= 0.02 || a >= 0.98) continue;
+      let fgR=0,fgG=0,fgB=0,fgW=0,bgR=0,bgG=0,bgB=0,bgW=0;
+      for (let dy=-RO;dy<=RO;dy++) { const ny=y+dy; if (ny<0||ny>=h) continue;
+        for (let dx=-RO;dx<=RO;dx++) { const nx=x+dx; if (nx<0||nx>=w) continue;
+          const ni=ny*w+nx, na=alpha[ni], dist2=dx*dx+dy*dy;
+          if (dist2===0||dist2>RO*RO) continue;
+          const dist=Math.sqrt(dist2);
+          const wgt=(dist<=RI?3:1)/(dist*dist);
+          if (na>0.9) { const p=ni*4; fgR+=d[p]*wgt; fgG+=d[p+1]*wgt; fgB+=d[p+2]*wgt; fgW+=wgt; }
+          else if (na<0.1) { const p=ni*4; bgR+=d[p]*wgt; bgG+=d[p+1]*wgt; bgB+=d[p+2]*wgt; bgW+=wgt; }
+        }
+      }
+      if (fgW<1e-3||bgW<1e-3) continue;
+      fgR/=fgW; fgG/=fgW; fgB/=fgW; bgR/=bgW; bgG/=bgW; bgB/=bgW;
+      const p=i*4, cR=d[p], cG=d[p+1], cB=d[p+2];
+      const fgDiffR=fgR-bgR, fgDiffG=fgG-bgG, fgDiffB=fgB-bgB;
+      const cDiffR=cR-bgR, cDiffG=cG-bgG, cDiffB=cB-bgB;
+      const denom=fgDiffR*fgDiffR+fgDiffG*fgDiffG+fgDiffB*fgDiffB;
+      if (denom>4) {
+        let est=(cDiffR*fgDiffR+cDiffG*fgDiffG+cDiffB*fgDiffB)/denom;
+        est=Math.max(0,Math.min(1,est));
+        out[i]=a*(1-strength)+est*strength;
+      }
+    }
+    return out;
+  }
+  function decontaminateEdges(imgData, alpha, strength) {
+    const w=imgData.width, h=imgData.height, d=imgData.data;
+    const out=new Uint8ClampedArray(d);
+    const R=6;
+    for (let y=0;y<h;y++) for (let x=0;x<w;x++) {
+      const i=y*w+x, a=alpha[i];
+      if (a<=0.05||a>=0.95) continue;
+      let fgR=0,fgG=0,fgB=0,totalW=0;
+      for (let dy=-R;dy<=R;dy++) { const ny=y+dy; if (ny<0||ny>=h) continue;
+        for (let dx=-R;dx<=R;dx++) { const nx=x+dx; if (nx<0||nx>=w) continue;
+          const ni=ny*w+nx, na=alpha[ni];
+          if (na<0.85) continue;
+          const dist2=dx*dx+dy*dy; if (dist2===0||dist2>R*R) continue;
+          const wgt=(1/dist2)*na, p=ni*4;
+          fgR+=d[p]*wgt; fgG+=d[p+1]*wgt; fgB+=d[p+2]*wgt; totalW+=wgt;
+        }
+      }
+      if (totalW<1e-6) continue;
+      fgR/=totalW; fgG/=totalW; fgB/=totalW;
+      const p=i*4, blend=strength*(1-a);
+      out[p]=Math.round(d[p]*(1-blend)+fgR*blend);
+      out[p+1]=Math.round(d[p+1]*(1-blend)+fgG*blend);
+      out[p+2]=Math.round(d[p+2]*(1-blend)+fgB*blend);
+    }
+    return out;
+  }
+  function haloRemoval(imgData, alpha, strength) {
+    const w=imgData.width, h=imgData.height, d=imgData.data;
+    const out=new Uint8ClampedArray(d);
+    const R=4;
+    for (let y=0;y<h;y++) for (let x=0;x<w;x++) {
+      const i=y*w+x, a=alpha[i];
+      if (a<=0.1||a>=0.9) continue;
+      let fgLum=0,cnt=0;
+      for (let dy=-R;dy<=R;dy++) { const ny=y+dy; if (ny<0||ny>=h) continue;
+        for (let dx=-R;dx<=R;dx++) { const nx=x+dx; if (nx<0||nx>=w) continue;
+          const ni=ny*w+nx; if (alpha[ni]<0.9) continue;
+          const p=ni*4;
+          fgLum+=0.299*d[p]+0.587*d[p+1]+0.114*d[p+2]; cnt++;
+        }
+      }
+      if (cnt===0) continue;
+      fgLum/=cnt;
+      const p=i*4, lum=0.299*d[p]+0.587*d[p+1]+0.114*d[p+2];
+      const diff=Math.abs(lum-fgLum);
+      if (diff>35) {
+        const haloFactor=Math.min(1,(diff-35)/60), blend=haloFactor*strength;
+        let fgR=0,fgG=0,fgB=0,totW=0;
+        for (let dy=-R;dy<=R;dy++) { const ny=y+dy; if (ny<0||ny>=h) continue;
+          for (let dx=-R;dx<=R;dx++) { const nx=x+dx; if (nx<0||nx>=w) continue;
+            const ni=ny*w+nx; if (alpha[ni]<0.9) continue;
+            const dist2=dx*dx+dy*dy; if (dist2===0) continue;
+            const wgt=1/dist2, np=ni*4;
+            fgR+=d[np]*wgt; fgG+=d[np+1]*wgt; fgB+=d[np+2]*wgt; totW+=wgt;
+          }
+        }
+        if (totW<1e-6) continue;
+        fgR/=totW; fgG/=totW; fgB/=totW;
+        out[p]=Math.round(d[p]*(1-blend)+fgR*blend);
+        out[p+1]=Math.round(d[p+1]*(1-blend)+fgG*blend);
+        out[p+2]=Math.round(d[p+2]*(1-blend)+fgB*blend);
+      }
+    }
+    return out;
+  }
+
+  self.onmessage = (e) => {
+    const { jobId, imgData, alpha, options } = e.data;
+    try {
+      const w = imgData.width, h = imgData.height, n = w * h;
+      let a = new Float32Array(alpha);
+      const post = (stage, pct) => self.postMessage({ jobId, type: 'progress', stage, pct });
+
+      if (options.matting) {
+        post('matting', 0);
+        const edgeBand = detectEdgeBand(a, w, h, 6);
+        const refined = guidedFilterMatting(imgData, a, 8, 1e-4);
+        for (let i = 0; i < a.length; i++) if (edgeBand[i]) a[i] = refined[i];
+        post('matting', 100);
+      }
+      if (options.hair) {
+        post('hair', 0);
+        const band = detectEdgeBand(a, w, h, 4);
+        a = hairFurRecovery(imgData, a, band, 0.65);
+        post('hair', 100);
+      }
+
+      const result = new Uint8ClampedArray(imgData.data);
+      for (let i = 0, p = 3; i < n; i++, p += 4) result[p] = Math.round(a[i] * 255);
+
+      let finalData = result;
+      const finalImg = { width: w, height: h, data: result };
+
+      if (options.decon) {
+        post('decon', 0);
+        finalData = decontaminateEdges(finalImg, a, 0.65);
+        finalImg.data = finalData;
+        post('decon', 100);
+      }
+      if (options.halo) {
+        post('halo', 0);
+        finalData = haloRemoval(finalImg, a, 0.75);
+        post('halo', 100);
+      }
+
+      self.postMessage({ jobId, type: 'done', result: finalData, width: w, height: h }, [finalData.buffer]);
+    } catch (err) {
+      self.postMessage({ jobId, type: 'error', error: String(err && err.message || err) });
+    }
+  };
+`;
+
+const postWorker = new Worker(URL.createObjectURL(new Blob([workerCode], { type: 'application/javascript' })));
+let workerJobId = 0;
+const pendingJobs = new Map();
+
+postWorker.onmessage = (e) => {
+  const { jobId, type } = e.data;
+  const job = pendingJobs.get(jobId);
+  if (!job) return;
+  if (type === 'progress') job.onProgress && job.onProgress(e.data.stage, e.data.pct);
+  else if (type === 'done') {
+    pendingJobs.delete(jobId);
+    job.resolve({ data: e.data.result, width: e.data.width, height: e.data.height });
+  } else if (type === 'error') {
+    pendingJobs.delete(jobId);
+    job.reject(new Error(e.data.error));
+  }
+};
+
+function runPostProcess(imgData, alpha, options, onProgress, cancelToken) {
+  return new Promise((resolve, reject) => {
+    const jobId = ++workerJobId;
+    pendingJobs.set(jobId, { resolve, reject, onProgress });
+    const imgCopy = new Uint8ClampedArray(imgData.data);
+    const alphaCopy = new Float32Array(alpha);
+    try {
+      postWorker.postMessage({
+        jobId,
+        imgData: { width: imgData.width, height: imgData.height, data: imgCopy },
+        alpha: alphaCopy,
+        options
+      }, [imgCopy.buffer, alphaCopy.buffer]);
+    } catch (e) {
+      pendingJobs.delete(jobId);
+      reject(e);
+    }
+    if (cancelToken) {
+      cancelToken.onCancel = () => {
+        const job = pendingJobs.get(jobId);
+        if (job) { pendingJobs.delete(jobId); reject(new Error('Cancelled')); }
+      };
+    }
+  });
+}
+
+/* ============================================================
+   ★ FIX #2: CORE STATE (with fileBase declared)
+   ============================================================ */
 const c = $('c');
 const ctx = c.getContext('2d', { willReadFrequently: true });
+
+const IS_MOBILE = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+const DEVICE_MEM_GB = navigator.deviceMemory || (IS_MOBILE ? 3 : 8);
+const IS_LOW_END = IS_MOBILE && DEVICE_MEM_GB <= 3;
+
+const MAX_FILE_MB = 25;
+const MAX_MP = IS_LOW_END ? 8 : (IS_MOBILE ? 12 : 20);
+const MAX_HISTORY = IS_LOW_END ? 4 : (IS_MOBILE ? 6 : 12);
+const LARGE_IMG_MP = 8;
 
 let queue = [];
 let activeId = null;
 let idCounter = 0;
 let original = null, work = null, maskBackup = null;
-let undoStack = [], hasResult = false, fileBase = 'image';
+let undoStack = [], redoStack = [], hasResult = false;
+
+/* ★ CRITICAL FIX: fileBase was undeclared global */
+let fileBase = 'image';
+
 let compareMode = false, compareSliderPos = 0.5;
 let isProcessing = false, batchMode = false;
 
@@ -628,9 +769,94 @@ let currentFormat = 'image/png';
 let currentQuality = 0.92;
 let currentTargetKB = 0;
 
-const MAX_FILE_MB = 25;
-const MAX_MP = 20;
+/* ============================================================
+   ERROR LOGGING
+   ============================================================ */
+function logError(context, error) {
+  try {
+    const entry = {
+      time: new Date().toISOString(),
+      context,
+      message: String(error && error.message || error).substring(0, 500),
+      stack: String(error && error.stack || '').substring(0, 500),
+      ua: navigator.userAgent,
+      engine: $val('engine', 'fast'),
+      speedMode: $val('speedMode', 'balanced')
+    };
+    const log = JSON.parse(localStorage.getItem('bgremover_errors') || '[]');
+    log.push(entry);
+    while (log.length > 20) log.shift();
+    localStorage.setItem('bgremover_errors', JSON.stringify(log));
+    console.error('[BG Remover Error]', entry);
+  } catch (_) {}
+}
 
+/* ============================================================
+   PERSISTENT STORAGE + CACHE STATUS
+   ============================================================ */
+async function requestPersistentStorage() {
+  if (!navigator.storage || !navigator.storage.persist) return false;
+  try {
+    if (await navigator.storage.persisted()) return true;
+    return await navigator.storage.persist();
+  } catch (_) { return false; }
+}
+
+function updateCacheStatus() {
+  const box = document.getElementById('cacheStatus');
+  const icon = document.getElementById('cacheIcon');
+  const text = document.getElementById('cacheText');
+  if (!box || !icon || !text) return;
+  box.classList.remove('ok','warn','new');
+  const loaded = [];
+  if (engineCache.imgly) loaded.push('Fast');
+  if (engineCache.birefnet) loaded.push('Slow');
+  if (engineCache.tf && !engineCache.birefnet) loaded.push('Medium');
+  if (loaded.length > 0) {
+    icon.textContent = '✅';
+    text.textContent = `AI ready (${loaded.join(', ')}) — अगली बार instant load`;
+    box.classList.add('ok');
+  } else {
+    icon.textContent = '📥';
+    text.textContent = 'पहली बार: AI model download होगा (40-100 MB)';
+    box.classList.add('new');
+  }
+}
+
+async function clearAllCaches() {
+  try {
+    if (typeof caches !== 'undefined') {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+    }
+    return true;
+  } catch (e) { return false; }
+}
+
+document.getElementById('cacheHelp')?.addEventListener('click', async () => {
+  const errCount = (() => {
+    try { return JSON.parse(localStorage.getItem('bgremover_errors') || '[]').length; } catch (_) { return 0; }
+  })();
+  const doClear = confirm(
+    '💾 Cache Info:\n\n' +
+    '• पहली बार: AI model download (40-100 MB)\n' +
+    '• दूसरी बार: browser cache से instant load\n\n' +
+    `📝 Recent errors logged: ${errCount}\n\n` +
+    'Cache clear करें? (AI fail हो तो हाँ दबाएँ)'
+  );
+  if (doClear) {
+    await clearAllCaches();
+    engineCache.imgly = null; engineCache.tf = null; engineCache.birefnet = null;
+    loadingEngine.imgly = null; loadingEngine.tf = null;
+    setTimeout(() => location.reload(), 500);
+  }
+});
+
+requestPersistentStorage();
+
+/* ============================================================
+   UTILITY FUNCTIONS
+   ============================================================ */
 function releaseCanvas(canvas) { if (!canvas) return; try { canvas.width = 0; canvas.height = 0; } catch (_) {} }
 function forceGC() { if (window.gc) { try { window.gc(); } catch (_) {} } }
 
@@ -641,7 +867,6 @@ async function withRetry(fn, maxRetries = 2, delayMs = 1500) {
     catch (e) {
       lastErr = e;
       if (attempt < maxRetries) {
-        console.warn(`Retry ${attempt + 1}/${maxRetries}…`, e);
         await new Promise(r => setTimeout(r, delayMs));
         delayMs *= 1.5;
       }
@@ -651,21 +876,16 @@ async function withRetry(fn, maxRetries = 2, delayMs = 1500) {
 }
 
 function status(msg, p) {
-  const el = $('status');
-  if (el) el.textContent = msg;
-  if (p !== undefined) {
-    const bar = $('progress');
-    if (bar) bar.style.width = Math.max(0, Math.min(100, p)) + '%';
-  }
+  const el = $('status'); if (el) el.textContent = msg;
+  if (p !== undefined) { const bar = $('progress'); if (bar) bar.style.width = Math.max(0, Math.min(100, p)) + '%'; }
 }
 let toastTimer = null;
 function toast(msg, ms = 2400) {
-  const el = $('toast');
-  if (!el) return;
+  const el = $('toast'); if (!el) return;
   el.textContent = msg; el.classList.add('on');
   clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('on'), ms);
 }
-function setStage(name, detail, pct) {
+function setStage(name, detail, pct, showCancel) {
   const n = $('stageLoaderName'); if (n) n.textContent = name;
   const d = $('stageLoaderText'); if (d) d.textContent = detail || '';
   const s = $('stageLoader'); if (s) s.classList.remove('hidden');
@@ -673,8 +893,13 @@ function setStage(name, detail, pct) {
     const bp = $('batchProgressBar'); if (bp) bp.classList.remove('hidden');
     const bf = $('batchProgressFill'); if (bf) bf.style.width = Math.max(0, Math.min(100, pct)) + '%';
   }
+  const cb = $('cancelBtn');
+  if (cb) cb.classList.toggle('hidden', !showCancel);
 }
-function hideStage() { const s = $('stageLoader'); if (s) s.classList.add('hidden'); }
+function hideStage() {
+  const s = $('stageLoader'); if (s) s.classList.add('hidden');
+  const cb = $('cancelBtn'); if (cb) cb.classList.add('hidden');
+}
 function cloneState(s) {
   if (typeof structuredClone === 'function') return structuredClone(s);
   return JSON.parse(JSON.stringify(s));
@@ -698,10 +923,18 @@ function applyAlpha(img, mask) {
 }
 function pushHistory() {
   if (!work) return;
-  undoStack.push({ work: snapshot(), state: cloneState(state), hasResult,
-    maskBackup: maskBackup ? new Uint8ClampedArray(maskBackup) : null });
-  if (undoStack.length > 12) undoStack.shift();
+  const mp = (work.width * work.height) / 1e6;
+  const maxHistory = mp > LARGE_IMG_MP ? Math.max(3, MAX_HISTORY - 4) : MAX_HISTORY;
+  undoStack.push({
+    work: snapshot(),
+    state: cloneState(state),
+    hasResult,
+    maskBackup: maskBackup ? new Uint8ClampedArray(maskBackup) : null
+  });
+  while (undoStack.length > maxHistory) undoStack.shift();
+  redoStack = [];
 }
+
 async function decodeImage(file) {
   if (typeof createImageBitmap === 'function') {
     try { return await createImageBitmap(file, { imageOrientation: 'from-image' }); } catch (_) {}
@@ -726,27 +959,31 @@ function makeThumb(imgData, maxDim = 100) {
     tmp.getContext('2d').putImageData(imgData, 0, 0);
     const t = document.createElement('canvas');
     t.width = w; t.height = h;
-    t.getContext('2d').drawImage(tmp, 0, 0, w, h);
-    const url = t.toDataURL('image/jpeg', 0.7);
+    const tctx = t.getContext('2d');
+    tctx.clearRect(0, 0, w, h);
+    tctx.drawImage(tmp, 0, 0, w, h);
+    const url = t.toDataURL('image/png');
     releaseCanvas(tmp); releaseCanvas(t);
     return url;
   } catch (_) { return ''; }
 }
+
 function showConfirm(title, message, onConfirm, confirmText = 'Delete') {
-  const root = $('confirmRoot');
-  if (!root) return;
-  root.innerHTML = `
-    <div class="confirmModal">
-      <div class="confirmBox">
-        <h3>${title}</h3><p>${message}</p>
-        <div class="actions">
-          <button id="cNo" class="ghost">Cancel</button>
-          <button id="cYes" class="danger">${confirmText}</button>
-        </div>
-      </div>
-    </div>`;
-  $('cNo').onclick = () => root.innerHTML = '';
-  $('cYes').onclick = () => { root.innerHTML = ''; onConfirm(); };
+  const root = $('confirmRoot'); if (!root) return;
+  root.textContent = '';
+  const modal = document.createElement('div');
+  modal.className = 'confirmModal';
+  const box = document.createElement('div');
+  box.className = 'confirmBox';
+  const h3 = document.createElement('h3'); h3.textContent = title; box.appendChild(h3);
+  const p = document.createElement('p'); p.textContent = message; box.appendChild(p);
+  const actions = document.createElement('div'); actions.className = 'actions';
+  const cNo = document.createElement('button'); cNo.className = 'ghost'; cNo.textContent = 'Cancel';
+  cNo.onclick = () => { root.textContent = ''; };
+  const cYes = document.createElement('button'); cYes.className = 'danger'; cYes.textContent = confirmText;
+  cYes.onclick = () => { root.textContent = ''; onConfirm(); };
+  actions.appendChild(cNo); actions.appendChild(cYes);
+  box.appendChild(actions); modal.appendChild(box); root.appendChild(modal);
 }
 
 function boxFilterFloat(src, w, h, r) {
@@ -774,229 +1011,36 @@ function boxFilterFloat(src, w, h, r) {
   return out;
 }
 
-function guidedFilterMatting(imgData, alpha, radius, eps) {
-  const w = imgData.width, h = imgData.height, n = w * h;
-  const d = imgData.data;
-  const gray = new Float32Array(n);
-  for (let i = 0, p = 0; i < n; i++, p += 4) {
-    gray[i] = (d[p] * 0.299 + d[p + 1] * 0.587 + d[p + 2] * 0.114) / 255;
-  }
-  const meanG = boxFilterFloat(gray, w, h, radius);
-  const meanA = boxFilterFloat(alpha, w, h, radius);
-  const gg = new Float32Array(n), ga = new Float32Array(n);
-  for (let i = 0; i < n; i++) { gg[i] = gray[i] * gray[i]; ga[i] = gray[i] * alpha[i]; }
-  const meanGG = boxFilterFloat(gg, w, h, radius);
-  const meanGA = boxFilterFloat(ga, w, h, radius);
-  const a = new Float32Array(n), b = new Float32Array(n);
-  for (let i = 0; i < n; i++) {
-    const varG = meanGG[i] - meanG[i] * meanG[i];
-    const covGA = meanGA[i] - meanG[i] * meanA[i];
-    a[i] = covGA / (varG + eps);
-    b[i] = meanA[i] - a[i] * meanG[i];
-  }
-  const meanA2 = boxFilterFloat(a, w, h, radius);
-  const meanB2 = boxFilterFloat(b, w, h, radius);
-  const refined = new Float32Array(n);
-  for (let i = 0; i < n; i++) {
-    let v = meanA2[i] * gray[i] + meanB2[i];
-    refined[i] = v < 0 ? 0 : (v > 1 ? 1 : v);
-  }
-  return refined;
-}
-
-function detectEdgeBand(alpha, w, h, bandWidth) {
-  const n = w * h;
-  const band = new Uint8Array(n);
-  const edge = new Uint8Array(n);
-  for (let i = 0; i < n; i++) {
-    const a = alpha[i];
-    if (a > 0.02 && a < 0.98) edge[i] = 1;
-  }
-  const bw = bandWidth;
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      const i = y * w + x;
-      if (!edge[i]) continue;
-      const y0 = Math.max(0, y - bw), y1 = Math.min(h - 1, y + bw);
-      const x0 = Math.max(0, x - bw), x1 = Math.min(w - 1, x + bw);
-      for (let yy = y0; yy <= y1; yy++) for (let xx = x0; xx <= x1; xx++) band[yy * w + xx] = 1;
-    }
-  }
-  return band;
-}
-
-function hairFurRecovery(imgData, alpha, band, strength) {
-  const w = imgData.width, h = imgData.height;
-  const d = imgData.data;
-  const out = new Float32Array(alpha);
-  const R_INNER = 2, R_OUTER = 5;
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      const i = y * w + x;
-      if (!band[i]) continue;
-      const a = alpha[i];
-      if (a <= 0.02 || a >= 0.98) continue;
-      let fgR = 0, fgG = 0, fgB = 0, fgW = 0;
-      let bgR = 0, bgG = 0, bgB = 0, bgW = 0;
-      for (let dy = -R_OUTER; dy <= R_OUTER; dy++) {
-        const ny = y + dy; if (ny < 0 || ny >= h) continue;
-        for (let dx = -R_OUTER; dx <= R_OUTER; dx++) {
-          const nx = x + dx; if (nx < 0 || nx >= w) continue;
-          const ni = ny * w + nx;
-          const na = alpha[ni];
-          const dist2 = dx * dx + dy * dy;
-          if (dist2 === 0 || dist2 > R_OUTER * R_OUTER) continue;
-          const dist = Math.sqrt(dist2);
-          const wgt = (dist <= R_INNER ? 3 : 1) / (dist * dist);
-          if (na > 0.9) {
-            const p = ni * 4;
-            fgR += d[p] * wgt; fgG += d[p + 1] * wgt; fgB += d[p + 2] * wgt; fgW += wgt;
-          } else if (na < 0.1) {
-            const p = ni * 4;
-            bgR += d[p] * wgt; bgG += d[p + 1] * wgt; bgB += d[p + 2] * wgt; bgW += wgt;
-          }
-        }
-      }
-      if (fgW < 1e-3 || bgW < 1e-3) continue;
-      fgR /= fgW; fgG /= fgW; fgB /= fgW;
-      bgR /= bgW; bgG /= bgW; bgB /= bgW;
-      const p = i * 4;
-      const cR = d[p], cG = d[p + 1], cB = d[p + 2];
-      const fgDiffR = fgR - bgR, fgDiffG = fgG - bgG, fgDiffB = fgB - bgB;
-      const cDiffR = cR - bgR, cDiffG = cG - bgG, cDiffB = cB - bgB;
-      const denom = fgDiffR * fgDiffR + fgDiffG * fgDiffG + fgDiffB * fgDiffB;
-      if (denom > 4) {
-        let est = (cDiffR * fgDiffR + cDiffG * fgDiffG + cDiffB * fgDiffB) / denom;
-        est = Math.max(0, Math.min(1, est));
-        out[i] = a * (1 - strength) + est * strength;
-      }
-    }
-  }
-  return out;
-}
-
-function decontaminateEdges(imgData, alpha, strength) {
-  const w = imgData.width, h = imgData.height;
-  const d = imgData.data;
-  const out = new Uint8ClampedArray(d);
-  const R = 6;
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      const i = y * w + x;
-      const a = alpha[i];
-      if (a <= 0.05 || a >= 0.95) continue;
-      let fgR = 0, fgG = 0, fgB = 0, totalW = 0;
-      for (let dy = -R; dy <= R; dy++) {
-        const ny = y + dy; if (ny < 0 || ny >= h) continue;
-        for (let dx = -R; dx <= R; dx++) {
-          const nx = x + dx; if (nx < 0 || nx >= w) continue;
-          const ni = ny * w + nx;
-          const na = alpha[ni];
-          if (na < 0.85) continue;
-          const dist2 = dx * dx + dy * dy;
-          if (dist2 === 0 || dist2 > R * R) continue;
-          const wgt = (1 / dist2) * na;
-          const p = ni * 4;
-          fgR += d[p] * wgt; fgG += d[p + 1] * wgt; fgB += d[p + 2] * wgt;
-          totalW += wgt;
-        }
-      }
-      if (totalW < 1e-6) continue;
-      fgR /= totalW; fgG /= totalW; fgB /= totalW;
-      const p = i * 4;
-      const blend = strength * (1 - a);
-      out[p]     = Math.round(d[p]     * (1 - blend) + fgR * blend);
-      out[p + 1] = Math.round(d[p + 1] * (1 - blend) + fgG * blend);
-      out[p + 2] = Math.round(d[p + 2] * (1 - blend) + fgB * blend);
-    }
-  }
-  return new ImageData(out, w, h);
-}
-
-function haloRemoval(imgData, alpha, strength) {
-  const w = imgData.width, h = imgData.height;
-  const d = imgData.data;
-  const out = new Uint8ClampedArray(d);
-  const R = 4;
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      const i = y * w + x;
-      const a = alpha[i];
-      if (a <= 0.1 || a >= 0.9) continue;
-      let fgLum = 0, cnt = 0;
-      for (let dy = -R; dy <= R; dy++) {
-        const ny = y + dy; if (ny < 0 || ny >= h) continue;
-        for (let dx = -R; dx <= R; dx++) {
-          const nx = x + dx; if (nx < 0 || nx >= w) continue;
-          const ni = ny * w + nx;
-          if (alpha[ni] < 0.9) continue;
-          const p = ni * 4;
-          fgLum += 0.299 * d[p] + 0.587 * d[p + 1] + 0.114 * d[p + 2];
-          cnt++;
-        }
-      }
-      if (cnt === 0) continue;
-      fgLum /= cnt;
-      const p = i * 4;
-      const lum = 0.299 * d[p] + 0.587 * d[p + 1] + 0.114 * d[p + 2];
-      const diff = Math.abs(lum - fgLum);
-      if (diff > 35) {
-        const haloFactor = Math.min(1, (diff - 35) / 60);
-        const blend = haloFactor * strength;
-        let fgR = 0, fgG = 0, fgB = 0, totW = 0;
-        for (let dy = -R; dy <= R; dy++) {
-          const ny = y + dy; if (ny < 0 || ny >= h) continue;
-          for (let dx = -R; dx <= R; dx++) {
-            const nx = x + dx; if (nx < 0 || nx >= w) continue;
-            const ni = ny * w + nx;
-            if (alpha[ni] < 0.9) continue;
-            const dist2 = dx * dx + dy * dy; if (dist2 === 0) continue;
-            const wgt = 1 / dist2;
-            const np = ni * 4;
-            fgR += d[np] * wgt; fgG += d[np + 1] * wgt; fgB += d[np + 2] * wgt;
-            totW += wgt;
-          }
-        }
-        if (totW < 1e-6) continue;
-        fgR /= totW; fgG /= totW; fgB /= totW;
-        out[p]     = Math.round(d[p]     * (1 - blend) + fgR * blend);
-        out[p + 1] = Math.round(d[p + 1] * (1 - blend) + fgG * blend);
-        out[p + 2] = Math.round(d[p + 2] * (1 - blend) + fgB * blend);
-      }
-    }
-  }
-  return new ImageData(out, w, h);
-}
-
 /* ============================================================
-   QUEUE
+   QUEUE MANAGEMENT
    ============================================================ */
 function saveActiveToQueue() {
   const item = queue.find(x => x.id === activeId); if (!item) return;
   item.original = original; item.work = work;
   item.hasResult = hasResult; item.maskBackup = maskBackup;
   item.state = cloneState(state); item.undoStack = undoStack;
+  item.redoStack = redoStack;
   item.fileBase = fileBase;
 }
-
-// ✅ State-only save — batch में work/original touch नहीं करता
 function saveActiveStateOnly() {
   const item = queue.find(x => x.id === activeId); if (!item) return;
   item.state = cloneState(state);
   item.undoStack = undoStack;
+  item.redoStack = redoStack;
   item.fileBase = fileBase;
 }
-
 function loadActiveFromQueue() {
   const item = queue.find(x => x.id === activeId);
   if (!item) {
-    original = null; work = null; maskBackup = null; hasResult = false; undoStack = [];
+    original = null; work = null; maskBackup = null; hasResult = false;
+    undoStack = []; redoStack = [];
     return;
   }
   original = item.original; work = item.work;
   hasResult = item.hasResult;
   maskBackup = item.maskBackup ? new Uint8ClampedArray(item.maskBackup) : null;
   undoStack = item.undoStack || [];
+  redoStack = item.redoStack || [];
   fileBase = item.fileBase || 'image';
   Object.assign(state, item.state || {
     bg: 'checker', customColor: '#f5f5f5', brightness: 1, contrast: 1,
@@ -1004,12 +1048,21 @@ function loadActiveFromQueue() {
     brushMode: 'keep', brushSize: 32, brushHard: 60, brushStrength: 100, autoCrop: false
   });
 }
+
+function updateProcessedThumb(item) {
+  try {
+    if (!item.work) return;
+    const thumb = makeThumb(item.work, 100);
+    if (thumb) item.thumb = thumb;
+  } catch (_) {}
+}
+
 function updateQueueUI() {
   const strip = $('queueStrip');
   const wrap = $('queueWrap');
   const info = $('queueInfo');
   if (!strip || !wrap || !info) return;
-  strip.innerHTML = '';
+  strip.textContent = '';
   if (!queue.length) {
     wrap.classList.add('empty'); info.classList.add('hidden'); return;
   }
@@ -1025,7 +1078,7 @@ function updateQueueUI() {
     img.src = item.thumb || '';
     el.appendChild(img);
     const del = document.createElement('button');
-    del.className = 'qDel'; del.innerHTML = '×';
+    del.className = 'qDel'; del.textContent = '×';
     del.onclick = (e) => { e.stopPropagation(); deleteItem(item.id); };
     el.appendChild(del);
     const st = document.createElement('div');
@@ -1039,7 +1092,7 @@ function updateQueueUI() {
     strip.appendChild(el);
   });
   const add = document.createElement('label');
-  add.className = 'qAdd'; add.htmlFor = 'fileMulti'; add.innerHTML = '+';
+  add.className = 'qAdd'; add.htmlFor = 'fileMulti'; add.textContent = '+';
   strip.appendChild(add);
 }
 function switchActive(id) {
@@ -1068,9 +1121,7 @@ function clearCanvas() {
   const lb = $('liveBadge'); if (lb) lb.classList.add('hidden');
 }
 
-/* ============================================================
-   UI
-   ============================================================ */
+/* UI */
 function resetCompare() {
   if (compareMode) {
     compareMode = false;
@@ -1150,7 +1201,7 @@ function updateCompareBefore() {
   const h = swap ? original.width : original.height;
   let bc = host.querySelector('canvas');
   if (!bc || bc.width !== w || bc.height !== h) {
-    host.innerHTML = '';
+    host.textContent = '';
     bc = document.createElement('canvas');
     bc.width = w; bc.height = h;
     host.appendChild(bc);
@@ -1182,27 +1233,24 @@ function updateSizeInfo(w, h) {
 function syncAllUI() {
   const bind = (id, val) => { const el = $(id); if (el) el.value = val; };
   const set = (id, val) => { const el = $(id); if (el) el.textContent = val; };
-  bind('bright', state.brightness);
-  bind('contrast', state.contrast);
-  set('brightO', state.brightness.toFixed(2));
-  set('contrastO', state.contrast.toFixed(2));
-  bind('brushSize', state.brushSize);
-  set('brushSizeO', state.brushSize);
-  bind('brushHard', state.brushHard);
-  set('brushHardO', state.brushHard);
-  bind('brushStrength', state.brushStrength);
-  set('brushStrengthO', state.brushStrength);
+  bind('bright', state.brightness); bind('contrast', state.contrast);
+  set('brightO', state.brightness.toFixed(2)); set('contrastO', state.contrast.toFixed(2));
+  bind('brushSize', state.brushSize); set('brushSizeO', state.brushSize);
+  bind('brushHard', state.brushHard); set('brushHardO', state.brushHard);
+  bind('brushStrength', state.brushStrength); set('brushStrengthO', state.brushStrength);
   const ac = $('autoCrop'); if (ac) ac.checked = state.autoCrop;
-  const cc = $('customColor'); if (cc) {
-    cc.style.display = state.bg === 'custom' ? 'block' : 'none';
-    cc.value = state.customColor;
-  }
+  const cc = $('customColor');
+  if (cc) { cc.style.display = state.bg === 'custom' ? 'block' : 'none'; cc.value = state.customColor; }
   document.querySelectorAll('.brushModes button').forEach(b => b.classList.remove('on'));
   if (state.brushMode === 'keep') $('keepBrush')?.classList.add('on');
   else if (state.brushMode === 'remove') $('removeBrush')?.classList.add('on');
   else $('brushOff')?.classList.add('on');
   document.querySelectorAll('#bgOpts button').forEach(b => b.classList.toggle('on', b.dataset.bg === state.bg));
-  const fi = $('fileNameInput'); if (fi) fi.value = fileBase + '-no-bg';
+  const fi = $('fileNameInput');
+  if (fi && activeId) {
+    const item = queue.find(x => x.id === activeId);
+    if (item && document.activeElement !== fi) fi.value = item.fileBase + '-no-bg';
+  }
   updateCanvasTouchAction();
 }
 
@@ -1219,7 +1267,7 @@ async function addFiles(files) {
       await addSingleFileToQueue(file);
       loaded++;
       status(`Loaded ${loaded}/${validFiles.length}`, (loaded / validFiles.length) * 100);
-    } catch (e) { console.error(e); }
+    } catch (e) { logError('addFile', e); }
   }
   if (!activeId && queue.length) { activeId = queue[0].id; loadActiveFromQueue(); }
   updateQueueUI(); syncAllUI(); render();
@@ -1236,7 +1284,11 @@ async function addSingleFileToQueue(file) {
   let sw = im.width || im.naturalWidth;
   let sh = im.height || im.naturalHeight;
   const mp = sw * sh / 1e6;
-  if (mp > MAX_MP) { const sc = Math.sqrt(MAX_MP / mp); sw = Math.round(sw * sc); sh = Math.round(sh * sc); }
+  if (mp > MAX_MP) {
+    const sc = Math.sqrt(MAX_MP / mp);
+    sw = Math.round(sw * sc); sh = Math.round(sh * sc);
+    console.log(`📐 Auto-resized to ${sw}×${sh} (max ${MAX_MP}MP for this device)`);
+  }
   const src = document.createElement('canvas');
   src.width = sw; src.height = sh;
   src.getContext('2d').drawImage(im, 0, 0, sw, sh);
@@ -1255,7 +1307,9 @@ async function addSingleFileToQueue(file) {
     original: imgData,
     work: new ImageData(new Uint8ClampedArray(imgData.data), imgData.width, imgData.height),
     hasResult: false, maskBackup: null,
-    state: defaultState, undoStack: [], thumb, status: 'pending',
+    state: defaultState, undoStack: [], redoStack: [],
+    thumb, originalThumb: thumb,  /* ★ FIX #3: store original thumbnail */
+    status: 'pending',
     fileBase: (file.name || 'image').replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_') || 'image'
   });
   updateQueueUI();
@@ -1295,6 +1349,15 @@ bindRange('quality', 'qualO', v => currentQuality = v / 100);
 $('bright').oninput = () => { state.brightness = +$('bright').value; saveActiveToQueue(); syncAllUI(); render(); };
 $('contrast').oninput = () => { state.contrast = +$('contrast').value; saveActiveToQueue(); syncAllUI(); render(); };
 
+$('fileNameInput').oninput = e => {
+  const clean = e.target.value.replace(/[^a-zA-Z0-9_\-\.]/g, '_') || 'image';
+  const item = queue.find(x => x.id === activeId);
+  if (item) {
+    item.fileBase = clean.replace(/-no-bg$/, '');
+    fileBase = item.fileBase;
+  }
+};
+
 /* ============================================================
    AI LOADING
    ============================================================ */
@@ -1303,34 +1366,37 @@ async function loadImgly() {
   if (loadingEngine.imgly) return loadingEngine.imgly;
   loadingEngine.imgly = (async () => {
     try {
-      status('AI engine load हो रहा है…', 15);
-      const mod = await withRetry(() => import('https://esm.sh/@imgly/background-removal@1.7.0'), 2, 2000);
+      status('AI engine download हो रहा है… (पहली बार 30 sec - 2 min)', 10);
+      const mod = await withRetry(
+        () => import('https://esm.sh/@imgly/background-removal@1.7.0'), 2, 2000);
       engineCache.imgly = mod;
       updateCacheStatus();
+      status('AI engine ready ✅', 20);
       return mod;
     } catch (e) {
-      console.error('❌ imgly load fail:', e);
+      logError('loadImgly', e);
       loadingEngine.imgly = null;
-      throw new Error('AI library load नहीं हो पाई — internet check करें');
+      throw new Error('AI engine download नहीं हो पाया — internet चेक करें');
     }
   })();
   return loadingEngine.imgly;
 }
-
 async function loadTF() {
   if (engineCache.tf) return engineCache.tf;
   if (loadingEngine.tf) return loadingEngine.tf;
   loadingEngine.tf = (async () => {
     try {
-      status('AI engine load हो रहा है…', 15);
-      const mod = await withRetry(() => import('https://esm.sh/@huggingface/transformers@3.8.1'), 2, 2000);
+      status('AI engine download हो रहा है… (पहली बार 30 sec - 2 min)', 10);
+      const mod = await withRetry(
+        () => import('https://esm.sh/@huggingface/transformers@3.8.1'), 2, 2000);
       engineCache.tf = mod;
       updateCacheStatus();
+      status('AI engine ready ✅', 20);
       return mod;
     } catch (e) {
-      console.error('❌ transformers load fail:', e);
+      logError('loadTF', e);
       loadingEngine.tf = null;
-      throw new Error('AI library load नहीं हो पाई — internet check करें');
+      throw new Error('AI engine download नहीं हो पाया — internet चेक करें');
     }
   })();
   return loadingEngine.tf;
@@ -1379,22 +1445,21 @@ async function runISNet(blob, model, onProgress) {
     model,
     output: { format: 'image/png', quality: 1, type: 'foreground' },
     publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.7.0/dist/',
-    proxyToWorker: false,
+    proxyToWorker: true,
     progress: (name, a, b) => { if (b && onProgress) onProgress(a / b); }
   });
 }
-
 async function runBiRefNet(blob) {
   const { pipeline } = await loadTF();
   if (!engineCache.birefnet) {
-    try { engineCache.birefnet = await pipeline('image-segmentation', 'studioludens/birefnet-lite-512', { device: 'webgpu', dtype: 'fp16' }); }
-    catch (e) {
-      console.warn('WebGPU fail, WASM try:', e);
+    try {
+      engineCache.birefnet = await pipeline('image-segmentation', 'studioludens/birefnet-lite-512', { device: 'webgpu', dtype: 'fp16' });
+    } catch (e) {
       engineCache.birefnet = await pipeline('image-segmentation', 'studioludens/birefnet-lite-512', { device: 'wasm', dtype: 'fp32' });
     }
   }
   const result = await engineCache.birefnet(blob);
-  if (!result?.length || !result[0]?.mask) throw new Error('AI ne mask नहीं दिया');
+  if (!result?.length || !result[0]?.mask) throw new Error('AI ने mask नहीं दिया');
   const maskCanvas = await result[0].mask.toCanvas();
   const blobOut = await new Promise(r => maskCanvas.toBlob(b => r(b), 'image/png'));
   releaseCanvas(maskCanvas);
@@ -1416,34 +1481,32 @@ function smartResolution(imgW, imgH, choice, detail, speedMode) {
   return 2048;
 }
 
-// ✅ Defensive reads — कोई crash नहीं
-async function processAISingle(item, onStage) {
+async function processAISingle(item, onStage, cancelToken) {
   const choice = $val('engine', 'fast');
   const detail = $val('detailLevel', 'auto');
   const speedMode = $val('speedMode', 'balanced');
-
   const useMatting = speedMode !== 'ultra' && $checked('mattingMode', true);
   const useHair = speedMode !== 'ultra' && $checked('hairMode', true);
   const useHalo = speedMode !== 'ultra' && $checked('haloMode', true);
   const useDecon = speedMode !== 'ultra' && $checked('deconMode', true);
 
+  if (isCancelled(cancelToken)) throw new Error('Cancelled');
   const aiDim = smartResolution(item.original.width, item.original.height, choice, detail, speedMode);
-
   onStage && onStage('preparing', `AI input: ${aiDim}px`, 0.05);
 
   const blob = await buildAIInput(item.original, aiDim);
+  if (isCancelled(cancelToken)) throw new Error('Cancelled');
 
   onStage && onStage('ai', 'AI segmentation running…', 0.15);
 
   let maskBlob;
   const effectiveChoice = speedMode === 'ultra' ? 'fast' : choice;
-
   try {
     if (effectiveChoice === 'quality') {
       try {
         maskBlob = await withRetry(() => runBiRefNet(blob), 1, 800);
       } catch (e) {
-        console.warn('Slow failed, fallback Medium:', e);
+        logError('runBiRefNet-fallback', e);
         onStage && onStage('ai', 'Fallback to Medium…', 0.3);
         maskBlob = await withRetry(() => runISNet(blob, 'isnet_fp16', p => onStage && onStage('ai', 'Segmenting ' + Math.round(p * 100) + '%', 0.3 + p * 0.25)), 2, 1500);
       }
@@ -1452,42 +1515,50 @@ async function processAISingle(item, onStage) {
       maskBlob = await withRetry(() => runISNet(blob, model, p => onStage && onStage('ai', 'Segmenting ' + Math.round(p * 100) + '%', 0.15 + p * 0.35)), 2, 1500);
     }
   } catch (e) {
-    console.error('❌ Segmentation failed:', e);
+    logError('segmentation', e);
     throw new Error('AI segmentation fail: ' + (e.message || 'unknown'));
   }
+
+  if (isCancelled(cancelToken)) throw new Error('Cancelled');
 
   const w = item.original.width, h = item.original.height;
   let alpha = await getAlphaAtRes(maskBlob, w, h);
 
-  if (useMatting) {
-    onStage && onStage('matting', 'Refining edges', 0.55);
-    const edgeBand = detectEdgeBand(alpha, w, h, 6);
-    const refined = guidedFilterMatting(item.original, alpha, 8, 1e-4);
-    for (let i = 0; i < alpha.length; i++) if (edgeBand[i]) alpha[i] = refined[i];
+  if (isCancelled(cancelToken)) throw new Error('Cancelled');
+
+  const needsPost = useMatting || useHair || useDecon || useHalo;
+  let result;
+
+  if (needsPost) {
+    onStage && onStage('matting', 'Post-processing in background…', 0.55);
+    try {
+      const workerResult = await runPostProcess(item.original, alpha, {
+        matting: useMatting, hair: useHair, decon: useDecon, halo: useHalo
+      }, (stage, pct) => {
+        const stageMap = { matting: '✨ Matting', hair: '💇 Hair', decon: '🎨 Decon', halo: '🔆 Halo' };
+        const detailTxt = (stageMap[stage] || stage) + ' ' + pct + '%';
+        onStage && onStage(stage, detailTxt, 0.55 + (pct / 100) * 0.4);
+      }, cancelToken);
+
+      result = new ImageData(workerResult.data, workerResult.width, workerResult.height);
+    } catch (e) {
+      if (e.message === 'Cancelled') throw e;
+      logError('postProcess-worker', e);
+      result = new ImageData(new Uint8ClampedArray(item.original.data), w, h);
+      for (let i = 0, p = 3; i < w * h; i++, p += 4) result.data[p] = Math.round(alpha[i] * 255);
+    }
+  } else {
+    result = new ImageData(new Uint8ClampedArray(item.original.data), w, h);
+    for (let i = 0, p = 3; i < w * h; i++, p += 4) result.data[p] = Math.round(alpha[i] * 255);
   }
 
-  if (useHair) {
-    onStage && onStage('hair', 'Recovering hair/fur', 0.75);
-    const band = detectEdgeBand(alpha, w, h, 4);
-    alpha = hairFurRecovery(item.original, alpha, band, 0.65);
-  }
-
-  let result = new ImageData(new Uint8ClampedArray(item.original.data), w, h);
-  for (let i = 0, p = 3; i < w * h; i++, p += 4) result.data[p] = Math.round(alpha[i] * 255);
-
-  if (useDecon) {
-    onStage && onStage('decon', 'Removing color spill', 0.87);
-    result = decontaminateEdges(result, alpha, 0.65);
-  }
-  if (useHalo) {
-    onStage && onStage('halo', 'Removing halo', 0.93);
-    result = haloRemoval(result, alpha, 0.75);
-  }
+  if (isCancelled(cancelToken)) throw new Error('Cancelled');
 
   item.work = result;
   item.hasResult = true;
   item.maskBackup = captureAlpha(result);
   item.status = 'done';
+  updateProcessedThumb(item);
   onStage && onStage('done', 'Complete', 1);
 }
 
@@ -1498,40 +1569,28 @@ const stageNameMap = {
 };
 
 function showAIError(msg) {
-  const box = $('aiErrorBox');
-  const text = $('aiErrorText');
-  if (box && text) {
-    text.textContent = '❌ ' + msg;
-    box.classList.remove('hidden');
-  }
+  const box = $('aiErrorBox'), text = $('aiErrorText');
+  if (box && text) { text.textContent = '❌ ' + msg; box.classList.remove('hidden'); }
 }
 function hideAIError() {
-  const box = $('aiErrorBox');
-  if (box) box.classList.add('hidden');
+  const box = $('aiErrorBox'); if (box) box.classList.add('hidden');
 }
-
-$('aiRetryBtn')?.addEventListener('click', () => {
-  hideAIError();
-  $('aiRemove')?.click();
-});
+$('aiRetryBtn')?.addEventListener('click', () => { hideAIError(); $('aiRemove')?.click(); });
 $('aiClearCacheBtn')?.addEventListener('click', () => {
-  showConfirm(
-    'Clear Cache & Retry?',
-    'Cache clear होगा और page reload होगा।',
-    async () => {
-      await clearAllCaches();
-      setTimeout(() => location.reload(), 500);
-    },
-    'Clear & Reload'
-  );
+  showConfirm('Clear Cache & Retry?', 'Cache clear होगा और page reload होगा।', async () => {
+    await clearAllCaches();
+    engineCache.imgly = null; engineCache.tf = null; engineCache.birefnet = null;
+    loadingEngine.imgly = null; loadingEngine.tf = null;
+    setTimeout(() => location.reload(), 500);
+  }, 'Clear & Reload');
 });
 
-/* AI — Current */
 $('aiRemove').onclick = async () => {
   if (!activeId) return toast('❌ पहले image upload करें');
   if (isProcessing) return;
   hideAIError();
   isProcessing = true;
+  const cancelToken = startCancelable();
   saveActiveToQueue();
   const item = queue.find(x => x.id === activeId);
   item.status = 'processing'; updateQueueUI();
@@ -1540,8 +1599,8 @@ $('aiRemove').onclick = async () => {
   const t0 = performance.now();
   try {
     await processAISingle(item, (stage, detail, pct) => {
-      setStage(stageNameMap[stage] || 'Processing', detail, pct * 100);
-    });
+      setStage(stageNameMap[stage] || 'Processing', detail, pct * 100, true);
+    }, cancelToken);
     loadActiveFromQueue();
     $('modeBadge').textContent = 'BG REMOVED';
     const secs = ((performance.now() - t0) / 1000).toFixed(1);
@@ -1549,12 +1608,19 @@ $('aiRemove').onclick = async () => {
     toast('✅ Done in ' + secs + 's');
     switchTab('bg');
   } catch (e) {
-    console.error('❌ AI FULL ERROR:', e);
-    item.status = 'error'; undoStack.pop();
-    const msg = (e.message || 'AI failed').substring(0, 120);
-    status('❌ ' + msg, 0);
-    toast('❌ ' + msg.substring(0, 60), 3500);
-    showAIError(msg);
+    if (e.message === 'Cancelled') {
+      status('⏹ Cancelled', 0);
+      toast('⏹ Cancelled');
+      item.status = 'pending';
+      undoStack.pop();
+    } else {
+      logError('aiRemove', e);
+      item.status = 'error'; undoStack.pop();
+      const msg = (e.message || 'AI failed').substring(0, 150);
+      status('❌ ' + msg, 0);
+      toast('❌ ' + msg.substring(0, 60), 3500);
+      showAIError(msg);
+    }
   } finally {
     isProcessing = false;
     $('aiRemove').disabled = false;
@@ -1563,40 +1629,40 @@ $('aiRemove').onclick = async () => {
   }
 };
 
-/* AI — Batch (FIXED) */
 $('aiRemoveAll').onclick = async () => {
   if (!queue.length) return toast('❌ कोई image नहीं');
   if (isProcessing) return;
   const pending = queue.filter(x => x.status !== 'done');
   if (!pending.length) return toast('सब ready हैं!');
-
   isProcessing = true; batchMode = true;
   hideAIError();
+  const cancelToken = startCancelable();
   saveActiveToQueue();
 
-  const origText = $('aiRemoveAll').innerHTML;
-  $('aiRemoveAll').disabled = true;
-  $('aiRemoveAll').innerHTML = '<span class="spinner"></span> Processing…';
+  const btn = $('aiRemoveAll');
+  const origText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Processing…';
 
   const speedMode = $val('speedMode', 'balanced');
   const speedName = speedMode === 'ultra' ? 'Ultra' : speedMode === 'quality' ? 'Max' : 'Balanced';
 
-  let done = 0, failed = 0;
+  let done = 0, failed = 0, cancelled = false;
   const total = pending.length;
   const t0 = performance.now();
 
-  for (const item of pending) {
+  for (let i = 0; i < pending.length; i++) {
+    if (isCancelled(cancelToken)) { cancelled = true; break; }
+    const item = pending[i];
     activeId = item.id;
     loadActiveFromQueue();
-    item.status = 'processing';
-    updateQueueUI();
+    item.status = 'processing'; updateQueueUI();
 
-    const pctBase = (done / total) * 100;
+    const pctBase = (i / total) * 100;
     const pctRange = 100 / total;
-    setStage(`📸 ${done + 1}/${total}`, item.name, pctBase);
+    setStage(`📸 ${i + 1}/${total}`, item.name, pctBase, true);
 
     try {
-      // ✅ processAISingle सीधे item.work में result डालता है
       await processAISingle(item, (stage, detail, pct) => {
         const overall = pctBase + pct * pctRange;
         const elapsed = (performance.now() - t0) / 1000;
@@ -1605,33 +1671,38 @@ $('aiRemoveAll').onclick = async () => {
           const totalEst = elapsed / (overall / 100);
           eta = ` (~${Math.ceil(Math.max(0, totalEst - elapsed))}s)`;
         }
-        setStage(`${speedName} • ${done + 1}/${total}${eta}`, stageNameMap[stage] + ' — ' + detail, overall);
-      });
-      // ✅ BUG FIX: state-only save — work overwrite नहीं होगा
+        setStage(`${speedName} • ${i + 1}/${total}${eta}`, (stageNameMap[stage] || stage) + ' — ' + detail, overall, true);
+      }, cancelToken);
       saveActiveStateOnly();
     } catch (e) {
-      console.error('❌ Batch item failed:', item.name, e);
-      item.status = 'error';
-      failed++;
+      if (e.message === 'Cancelled') { cancelled = true; item.status = 'pending'; break; }
+      logError('batch-item', e);
+      item.status = 'error'; failed++;
     }
     done++;
     updateQueueUI();
     forceGC();
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise(r => setTimeout(r, 30));
   }
 
   batchMode = false;
   isProcessing = false;
-  $('aiRemoveAll').disabled = false;
-  $('aiRemoveAll').innerHTML = origText;
+  btn.disabled = false;
+  btn.textContent = origText;
   hideStage();
-  if (activeId) { loadActiveFromQueue(); render(); }
+
+  if (activeId) { loadActiveFromQueue(); render(); syncAllUI(); }
   updateQueueUI();
 
   const success = queue.filter(x => x.status === 'done').length;
   const secs = ((performance.now() - t0) / 1000).toFixed(1);
-  status(`✅ ${success}/${queue.length} done in ${secs}s`, 100);
-  toast(`🚀 ${success} done${failed > 0 ? ' • ' + failed + ' failed' : ''}`);
+  if (cancelled) {
+    status(`⏹ Cancelled — ${success} done`, 0);
+    toast(`⏹ Cancelled • ${success} done`);
+  } else {
+    status(`✅ ${success}/${queue.length} done in ${secs}s`, 100);
+    toast(`🚀 ${success} done${failed > 0 ? ' • ' + failed + ' failed' : ''}`);
+  }
   switchTab('bg');
 };
 
@@ -1675,15 +1746,15 @@ function sigCleanItem(item) {
   item.hasResult = true;
   item.maskBackup = captureAlpha(out);
   item.status = 'done';
+  updateProcessedThumb(item);
 }
-
 $('sigAuto').onclick = () => {
   if (!activeId || isProcessing) return;
   isProcessing = true;
   saveActiveToQueue();
   const item = queue.find(x => x.id === activeId);
   pushHistory();
-  setStage('✍️ Signature Clean', 'Extracting ink', 50);
+  setStage('✍️ Signature Clean', 'Extracting ink', 50, false);
   setTimeout(() => {
     try {
       sigCleanItem(item);
@@ -1692,28 +1763,28 @@ $('sigAuto').onclick = () => {
       status('✅ Signature clean!', 100);
       toast('✍️ Signature clean');
       switchTab('bg');
-    } catch (e) { console.error(e); toast('❌ Failed'); }
+    } catch (e) { logError('sigClean', e); toast('❌ Failed'); }
     finally { isProcessing = false; hideStage(); saveActiveToQueue(); updateQueueUI(); }
   }, 30);
 };
-
 $('sigAutoAll').onclick = () => {
   if (!queue.length || isProcessing) return;
   isProcessing = true;
   saveActiveToQueue();
-  const origText = $('sigAutoAll').innerHTML;
-  $('sigAutoAll').disabled = true;
-  $('sigAutoAll').innerHTML = '<span class="spinner"></span> …';
-  setStage('✍️ Processing all', 'Cleaning', 50);
+  const btn = $('sigAutoAll');
+  const origText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Processing…';
+  setStage('✍️ Processing all', 'Cleaning', 50, false);
   setTimeout(() => {
     let done = 0, failed = 0;
     for (const item of queue) {
       try { item.status = 'processing'; sigCleanItem(item); done++; }
-      catch (e) { console.error(e); item.status = 'error'; failed++; }
+      catch (e) { logError('sigBatch', e); item.status = 'error'; failed++; }
     }
     isProcessing = false;
-    $('sigAutoAll').disabled = false;
-    $('sigAutoAll').innerHTML = origText;
+    btn.disabled = false;
+    btn.textContent = origText;
     hideStage();
     loadActiveFromQueue(); render(); updateQueueUI();
     status(`✅ ${done} cleaned`, 100);
@@ -1789,9 +1860,16 @@ $('compareSlider').addEventListener('pointerup', e => {
 });
 $('compareSlider').addEventListener('pointercancel', () => { sliderDrag = false; });
 
-/* UNDO / RESET */
+/* UNDO / REDO */
 function doUndo() {
   if (!undoStack.length) return toast('कुछ undo नहीं है');
+  redoStack.push({
+    work: snapshot(),
+    state: cloneState(state),
+    hasResult,
+    maskBackup: maskBackup ? new Uint8ClampedArray(maskBackup) : null
+  });
+  while (redoStack.length > MAX_HISTORY) redoStack.shift();
   const s = undoStack.pop();
   work = s.work; Object.assign(state, s.state);
   hasResult = s.hasResult;
@@ -1799,8 +1877,27 @@ function doUndo() {
   saveActiveToQueue(); syncAllUI(); render();
   toast('↶ Undo');
 }
+function doRedo() {
+  if (!redoStack.length) return toast('कुछ redo नहीं है');
+  undoStack.push({
+    work: snapshot(),
+    state: cloneState(state),
+    hasResult,
+    maskBackup: maskBackup ? new Uint8ClampedArray(maskBackup) : null
+  });
+  while (undoStack.length > MAX_HISTORY) undoStack.shift();
+  const s = redoStack.pop();
+  work = s.work; Object.assign(state, s.state);
+  hasResult = s.hasResult;
+  maskBackup = s.maskBackup ? new Uint8ClampedArray(s.maskBackup) : null;
+  saveActiveToQueue(); syncAllUI(); render();
+  toast('↷ Redo');
+}
 $('undoBtn').onclick = doUndo;
 $('undoBtnBottom').onclick = doUndo;
+$('redoBtn').onclick = doRedo;
+$('redoBtnBottom').onclick = doRedo;
+
 function doReset() {
   if (!original) return;
   pushHistory();
@@ -1811,18 +1908,20 @@ function doReset() {
     rotate: 0, flipH: false, flipV: false, zoom: 1,
     brushMode: 'keep', brushSize: 32, brushHard: 60, brushStrength: 100, autoCrop: false
   });
-  saveActiveToQueue(); syncAllUI(); render();
+  const item = queue.find(x => x.id === activeId);
+  if (item && item.originalThumb) item.thumb = item.originalThumb;
+  saveActiveToQueue(); syncAllUI(); render(); updateQueueUI();
   toast('↻ Reset');
 }
-$('resetBtn').onclick = doReset;
-$('resetBtnBottom').onclick = doReset;
+$('resetBtn')?.addEventListener('click', doReset);
+$('resetBtnBottom')?.addEventListener('click', doReset);
 $('deleteCurrentBtn').onclick = () => { if (activeId) deleteItem(activeId); else toast('कोई image नहीं'); };
 
 /* EDGE */
 $('applyEdge').onclick = () => {
   if (!work) return;
   pushHistory();
-  setStage('✨ Edge Refine', 'Feather + Decontamination', 30);
+  setStage('✨ Edge Refine', 'Feather + Decontamination', 30, false);
   setTimeout(() => {
     const w = work.width, h = work.height, n = w * h;
     const s = work.data;
@@ -1839,8 +1938,6 @@ $('applyEdge').onclick = () => {
     let out = new Uint8ClampedArray(s);
     for (let i = 0, p = 3; i < n; i++, p += 4) out[p] = Math.round(a[i] * 255);
     let img = new ImageData(out, w, h);
-    if (def > 0) img = decontaminateEdges(img, a, def);
-    if (halo > 0) img = haloRemoval(img, a, halo);
     work = img; hasResult = true;
     maskBackup = captureAlpha(work);
     saveActiveToQueue(); render();
@@ -1946,6 +2043,8 @@ c.addEventListener('pointerup', e => {
   maskBackup = captureAlpha(work);
   saveActiveToQueue();
   $('modeBadge').textContent = 'EDITED';
+  const item = queue.find(x => x.id === activeId);
+  if (item) updateProcessedThumb(item);
 });
 c.addEventListener('pointercancel', () => { drawing = false; lastPt = null; });
 $('keepBrush').onclick = () => { state.brushMode = 'keep'; syncAllUI(); $('brushHint').textContent = '🟢 Keep'; $('brushHint').classList.remove('hidden'); };
@@ -1985,7 +2084,6 @@ $('format').onchange = e => {
 };
 $('targetSize').onchange = e => currentTargetKB = +e.target.value;
 $('dpi').onchange = e => { currentDpi = +e.target.value; updateSizeInfo(c.width, c.height); };
-$('fileNameInput').oninput = e => { fileBase = e.target.value.replace(/[^a-zA-Z0-9_-]/g, '_') || 'image'; };
 
 function trimImage(im) {
   const d = im.data, w = im.width, h = im.height;
@@ -2046,24 +2144,48 @@ async function buildOutputCanvas(item) {
   }
   return canvas;
 }
+
+/* ★ FIX #5: PNG skip binary search (quality param has no effect) */
 async function compressToTarget(canvas, format, targetKB) {
   if (targetKB <= 0) {
     const blob = await new Promise(r => canvas.toBlob(r, format, currentQuality));
     return { blob, metTarget: true };
   }
-  const target = targetKB * 1024;
+  const targetBytes = targetKB * 1024;
+
+  // PNG: quality ignored by browsers → downscale only
+  if (format === 'image/png') {
+    let blob = await new Promise(r => canvas.toBlob(r, format));
+    let scale = 1.0;
+    while (blob && blob.size > targetBytes && canvas.width * scale > 80 && scale > 0.15) {
+      scale -= 0.08;
+      const smaller = document.createElement('canvas');
+      smaller.width = Math.max(1, Math.round(canvas.width * scale));
+      smaller.height = Math.max(1, Math.round(canvas.height * scale));
+      const sctx = smaller.getContext('2d');
+      sctx.imageSmoothingQuality = 'high';
+      sctx.drawImage(canvas, 0, 0, smaller.width, smaller.height);
+      blob = await new Promise(r => smaller.toBlob(r, format));
+      releaseCanvas(smaller);
+    }
+    return { blob, metTarget: blob ? blob.size <= targetBytes : false };
+  }
+
+  // JPG/WEBP: quality binary search
   let lo = 0.05, hi = 1, best = null;
   for (let i = 0; i < 11; i++) {
     const q = (lo + hi) / 2;
     const blob = await new Promise(r => canvas.toBlob(r, format, q));
     if (!blob) break;
-    if (blob.size <= target) { best = blob; lo = q; } else hi = q;
+    if (blob.size <= targetBytes) { best = blob; lo = q; } else hi = q;
     if (hi - lo < 0.01) break;
   }
   if (best) return { blob: best, metTarget: true };
+
+  // Fallback: downscale
   let scale = 0.9;
   let blob = await new Promise(r => canvas.toBlob(r, format, 0.9));
-  while (blob && blob.size > target && canvas.width * scale > 80 && scale > 0.15) {
+  while (blob && blob.size > targetBytes && canvas.width * scale > 80 && scale > 0.15) {
     const smaller = document.createElement('canvas');
     smaller.width = Math.max(1, Math.round(canvas.width * scale));
     smaller.height = Math.max(1, Math.round(canvas.height * scale));
@@ -2074,7 +2196,7 @@ async function compressToTarget(canvas, format, targetKB) {
     releaseCanvas(smaller);
     scale -= 0.08;
   }
-  return { blob, metTarget: blob ? blob.size <= target : false };
+  return { blob, metTarget: blob ? blob.size <= targetBytes : false };
 }
 function triggerDownload(blob, name) {
   const u = URL.createObjectURL(blob);
@@ -2083,6 +2205,7 @@ function triggerDownload(blob, name) {
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(u), 3000);
 }
+
 async function downloadItem(item, index, total) {
   const canvas = await buildOutputCanvas(item);
   const { blob, metTarget } = await compressToTarget(canvas, currentFormat, currentTargetKB);
@@ -2091,57 +2214,76 @@ async function downloadItem(item, index, total) {
   const ext = currentFormat === 'image/png' ? 'png' : currentFormat === 'image/jpeg' ? 'jpg' : 'webp';
   const suffix = currentSize.w ? `-${currentSize.w}x${currentSize.h}` : '-no-bg';
   const base = item.fileBase || 'image';
-  const name = total > 1 ? `${fileBase || base}-${index + 1}${suffix}.${ext}` : `${base}${suffix}.${ext}`;
-  triggerDownload(blob, name);
-  return { size: blob.size, metTarget };
+  const name = total > 1
+    ? `${base}-${index + 1}${suffix}.${ext}`
+    : `${base}${suffix}.${ext}`;
+  return { blob, name, size: blob.size, metTarget };
 }
+
 async function doDownload(btn) {
   if (!work || isProcessing) return;
   saveActiveToQueue();
   isProcessing = true;
   btn.disabled = true;
-  const old = btn.innerHTML;
-  btn.innerHTML = '<span class="spinner"></span> …';
-  setStage('⬇ Download', 'Preparing file…', 40);
+  const old = btn.textContent;
+  btn.textContent = '…';
+  setStage('⬇ Download', 'Preparing file…', 40, false);
   try {
     const item = queue.find(x => x.id === activeId);
-    const { size } = await downloadItem(item, 0, 1);
+    const { blob, name, size } = await downloadItem(item, 0, 1);
+    triggerDownload(blob, name);
     const kb = Math.round(size / 1024);
     status(`✅ Downloaded (${kb} KB)`, 100);
     toast(`⬇ ${kb} KB`);
-  } catch (e) { console.error(e); toast('❌ Export error'); }
-  finally { btn.disabled = false; btn.innerHTML = old; isProcessing = false; hideStage(); }
+  } catch (e) { logError('download', e); toast('❌ Export error'); }
+  finally { btn.disabled = false; btn.textContent = old; isProcessing = false; hideStage(); }
 }
 $('downloadBtn').onclick = () => doDownload($('downloadBtn'));
 $('downloadBtn2').onclick = () => doDownload($('downloadBtn2'));
+
 $('downloadAllBtn').onclick = async () => {
   if (!queue.length || isProcessing) return;
   saveActiveToQueue();
   const readyItems = queue.filter(x => x.hasResult);
   if (!readyItems.length) return toast('कोई processed image नहीं');
   isProcessing = true;
-  const origText = $('downloadAllBtn').innerHTML;
-  $('downloadAllBtn').disabled = true;
-  $('downloadAllBtn').innerHTML = '<span class="spinner"></span> …';
+  const btn = $('downloadAllBtn');
+  const origText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Preparing ZIP…';
   let done = 0;
   const total = readyItems.length;
-  for (const item of readyItems) {
-    try {
-      setStage(`⬇ ${done + 1}/${total}`, item.name, (done / total) * 100);
-      await downloadItem(item, done, total);
-      await new Promise(r => setTimeout(r, 350));
-    } catch (e) { console.error(e); }
-    done++;
-    forceGC();
+  try {
+    setStage('📦 Building ZIP', 'Loading JSZip…', 5, false);
+    const JSZip = (await import('https://esm.sh/jszip@3.10.1')).default;
+    const zip = new JSZip();
+
+    for (const item of readyItems) {
+      try {
+        setStage(`📦 Packing ${done + 1}/${total}`, item.name, (done / total) * 100, false);
+        const { blob, name } = await downloadItem(item, done, total);
+        zip.file(name, blob);
+      } catch (e) { logError('zip-item', e); }
+      done++;
+      forceGC();
+    }
+
+    setStage('📦 Compressing…', 'Generating ZIP file', 95, false);
+    const zipBlob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
+    const zipName = `bg-removed-${Date.now()}.zip`;
+    triggerDownload(zipBlob, zipName);
+    const kb = Math.round(zipBlob.size / 1024);
+    status(`✅ ZIP (${kb} KB) downloaded — ${total} images`, 100);
+    toast(`📦 ZIP: ${total} images (${kb} KB)`);
+  } catch (e) {
+    logError('zip', e);
+    toast('❌ ZIP error — single downloads try करें');
+  } finally {
+    isProcessing = false;
+    btn.disabled = false;
+    btn.textContent = origText;
+    hideStage();
   }
-  setStage('✅ All done', `${total} saved`, 100);
-  await new Promise(r => setTimeout(r, 500));
-  isProcessing = false;
-  $('downloadAllBtn').disabled = false;
-  $('downloadAllBtn').innerHTML = origText;
-  hideStage();
-  status(`✅ ${total} downloaded`, 100);
-  toast(`⬇⬇ ${total} images`);
 };
 
 /* KEYBOARD */
@@ -2151,51 +2293,28 @@ window.addEventListener('keydown', e => {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
     e.preventDefault(); doUndo();
   }
+  if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))) {
+    e.preventDefault(); doRedo();
+  }
   if (e.key === 'Escape' && compareMode) $('compareBtn').click();
+  if (e.key === 'Escape' && isProcessing) cancelActive();
   if (e.key === 'Delete' && activeId && !isProcessing) deleteItem(activeId);
 });
 
 /* ============================================================
-   INIT + SELF-CHECK
+   INIT
    ============================================================ */
 clearCanvas(); syncAllUI(); updateQueueUI();
+updateCacheStatus();  /* ★ FIX #4: cache status on init */
 
-// ✅ Self-check — सभी required elements present हैं या नहीं
-(function selfCheck() {
-  const REQUIRED = [
-    'c','status','progress','toast','confirmRoot',
-    'engine','speedMode','detailLevel','hairMode','mattingMode','haloMode','deconMode',
-    'aiRemove','aiRemoveAll','aiErrorBox','aiErrorText','aiRetryBtn','aiClearCacheBtn',
-    'cacheStatus','cacheIcon','cacheText','cacheHelp',
-    'queueStrip','queueWrap','queueInfo','queueCount',
-    'modeBadge','liveBadge','compareBtn','compareSlider','cBeforeHost','cDivider','cHandle',
-    'undoBtn','undoBtnBottom','resetBtn','resetBtnBottom','deleteCurrentBtn',
-    'zoomIn','zoomOut','zoomReset',
-    'brushSize','brushHard','brushStrength','brushCursor','brushHint',
-    'keepBrush','removeBrush','brushOff','brushReset',
-    'applyEdge','feather','def','halo',
-    'bgOpts','customColor','autoCrop','format','targetSize','dpi','quality',
-    'fileNameInput','downloadBtn','downloadBtn2','downloadAllBtn',
-    'fileMulti','drop','featureNav','nextSteps','goAI','goSign',
-    'bright','contrast','brightO','contrastO',
-    'sigThresh','sigSmooth','sigThreshO','sigSmoothO',
-    'rotL','rotR','flipH','flipV','resetAdj',
-    'presets','pxInfo','mmInfo','kbInfo'
-  ];
-  const missing = REQUIRED.filter(id => !document.getElementById(id));
-  if (missing.length) {
-    console.error('❌ MISSING ELEMENTS:', missing);
-    console.warn('Missing IDs:', missing.join(', '));
-  } else {
-    console.log('✅ Self-check OK — all', REQUIRED.length, 'elements present');
-  }
-})();
+console.log(`📱 ${IS_MOBILE ? 'Mobile' : 'Desktop'} • ~${DEVICE_MEM_GB}GB • Max: ${MAX_MP}MP • History: ${MAX_HISTORY}`);
 
 setTimeout(() => {
   if (!engineCache.imgly && !loadingEngine.imgly) {
-    loadImgly().catch(() => {});
+    console.log('📥 Background preload of Fast engine…');
+    loadImgly().catch(e => console.warn('Preload skipped:', e.message));
   }
-}, 3000);
+}, 2000);
 </script>
 </body>
 </html>
