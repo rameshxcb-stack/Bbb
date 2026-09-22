@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5">
 <meta name="theme-color" content="#07070d">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://esm.sh https://cdn.jsdelivr.net https://staticimgly.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; img-src 'self' blob: data:; connect-src 'self' blob: data: https://esm.sh https://cdn.jsdelivr.net https://staticimgly.com https://huggingface.co https://cdn-lfs.huggingface.co https://cas-bridge.xethub.hf.co; worker-src 'self' blob:;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: https://esm.sh https://cdn.jsdelivr.net https://staticimgly.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; img-src 'self' blob: data:; connect-src 'self' blob: data: https://esm.sh https://cdn.jsdelivr.net https://staticimgly.com https://huggingface.co https://cdn-lfs.huggingface.co https://cdn-lfs-us-1.huggingface.co https://cas-bridge.xethub.hf.co; worker-src 'self' blob:;">
 <meta name="description" content="SSC, UPSC, IBPS, Railway exam photo ready in browser. Background remove, auto crop, resize, compress.">
 <title>Exam Photo Maker — Fast AI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -136,14 +136,14 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
 .stickyBar{position:fixed;left:0;right:0;bottom:0;z-index:50;padding:8px 10px;padding-bottom:calc(8px + var(--safe-bottom));background:linear-gradient(180deg,transparent,rgba(7,7,13,.95) 35%);backdrop-filter:blur(14px)}
 .stickyBar .inner{max-width:1400px;margin:auto;display:grid;grid-template-columns:auto auto 1fr;gap:6px}
 .stickyBar button{min-height:48px}
-.toast{position:fixed;left:50%;bottom:calc(76px + var(--safe-bottom));transform:translateX(-50%) translateY(80px);background:rgba(20,20,34,.97);border:1px solid rgba(139,92,246,.5);color:#e9d5ff;padding:10px 18px;border-radius:20px;font-size:12px;font-weight:600;z-index:100;opacity:0;pointer-events:none;transition:.35s var(--ease);max-width:calc(100vw - 24px);text-align:center;word-break:break-word}
+.toast{position:fixed;left:50%;bottom:calc(76px + var(--safe-bottom));transform:translateX(-50%) translateY(80px);background:rgba(20,20,34,.97);border:1px solid rgba(139,92,246,.5);color:#e9d5ff;padding:10px 18px;border-radius:20px;font-size:12px;font-weight:600;z-index:100;opacity:0;pointer-events:none;transition:.35s var(--ease);max-width:calc(100vw - 24px);text-align:center;word-break:break-word;white-space:pre-line}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 .footer{text-align:center;padding:14px 10px;color:var(--faint);font-size:10px;line-height:1.7}
 .hidden{display:none!important}
 .confirmModal{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;padding:20px}
 .confirmBox{background:linear-gradient(160deg,#1a1a2e,#0f0f1a);border:1px solid var(--stroke);border-radius:var(--r);padding:20px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.6)}
 .confirmBox h3{font-size:16px;margin:0 0 8px}
-.confirmBox p{color:var(--muted);font-size:12.5px;margin:0 0 16px;line-height:1.55}
+.confirmBox p{color:var(--muted);font-size:12.5px;margin:0 0 16px;line-height:1.55;white-space:pre-line;word-break:break-word}
 .detectedType{display:inline-block;padding:2px 8px;background:rgba(34,211,238,.15);border:1px solid rgba(34,211,238,.4);border-radius:6px;font-size:10px;color:#67e8f9;font-weight:700;margin-left:4px}
 .qualityPicker{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px}
 .qualityCard{background:rgba(10,10,20,.5);border:1px solid var(--stroke);border-radius:12px;padding:12px 10px;cursor:pointer;transition:.18s var(--ease);text-align:center;display:flex;flex-direction:column;gap:4px;align-items:center;min-height:auto}
@@ -159,10 +159,6 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
 .examInfoCard .eiDetail{font-size:11px;color:var(--muted);line-height:1.6}
 .examInfoCard .eiDetail b{color:#e2e8f0}
 .examInfoCard .eiNote{display:block;margin-top:6px;padding-top:6px;border-top:1px solid rgba(139,92,246,.2);font-size:10px;color:#f59e0b;opacity:.85}
-
-/* ============================================================================
- * EFFECTS — full UI with sliders
- * ========================================================================== */
 .fxPresets{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:12px}
 .fxPreset{background:rgba(10,10,20,.5);border:1px solid var(--stroke);border-radius:10px;padding:8px 4px;cursor:pointer;transition:.18s var(--ease);display:flex;flex-direction:column;align-items:center;gap:3px;min-height:auto;text-align:center}
 .fxPreset:active{transform:scale(.96)}
@@ -170,7 +166,6 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
 .fxPreset .fpEmoji{font-size:16px}
 .fxPreset .fpName{font-size:9.5px;font-weight:700;color:#e2e8f0;line-height:1.15}
 .fxPreset.on .fpName{color:#fff}
-
 .fxSection{background:rgba(10,10,20,.45);border:1px solid var(--stroke);border-radius:12px;margin-bottom:8px;overflow:hidden;transition:.2s var(--ease)}
 .fxSection.open{border-color:rgba(139,92,246,.5);background:rgba(139,92,246,.06)}
 .fxHeader{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;background:transparent;border:0;cursor:pointer;border-radius:12px;min-height:auto;text-align:left}
@@ -195,13 +190,6 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
 .fxFooter{display:flex;gap:6px;margin-top:10px}
 .fxFooter button{flex:1;font-size:11px;min-height:34px;padding:6px 8px}
 @media(min-width:900px){
-  .fxPresets{grid-template-columns:repeat(5,1fr)}
-}
-@media(max-width:360px){
-  .fxPresets{grid-template-columns:repeat(3,1fr)}
-}
-
-@media(min-width:900px){
   .app{max-width:1360px;padding:16px;padding-bottom:90px}
   .hero{padding:16px 12px 12px}.hero h1{font-size:24px}.hero .logo{width:52px;height:52px;font-size:26px}
   .grid{display:grid;grid-template-columns:1fr 420px;gap:16px;align-items:start}
@@ -216,7 +204,7 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
   .examGrid{grid-template-columns:repeat(3,1fr)}
   .qualityPicker{grid-template-columns:repeat(4,1fr)}
 }
-@media(max-width:360px){.hero h1{font-size:15px}.presets{grid-template-columns:repeat(2,1fr)}.qItem{width:64px;height:64px}.qAdd{width:64px;height:64px}}
+@media(max-width:360px){.hero h1{font-size:15px}.presets{grid-template-columns:repeat(2,1fr)}.qItem{width:64px;height:64px}.qAdd{width:64px;height:64px}.fxPresets{grid-template-columns:repeat(3,1fr)}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
@@ -226,7 +214,7 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
   <div class="logo" aria-hidden="true">📸</div>
   <h1>Exam Photo Maker</h1>
   <p>Fast AI • Typical 3–10 sec after warm-up</p>
-  <span class="ver" id="appVersion">v1.7.0</span>
+  <span class="ver" id="appVersion">v1.8.0</span>
 </header>
 
 <div class="grid">
@@ -320,7 +308,7 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
         <div id="status" class="status" role="status" aria-live="polite">Images upload करें।</div>
         <div class="bar"><i id="progress"></i></div>
         <div class="notice green">🔒 Images आपके browser में process होती हैं — server upload नहीं।</div>
-        <div class="notice warn">🌐 <b>First run:</b> AI download hoga (30 sec – 3 min)। Uske baad cached — <b>typical 3–10 sec</b> per image.</div>
+        <div class="notice warn">🌐 <b>First run:</b> AI download hoga (30 sec – 3 min)। Uske baad cached — <b>typical 3–10 sec</b> per image. <b>WiFi strongly recommended</b> for first run.</div>
         <div class="actions single" style="margin-top:10px">
           <button id="clearQueueBtn" class="ghost small">🗑 Clear Queue</button>
         </div>
@@ -350,7 +338,7 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
         </div>
         <div class="actions single"><button id="aiRemove" class="primary">✨ Background हटाएँ</button></div>
         <div class="actions single"><button id="aiRemoveAll" class="primary success">🚀 सभी Images (Batch)</button></div>
-        <div class="notice">💡 <b>Auto</b> image type + device ke hisaab se engine aur resolution choose karta hai. Times device/model/cache ke hisaab se vary karti hain.</div>
+        <div class="notice">💡 <b>Auto</b> image type + device ke hisaab se engine aur resolution choose karta hai. WiFi pe first run fastest hota hai.</div>
       </div>
 
       <div class="panel" data-panel="bg" role="tabpanel">
@@ -454,7 +442,6 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
         <input id="brushStrength" type="range" min="10" max="100" value="100" aria-label="Brush strength">
       </div>
 
-      <!-- ============ EFFECTS PANEL — full sliders + presets ============ -->
       <div class="panel" data-panel="effects" role="tabpanel">
         <h3>✨ Effects — Live Preview</h3>
         <div class="notice green" style="margin-top:0">🎬 Koi bhi slider move karo — preview me turant update hoga.</div>
@@ -470,7 +457,6 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
 
         <div style="font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 6px">⚙️ Fine-tune</div>
 
-        <!-- Shadow -->
         <div class="fxSection" data-fx="shadow">
           <button class="fxHeader" type="button" data-fx-toggle="shadow">
             <span class="fxIcon">🌑</span>
@@ -488,7 +474,6 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
           </div>
         </div>
 
-        <!-- Outline -->
         <div class="fxSection" data-fx="outline">
           <button class="fxHeader" type="button" data-fx-toggle="outline">
             <span class="fxIcon">⭕</span>
@@ -513,7 +498,6 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
           </div>
         </div>
 
-        <!-- Glow -->
         <div class="fxSection" data-fx="glow">
           <button class="fxHeader" type="button" data-fx-toggle="glow">
             <span class="fxIcon">✨</span>
@@ -538,7 +522,6 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
           </div>
         </div>
 
-        <!-- Vignette -->
         <div class="fxSection" data-fx="vignette">
           <button class="fxHeader" type="button" data-fx-toggle="vignette">
             <span class="fxIcon">🔮</span>
@@ -559,7 +542,6 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
         </div>
         <div class="notice warn" style="margin-top:10px">⚡ Low-end device pe effects lag sakte hain. Zaroorat na ho toh off rakhein.</div>
       </div>
-      <!-- ============ /EFFECTS PANEL ============ -->
 
       <div class="panel" data-panel="size" role="tabpanel">
         <h3>📐 Manual Size</h3>
@@ -629,11 +611,14 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
             <button id="clearStorageBtn" class="small ghost">🗑 Clear Storage</button>
           </div>
         </div>
-        <div class="actions single" style="margin-top:12px">
+        <div class="actions single" style="margin-top:8px">
+          <button id="diagBtn" class="ghost small">🧪 Show error log</button>
+        </div>
+        <div class="actions single" style="margin-top:8px">
           <button id="clearAllDataBtn" class="ghost small danger">🗑 Clear All Data & Cache</button>
         </div>
         <div class="notice">💡 <b>Device:</b> <span id="deviceInfo">—</span></div>
-        <div class="notice">🏷️ <b>Version:</b> <span id="versionInfo">v1.7.0</span></div>
+        <div class="notice">🏷️ <b>Version:</b> <span id="versionInfo">v1.8.0</span></div>
       </div>
     </div>
   </div>
@@ -656,9 +641,9 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
 <script type="module">
 'use strict';
 
-console.log('[Exam Photo Maker] module loading… v1.7.0');
+console.log('[Exam Photo Maker] module loading… v1.8.0');
 
-const APP_VERSION = '1.7.0';
+const APP_VERSION = '1.8.0';
 
 const CONFIG = Object.freeze({
   MAX_FILE_MB: 25,
@@ -668,8 +653,8 @@ const CONFIG = Object.freeze({
   RETRY_MAX: 2,
   RETRY_BASE_MS: 1500,
   AI_INIT_IDLE_MS: 2000,
-  FALLBACK_TIME_BUDGET_MS: { low: 6000, mobile: 10000, 'desktop-wasm': 15000, 'desktop-webgpu': 20000 },
-  PROCESSING_HARD_TIMEOUT_MS: { low: 45000, mobile: 60000, 'desktop-wasm': 90000, 'desktop-webgpu': 120000 },
+  FALLBACK_TIME_BUDGET_MS: { low: 8000, mobile: 15000, 'desktop-wasm': 20000, 'desktop-webgpu': 25000 },
+  PROCESSING_HARD_TIMEOUT_MS: { low: 60000, mobile: 90000, 'desktop-wasm': 120000, 'desktop-webgpu': 150000 },
   STORAGE_QUOTA_WARN_RATIO: 0.7,
   STORAGE_QUOTA_HARD_RATIO: 0.9,
   DB_SAVE_DEBOUNCE_MS: 350,
@@ -687,9 +672,9 @@ const CONFIG = Object.freeze({
 
 function tryJson(o) { try { return JSON.stringify(o); } catch { return String(o); } }
 class Logger {
-  constructor() { this.buffer = []; this.max = 200; this.listeners = new Set(); }
+  constructor() { this.buffer = []; this.max = 300; this.listeners = new Set(); }
   _push(level, args) {
-    const entry = { t: Date.now(), level, msg: args.map(a => (a instanceof Error ? a.message : typeof a === 'object' ? tryJson(a) : String(a))).join(' ') };
+    const entry = { t: Date.now(), level, msg: args.map(a => (a instanceof Error ? (a.stack || a.message) : typeof a === 'object' ? tryJson(a) : String(a))).join(' ') };
     this.buffer.push(entry);
     if (this.buffer.length > this.max) this.buffer.shift();
     for (const fn of this.listeners) { try { fn(entry); } catch (_) {} }
@@ -743,9 +728,6 @@ const MAX_HISTORY = IS_LOW_END ? 4 : (IS_MOBILE ? 6 : 12);
 const LARGE_IMG_MP = 8;
 const QUEUE_LIMIT = IS_LOW_END ? 5 : (IS_MOBILE ? 8 : 25);
 
-/* ============================================================================
- * FX DEFAULTS + PRESETS + MIGRATION
- * ========================================================================== */
 function defaultFx() {
   return {
     shadow:   { on: false, blur: 22, offsetY: 10, opacity: 0.7 },
@@ -764,7 +746,6 @@ const FX_PRESETS = {
 function migrateFx(fx) {
   const base = defaultFx();
   if (!fx || typeof fx !== 'object') return base;
-  // Old format: fx.shadow is boolean
   if (typeof fx.shadow === 'boolean' || typeof fx.outline === 'boolean') {
     return {
       shadow:   { ...base.shadow,   on: !!fx.shadow },
@@ -773,7 +754,6 @@ function migrateFx(fx) {
       vignette: { ...base.vignette, on: !!fx.vignette }
     };
   }
-  // New format: merge partial
   return {
     shadow:   { ...base.shadow,   ...(fx.shadow   || {}) },
     outline:  { ...base.outline,  ...(fx.outline  || {}) },
@@ -1176,7 +1156,6 @@ async function loadQueueFromDB() {
         else if (rec.workBuf) work = new ImageData(new Uint8ClampedArray(rec.workBuf), rec.workW, rec.workH);
       } catch (e) { log.warn('decode work', e); }
       const st = rec.state || defaultState();
-      // Migrate old fx format to new
       st.fx = migrateFx(st.fx);
       queue.push({
         id: rec.id, name: rec.name, fileBase: rec.fileBase,
@@ -1286,6 +1265,10 @@ function status(msg, p) {
   const el = $('status'); if (el) el.textContent = msg;
   if (p !== undefined) { const bar = $('progress'); if (bar) bar.style.width = Math.max(0, Math.min(100, p)) + '%'; }
 }
+function errMsg(e) {
+  const s = String(e && (e.message || e) || 'Unknown error');
+  return s.length > 90 ? s.substring(0, 90) + '…' : s;
+}
 
 function snapshot(img) {
   const src = img || work; if (!src) return null;
@@ -1387,7 +1370,6 @@ function drawSubjectWithEffects(targetCtx, imgData, canvasW, canvasH, st) {
 
   const tmp = imagedataToCanvas(imgData);
 
-  // GLOW (behind)
   if (glow.on && glow.intensity > 0 && glow.blur > 0) {
     const glowCv = makeColoredSilhouette(tmp, glow.color || '#a78bfa', 1);
     targetCtx.save();
@@ -1399,7 +1381,6 @@ function drawSubjectWithEffects(targetCtx, imgData, canvasW, canvasH, st) {
     targetCtx.restore();
   }
 
-  // SHADOW (behind)
   if (shadow.on && shadow.opacity > 0) {
     targetCtx.save();
     targetCtx.shadowBlur = shadow.blur;
@@ -1411,7 +1392,6 @@ function drawSubjectWithEffects(targetCtx, imgData, canvasW, canvasH, st) {
     targetCtx.restore();
   }
 
-  // OUTLINE (behind subject, colored ring)
   if (outline.on && outline.thickness > 0 && outline.opacity > 0) {
     const outlineCv = makeColoredSilhouette(tmp, outline.color || '#22d3ee', outline.opacity);
     const o = outline.thickness;
@@ -1424,11 +1404,9 @@ function drawSubjectWithEffects(targetCtx, imgData, canvasW, canvasH, st) {
     }
   }
 
-  // SUBJECT
   targetCtx.filter = filterStr;
   targetCtx.drawImage(tmp, -imgData.width / 2, -imgData.height / 2);
   pool.release(tmp);
-
   targetCtx.restore();
 
   targetCtx.filter = 'none';
@@ -1437,7 +1415,6 @@ function drawSubjectWithEffects(targetCtx, imgData, canvasW, canvasH, st) {
   targetCtx.shadowOffsetY = 0;
   targetCtx.shadowColor = 'transparent';
 
-  // VIGNETTE (on top, canvas-wide)
   if (vignette.on && vignette.intensity > 0) {
     const cx = canvasW / 2, cy = canvasH / 2;
     const inner = Math.min(canvasW, canvasH) * vignette.radius;
@@ -1694,7 +1671,7 @@ function clearCanvas() {
 }
 
 let modalCleanup = null;
-function showConfirm(title, message, onConfirm, confirmText = 'OK') {
+function showConfirm(title, message, onConfirm, confirmText = 'OK', onCancel = null) {
   const root = $('confirmRoot'); if (!root) return;
   if (modalCleanup) modalCleanup();
   root.textContent = '';
@@ -1706,25 +1683,22 @@ function showConfirm(title, message, onConfirm, confirmText = 'OK') {
   const p = document.createElement('p'); p.textContent = message; box.appendChild(p);
   const actions = document.createElement('div'); actions.className = 'actions';
   const cNo = document.createElement('button'); cNo.className = 'ghost'; cNo.textContent = 'Cancel';
-  const cYes = document.createElement('button'); cYes.className = 'danger'; cYes.textContent = confirmText;
+  const cYes = document.createElement('button'); cYes.className = 'primary'; cYes.textContent = confirmText;
   actions.appendChild(cNo); actions.appendChild(cYes);
   box.appendChild(actions); modal.appendChild(box); root.appendChild(modal);
   const close = () => { root.textContent = ''; document.removeEventListener('keydown', keyHandler); modalCleanup = null; if (prevFocus && prevFocus.focus) try { prevFocus.focus(); } catch (_) {} };
   const keyHandler = e => {
-    if (e.key === 'Escape') { e.preventDefault(); close(); }
+    if (e.key === 'Escape') { e.preventDefault(); close(); if (onCancel) try { onCancel(); } catch (_) {} }
     else if (e.key === 'Tab') { const f = [cNo, cYes]; const i = f.indexOf(document.activeElement); e.preventDefault(); f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus(); }
   };
   document.addEventListener('keydown', keyHandler);
-  cNo.onclick = close;
+  cNo.onclick = () => { close(); if (onCancel) try { onCancel(); } catch (_) {} };
   cYes.onclick = () => { close(); try { onConfirm(); } catch (e) { log.error('confirm action', e); toastSafe('❌ Action failed'); } };
-  modal.onclick = e => { if (e.target === modal) close(); };
+  modal.onclick = e => { if (e.target === modal) { close(); if (onCancel) try { onCancel(); } catch (_) {} } };
   modalCleanup = close;
   setTimeout(() => cYes.focus(), 30);
 }
 
-/* ============================================================================
- * RENDER (rAF-throttled)
- * ========================================================================== */
 function resetCompare() {
   if (compareMode) { compareMode = false; $('compareSlider')?.classList.remove('on'); const cb = $('compareBtn'); if (cb) cb.innerHTML = '<span class="ico">◐</span><span>Compare</span>'; }
   updateLiveBadge();
@@ -1822,7 +1796,6 @@ function updateSizeInfo(w, h) {
 function syncFxUI() {
   const fx = migrateFx(state.fx);
   state.fx = fx;
-  // Sections
   document.querySelectorAll('.fxSection').forEach(sec => {
     const key = sec.dataset.fx;
     const cfg = fx[key] || {};
@@ -1831,7 +1804,6 @@ function syncFxUI() {
     const ctl = sec.querySelector('.fxControls');
     if (ctl) ctl.classList.toggle('hidden', !cfg.on);
   });
-  // Sliders + outputs
   document.querySelectorAll('[data-fx-slider]').forEach(el => {
     const path = el.dataset.fxSlider.split('.');
     const val = fx[path[0]]?.[path[1]];
@@ -1845,13 +1817,11 @@ function syncFxUI() {
     if (prop === 'opacity' || prop === 'intensity' || prop === 'radius') el.textContent = Math.round(val * 100) + '%';
     else el.textContent = String(val);
   });
-  // Color swatches
   document.querySelectorAll('.fxColor').forEach(btn => {
     const key = btn.dataset.fxColor;
     const col = btn.dataset.color;
     btn.classList.toggle('on', (fx[key]?.color || '').toLowerCase() === col.toLowerCase());
   });
-  // Preset detection
   const presetMatch = detectPreset(fx);
   document.querySelectorAll('.fxPreset').forEach(b => b.classList.toggle('on', b.dataset.preset === presetMatch));
 }
@@ -1930,7 +1900,6 @@ async function addFiles(files) {
   let valid = arr.filter(f => f.size <= CONFIG.MAX_FILE_MB * 1024 * 1024);
   if (!valid.length) { toast('❌ File बहुत बड़ी'); return; }
 
-  // Prefetch AI model — user clearly intends to process
   if (!engineCache.imgly) loadImgly().catch(() => {});
 
   const est = await getStorageEstimate();
@@ -2009,7 +1978,11 @@ async function loadImgly() {
       const mod = await withRetry(() => import(/* @vite-ignore */ CONFIG.CDN.IMGLY), 2, 2000, 'imgly');
       engineCache.imgly = mod; lruTouch('imgly'); updateCacheStatus();
       return mod;
-    } catch (e) { loadingEngine.imgly = null; throw new Error('AI load fail: ' + (e && e.message || e)); }
+    } catch (e) {
+      loadingEngine.imgly = null;
+      console.error('[AI] imgly library load failed:', e);
+      throw new Error('AI library load failed: ' + errMsg(e));
+    }
   })();
   return loadingEngine.imgly;
 }
@@ -2036,7 +2009,11 @@ async function getPipeline(modelId, opts = {}) {
       const pipe = await pipeline(opts.task || 'image-segmentation', modelId, { device, dtype });
       engineCache[key] = pipe; lruTouch(key); updateCacheStatus();
       return pipe;
-    } catch (e) { loadingEngine[key] = null; throw new Error('Pipeline load failed: ' + (e && e.message || e)); }
+    } catch (e) {
+      loadingEngine[key] = null;
+      console.error('[AI] Pipeline load failed:', modelId, e);
+      throw new Error('Model load failed: ' + modelId + ' — ' + errMsg(e));
+    }
   })();
   return loadingEngine[key];
 }
@@ -2182,13 +2159,29 @@ async function getAlphaAtRes(maskBlob, w, h) {
 
 async function runImglyAdapter(blob, modelId, onProgress) {
   const m = await loadImgly();
-  return m.removeBackground(blob, {
-    model: modelId,
-    output: { format: 'image/png', quality: 1, type: 'foreground' },
-    publicPath: CONFIG.CDN.IMGLY_DATA,
-    proxyToWorker: true,
-    progress: (name, a, b) => { if (b && onProgress) onProgress(a / b); }
-  });
+  // Attempt 1: full config (with publicPath + progress)
+  try {
+    return await m.removeBackground(blob, {
+      model: modelId,
+      output: { format: 'image/png', quality: 1, type: 'foreground' },
+      publicPath: CONFIG.CDN.IMGLY_DATA,
+      progress: (key, current, total) => { if (total && onProgress) onProgress(current / total); }
+    });
+  } catch (e1) {
+    log.warn('imgly attempt 1 failed', e1);
+    console.error('[AI] imgly attempt 1 failed:', e1);
+  }
+  // Attempt 2: minimal config (no publicPath, no progress, no proxy)
+  try {
+    return await m.removeBackground(blob, {
+      model: modelId,
+      output: { format: 'image/png', type: 'foreground' }
+    });
+  } catch (e2) {
+    log.warn('imgly attempt 2 failed', e2);
+    console.error('[AI] imgly attempt 2 failed:', e2);
+    throw e2;
+  }
 }
 async function runTransformersAdapter(blob, modelId) {
   const pipe = await getPipeline(modelId);
@@ -2267,11 +2260,11 @@ function isCached(engineId) {
 async function processAISingle(item, onStage, cancelToken) {
   cancelToken.throwIfCancelled();
 
-  const hardTimeoutMs = CONFIG.PROCESSING_HARD_TIMEOUT_MS[DEVICE_CLASS] || 60000;
+  const hardTimeoutMs = CONFIG.PROCESSING_HARD_TIMEOUT_MS[DEVICE_CLASS] || 90000;
   const startedAt = performance.now();
   const checkTime = (label) => {
     if (performance.now() - startedAt > hardTimeoutMs) {
-      const e = new Error(`Timeout at ${label} (>${hardTimeoutMs}ms)`);
+      const e = new Error(`Timeout at ${label}`);
       e.name = 'TimeoutError';
       throw e;
     }
@@ -2288,21 +2281,26 @@ async function processAISingle(item, onStage, cancelToken) {
   const resolution = pickResolution(item.original.width, item.original.height,
     qualityMode === 'auto' ? QUALITY_LEVELS.auto.resolutionMode : QUALITY_LEVELS[qualityMode].resolutionMode);
 
-  onStage && onStage('AI Processing', 'Segmenting…', 0.15);
+  onStage && onStage('AI Processing', 'Preparing image…', 0.15);
   const blob = await buildAIInput(item.original, resolution);
   cancelToken.throwIfCancelled();
   checkTime('buildAIInput');
 
   let maskBlob, usedFallback = false;
+  let lastError = null;
   const startMs = performance.now();
   const budget = CONFIG.FALLBACK_TIME_BUDGET_MS[DEVICE_CLASS] || 15000;
+
   try {
     maskBlob = await withRetry(() => runEngine(engineId, blob, p => {
       onStage && onStage('AI Processing', `Segmenting ${Math.round(p * 100)}%`, 0.15 + p * 0.4);
     }), 1, 1000, 'primary-engine');
     markEngineWarm(engineId);
   } catch (e) {
-    log.warn('primary engine failed, trying fallbacks', engineId, e);
+    log.warn('primary engine failed', engineId, e);
+    console.error('[AI] Primary engine failed:', engineId, e);
+    lastError = e;
+
     const chain = (FALLBACK_CHAIN[engineId] || ['isnet_fp16', 'isnet_quint8']).slice();
     chain.sort((a, b) => {
       const ca = (isCached(a) || warmEngines.has(a)) ? 0 : 1;
@@ -2310,6 +2308,7 @@ async function processAISingle(item, onStage, cancelToken) {
       if (ca !== cb) return ca - cb;
       return (MODEL_REGISTRY[a]?.sizeMB || 999) - (MODEL_REGISTRY[b]?.sizeMB || 999);
     });
+
     for (const fb of chain) {
       cancelToken.throwIfCancelled();
       if (performance.now() - startMs > budget) { log.warn('fallback time budget exceeded'); break; }
@@ -2321,9 +2320,17 @@ async function processAISingle(item, onStage, cancelToken) {
         markEngineWarm(fb);
         log.info('fallback succeeded', fb);
         break;
-      } catch (e2) { log.warn('fallback failed', fb, e2); }
+      } catch (e2) {
+        log.warn('fallback failed', fb, e2);
+        console.error('[AI] Fallback failed:', fb, e2);
+        lastError = e2;
+      }
     }
-    if (!maskBlob) throw new Error('All engines failed');
+    if (!maskBlob) {
+      const err = new Error('AI could not process this photo. ' + errMsg(lastError));
+      err.name = 'AIAllFailedError';
+      throw err;
+    }
   }
 
   cancelToken.throwIfCancelled();
@@ -2365,6 +2372,47 @@ async function processAISingle(item, onStage, cancelToken) {
   item.engineUsed = usedFallback ? 'fallback' : engineId;
   updateProcessedThumb(item);
   onStage && onStage('Complete', 'Done' + (usedFallback ? ' • ✓' : ''), 1);
+}
+
+async function fallbackWithoutAI(item, preset) {
+  // Continue without background removal — just crop + resize with white bg
+  try {
+    const cropped = await autoFaceCrop(item.work, preset.w, preset.h);
+    const finalCanvas = pool.acquire(preset.w, preset.h);
+    const fctx = finalCanvas.getContext('2d');
+    if (preset.bg === 'white') { fctx.fillStyle = '#fff'; fctx.fillRect(0, 0, preset.w, preset.h); }
+    const tmp = imagedataToCanvas(cropped);
+    fctx.drawImage(tmp, 0, 0);
+    pool.release(tmp);
+    const finalData = fctx.getImageData(0, 0, preset.w, preset.h);
+    pool.release(finalCanvas);
+    item.work = finalData;
+    item.hasResult = true;
+    item.status = 'done';
+    updateProcessedThumb(item);
+    loadActiveFromQueue();
+    render();
+    syncAllUI();
+    updateQueueUI();
+    markItemDirty(item.id);
+    toast('✅ Photo ready (no AI)');
+    switchTab('download');
+    return true;
+  } catch (e) {
+    log.error('fallbackWithoutAI', e);
+    toast('❌ Failed too — try different photo', 3500);
+    return false;
+  }
+}
+
+function showAIFallbackDialog(item, preset, errorText) {
+  showConfirm(
+    'AI नहीं चला',
+    `Background remove fail ho gaya.\n\n${errorText ? 'Reason: ' + errorText + '\n\n' : ''}Kya aap bina AI ke photo ready karein? (Photo size/crop apply hoga, background white rahega)`,
+    () => { fallbackWithoutAI(item, preset); },
+    '✅ Continue without AI',
+    () => { item.status = 'error'; updateQueueUI(); }
+  );
 }
 
 function trimImage(im) {
@@ -2411,9 +2459,7 @@ async function buildOutputCanvas(item, targetW, targetH) {
     const bg = item.state.bg === 'white' ? '#fff' : item.state.bg === 'black' ? '#000' : item.state.bg === 'custom' ? item.state.customColor : null;
     if (bg) { cx.fillStyle = bg; cx.fillRect(0, 0, baseW, baseH); }
   }
-
   drawSubjectWithEffects(cx, im, baseW, baseH, item.state);
-
   const finalW = targetW || currentSize.w || baseW;
   const finalH = targetH || currentSize.h || baseH;
   if (finalW && finalH && (finalW !== baseW || finalH !== baseH)) {
@@ -2733,12 +2779,8 @@ on($('brushReset'), 'click', () => {
   saveActiveToQueue(); render(); toast('↺ Reset');
 });
 
-/* ============================================================================
- * EFFECTS — sliders, colors, presets
- * ========================================================================== */
 function ensureFx() { if (!state.fx) state.fx = defaultFx(); state.fx = migrateFx(state.fx); }
 
-// Header toggle
 document.querySelectorAll('[data-fx-toggle]').forEach(btn => {
   btn.addEventListener('click', () => {
     const key = btn.dataset.fxToggle;
@@ -2752,7 +2794,6 @@ document.querySelectorAll('[data-fx-toggle]').forEach(btn => {
   });
 });
 
-// Sliders — debounced DB, rAF render
 let fxSliderSaveTimer = null;
 document.querySelectorAll('[data-fx-slider]').forEach(slider => {
   const handler = () => {
@@ -2761,32 +2802,26 @@ document.querySelectorAll('[data-fx-slider]').forEach(slider => {
     ensureFx();
     const v = parseFloat(slider.value);
     state.fx[grp][prop] = v;
-    // Update output
     const out = document.querySelector(`[data-fx-out="${slider.dataset.fxSlider}"]`);
     if (out) {
       if (prop === 'opacity' || prop === 'intensity' || prop === 'radius') out.textContent = Math.round(v * 100) + '%';
       else out.textContent = String(v);
     }
-    // Live render (rAF-throttled)
     scheduleRender();
-    // Debounced DB save
     if (fxSliderSaveTimer) clearTimeout(fxSliderSaveTimer);
     fxSliderSaveTimer = setTimeout(() => { saveActiveToQueue(); }, 400);
-    // Preset match update (lightweight)
     updatePresetHighlightOnly();
   };
   slider.addEventListener('input', handler);
   slider.addEventListener('change', handler);
 });
 
-// Colors
 document.querySelectorAll('.fxColor').forEach(btn => {
   btn.addEventListener('click', () => {
     const key = btn.dataset.fxColor;
     const color = btn.dataset.color;
     ensureFx();
     state.fx[key].color = color;
-    // Auto-enable if user picks a color and effect is off
     if (!state.fx[key].on) state.fx[key].on = true;
     saveActiveToQueue();
     syncFxUI();
@@ -2795,7 +2830,6 @@ document.querySelectorAll('.fxColor').forEach(btn => {
   });
 });
 
-// Per-effect reset
 document.querySelectorAll('[data-fx-reset]').forEach(btn => {
   btn.addEventListener('click', () => {
     const key = btn.dataset.fxReset;
@@ -2809,7 +2843,6 @@ document.querySelectorAll('[data-fx-reset]').forEach(btn => {
   });
 });
 
-// Global preset
 document.querySelectorAll('.fxPreset').forEach(btn => {
   btn.addEventListener('click', () => {
     const name = btn.dataset.preset;
@@ -2864,6 +2897,23 @@ on($('cacheHelp'), 'click', async () => {
     setTimeout(() => location.reload(), 500);
   }, 'Clear & Reload');
 });
+on($('diagBtn'), 'click', () => {
+  const entries = log.dump();
+  const txt = entries.map(e => {
+    const ts = new Date(e.t).toLocaleTimeString();
+    return `[${ts}] ${e.level.toUpperCase()}: ${e.msg}`;
+  }).join('\n');
+  console.log('=== Exam Photo Maker Error Log ===\n' + txt);
+  try {
+    const win = window.open('', '_blank');
+    if (win && win.document) {
+      const safe = txt.replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+      win.document.write('<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Error Log</title></head><body style="margin:0;background:#0a0a14;color:#e2e8f0"><div style="padding:14px;font-family:Inter,sans-serif;border-bottom:1px solid #1e1e30;position:sticky;top:0;background:#0a0a14"><b>📋 Exam Photo Maker — Error Log</b><button onclick="navigator.clipboard.writeText(document.getElementById(\'log\').innerText);this.innerText=\'✅ Copied!\'" style="float:right;background:#7c3aed;border:0;color:#fff;padding:6px 12px;border-radius:6px;font-weight:600">Copy</button></div><pre id="log" style="padding:14px;font-size:11px;line-height:1.55;white-space:pre-wrap;word-break:break-word">' + safe + '</pre></body></html>');
+      win.document.close();
+    }
+  } catch (_) {}
+  toast(`📋 ${entries.length} log entries — console + new tab me dekho`, 4000);
+});
 on($('clearQueueBtn'), 'click', () => {
   if (!queue.length || isProcessing) return;
   showConfirm('Clear all?', `${queue.length} images हटाएँ?`, async () => {
@@ -2896,8 +2946,15 @@ on($('aiRemove'), 'click', async () => {
     switchTab('bg');
   } catch (e) {
     if (e.name === 'AbortError') { toast('⏹ Cancelled'); item.status = 'pending'; undoStack.pop(); }
-    else if (e.name === 'TimeoutError') { log.error('aiRemove timeout', e); item.status = 'error'; undoStack.pop(); toast('⏱ Timeout — try Fast mode', 3500); }
-    else { log.error('aiRemove', e); item.status = 'error'; undoStack.pop(); toast('❌ Processing fail', 3500); }
+    else if (e.name === 'TimeoutError') { log.error('aiRemove timeout', e); item.status = 'error'; undoStack.pop(); toast('⏱ Timeout — Fast mode try karein', 3500); }
+    else {
+      log.error('aiRemove', e);
+      console.error('[AI] Full error:', e);
+      undoStack.pop();
+      item.status = 'error'; updateQueueUI();
+      const preset = EXAM_PRESETS.find(x => x.id === selectedExam);
+      showAIFallbackDialog(item, preset, errMsg(e));
+    }
   } finally { isProcessing = false; $('aiRemove').disabled = false; hideStage(); saveActiveToQueue(); updateQueueUI(); }
 });
 on($('aiRemoveAll'), 'click', async () => {
@@ -2908,6 +2965,7 @@ on($('aiRemoveAll'), 'click', async () => {
   const token = newCancelToken();
   saveActiveToQueue();
   const t0 = performance.now();
+  let failed = 0;
   for (let i = 0; i < pending.length; i++) {
     if (token.cancelled) break;
     const item = pending[i];
@@ -2915,7 +2973,12 @@ on($('aiRemoveAll'), 'click', async () => {
     item.status = 'processing'; updateQueueUI();
     setStage(`📸 ${i + 1}/${pending.length}`, item.name, (i / pending.length) * 100, true);
     try { await processAISingle(item, () => {}, token); }
-    catch (e) { if (e.name === 'AbortError') break; log.error('batch item', item.name, e); item.status = 'error'; }
+    catch (e) {
+      if (e.name === 'AbortError') break;
+      log.error('batch item', item.name, e);
+      console.error('[AI batch]', item.name, e);
+      item.status = 'error'; failed++;
+    }
     markItemDirty(item.id);
   }
   isProcessing = false; hideStage();
@@ -2923,7 +2986,7 @@ on($('aiRemoveAll'), 'click', async () => {
   updateQueueUI(); markMetaDirty();
   const done = queue.filter(x => x.status === 'done').length;
   const secs = ((performance.now() - t0) / 1000).toFixed(1);
-  toast(`🚀 ${done}/${queue.length} • ${secs}s`);
+  toast(`🚀 ${done}/${queue.length} • ${secs}s` + (failed ? ` • ${failed} failed` : ''), 4000);
   switchTab('bg');
 });
 
@@ -2965,8 +3028,13 @@ on($('examReadyBtn'), 'click', async () => {
     switchTab('download');
   } catch (e) {
     if (e.name === 'AbortError') toast('⏹ Cancelled');
-    else if (e.name === 'TimeoutError') toast('⏱ Timeout — try Fast mode', 3500);
-    else { log.error('examReady', e); toast('❌ ' + (e.message || 'fail').substring(0, 60), 3500); }
+    else if (e.name === 'TimeoutError') toast('⏱ Timeout — Fast mode try karein', 3500);
+    else {
+      log.error('examReady', e);
+      console.error('[ExamReady] error:', e);
+      const preset2 = EXAM_PRESETS.find(x => x.id === selectedExam);
+      showAIFallbackDialog(item, preset2, errMsg(e));
+    }
   } finally { isProcessing = false; hideStage(); saveActiveToQueue(); updateQueueUI(); markMetaDirty(); }
 });
 on($('examSignBtn'), 'click', () => { if (!activeId) return toast('❌ पहले upload'); switchTab('sign'); });
@@ -3207,9 +3275,6 @@ window.addEventListener('visibilitychange', () => {
   }
 });
 
-/* ============================================================================
- * AI PREFETCH — speed up first interaction
- * ========================================================================== */
 function prefetchAI() {
   if (engineCache.imgly || loadingEngine.imgly) return;
   loadImgly().catch(() => {});
@@ -3220,7 +3285,6 @@ function prefetchAI() {
   el.addEventListener('pointerdown', prefetchAI, { once: true });
   el.addEventListener('touchstart', prefetchAI, { once: true, passive: true });
 });
-// Also prefetch when user taps Exam Ready tab
 on(document.querySelector('[data-tab="exam"]'), 'click', () => { setTimeout(prefetchAI, 500); });
 
 async function init() {
