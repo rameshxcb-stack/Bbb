@@ -77,7 +77,6 @@ button:focus-visible{outline:2px solid #a78bfa;outline-offset:2px}
 .compareSlider .cLabelL{position:absolute;top:12px;left:12px;background:rgba(10,10,20,.9);border:1px solid var(--stroke);color:var(--muted);padding:4px 10px;border-radius:8px;font-size:10px;font-weight:700;letter-spacing:.06em}
 .compareSlider .cLabelR{position:absolute;top:12px;right:12px;background:rgba(16,185,129,.9);color:#fff;padding:4px 10px;border-radius:8px;font-size:10px;font-weight:700;letter-spacing:.06em}
 .controlsCol{padding-bottom:calc(20px + var(--safe-bottom))}
-/* FIX: Flexible Grid for Mobile */
 .featureNav{display:grid;grid-template-columns:repeat(auto-fit, minmax(72px, 1fr));gap:5px;padding:6px;background:rgba(10,10,20,.5);border:1px solid var(--stroke);border-radius:14px;margin-bottom:8px}
 .featureNav button{padding:6px 2px;font-size:9px;font-weight:600;min-height:50px;background:transparent;border:1px solid transparent;border-radius:10px;flex-direction:column;gap:3px;line-height:1.2;color:var(--muted);word-break:break-word}
 .featureNav button.on{background:linear-gradient(135deg,rgba(139,92,246,.9),rgba(34,211,238,.75));color:#fff;border-color:transparent;box-shadow:0 6px 18px -6px rgba(139,92,246,.6)}
@@ -224,7 +223,7 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
   <div class="logo" aria-hidden="true">📸</div>
   <h1>Exam Photo Maker</h1>
   <p>Fast AI • Device-adaptive • 100% private</p>
-  <span class="ver" id="appVersion">v2.1.1</span>
+  <span class="ver" id="appVersion">v2.1.2</span>
 </header>
 
 <div class="grid">
@@ -654,7 +653,7 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
           <button id="clearAllDataBtn" class="ghost small danger">🗑 Clear All Data & Cache</button>
         </div>
         <div class="notice">💡 <b>Device:</b> <span id="deviceInfo">—</span></div>
-        <div class="notice">🏷️ <b>Version:</b> <span id="versionInfo">v2.1.1</span></div>
+        <div class="notice">🏷️ <b>Version:</b> <span id="versionInfo">v2.1.2</span></div>
       </div>
     </div>
   </div>
@@ -677,9 +676,9 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
 <script type="module">
 'use strict';
 
-console.log('[Exam Photo Maker] module loading… v2.1.1');
+console.log('[Exam Photo Maker] module loading… v2.1.2');
 
-const APP_VERSION = '2.1.1';
+const APP_VERSION = '2.1.2';
 
 const CONFIG = Object.freeze({
   MAX_FILE_MB: 25,
@@ -727,7 +726,7 @@ class Logger {
 const log = new Logger();
 
 /* ============================================================================
- * MODEL REGISTRY v2.1.1
+ * MODEL REGISTRY v2.1.2
  * ========================================================================== */
 const MODEL_REGISTRY = Object.freeze({
   isnet_quint8:  { engine: 'imgly', model: 'isnet_quint8', label: 'Quality A', sizeMB: 40,  portrait: true, general: true, quality: 'fast',     mobileSafe: true,  ramMB: 250 },
@@ -742,7 +741,7 @@ const MODEL_REGISTRY = Object.freeze({
   ormbg:         { engine: 'transformers', model: 'onnx-community/ormbg-ONNX', label: 'RMBG Open', sizeMB: 44, portrait: true, general: true, quality: 'quality', mobileSafe: true, ramMB: 260 }
 });
 const ALL_ENGINE_IDS = Object.keys(MODEL_REGISTRY);
-log.info(`Registry loaded: ${ALL_ENGINE_IDS.length} engines (v2.1.1)`);
+log.info(`Registry loaded: ${ALL_ENGINE_IDS.length} engines (v2.1.2)`);
 
 window.addEventListener('error', e => { log.error('window.error', e.message || e.error, e.filename, e.lineno); toastSafe('⚠️ ' + (e.message || 'Error')); });
 window.addEventListener('unhandledrejection', e => { log.error('unhandledrejection', e.reason); toastSafe('⚠️ ' + (e.reason?.message || 'Background task failed')); });
@@ -754,7 +753,7 @@ const on = (el, ev, fn, opts) => { if (el) el.addEventListener(ev, fn, opts); };
 function toastSafe(msg) { try { toast(msg); } catch (_) {} }
 
 /* ============================================================================
- * DEVICE DETECTION v2.1.1 — Robust with Timeout
+ * DEVICE DETECTION v2.1.2
  * ========================================================================== */
 const UA = navigator.userAgent;
 const IS_MOBILE = /Android|iPhone|iPad|iPod|Mobile/i.test(UA);
@@ -771,8 +770,6 @@ async function detectDeviceTier() {
     const ram = DEVICE_MEM_GB;
     const cores = CPU_CORES;
     let availableMB = 500;
-
-    // Timeout wrapper for storage estimate (fixes WebView hang)
     try {
       const est = await Promise.race([
         navigator.storage.estimate(),
@@ -782,15 +779,12 @@ async function detectDeviceTier() {
     } catch (e) {
       log.warn('storage estimate failed/timeout, using default 500MB', e);
     }
-
     DEVICE_STORAGE_MB = availableMB;
-
     if (ram <= 2 || cores < 2) DEVICE_TIER = 'minimal';
     else if (ram <= 3 || cores < 4) DEVICE_TIER = (availableMB >= 100) ? 'low' : 'minimal';
     else if (ram <= 4 || cores < 6) DEVICE_TIER = (availableMB >= 200) ? 'mid' : 'low';
     else if (ram <= 6 || cores < 8) DEVICE_TIER = (availableMB >= 500 && HAS_WEBGPU) ? 'high' : 'mid';
     else DEVICE_TIER = (availableMB >= 1000 && HAS_WEBGPU) ? 'flagship' : 'high';
-
     log.info(`Tier=${DEVICE_TIER} | RAM=${ram}GB | Cores=${cores} | Storage=${availableMB}MB | WebGPU=${HAS_WEBGPU}`);
   } catch (e) {
     log.error('detectDeviceTier failed, fallback to mid', e);
@@ -810,12 +804,13 @@ function getMaxMP() { return { minimal: 4, low: 6, mid: 10, high: 14, flagship: 
 function getMaxHistory() { return { minimal: 3, low: 4, mid: 6, high: 10, flagship: 12 }[DEVICE_TIER] || 6; }
 function getQueueLimit() { return { minimal: 3, low: 5, mid: 8, high: 15, flagship: 25 }[DEVICE_TIER] || 8; }
 
+/* FIX v2.1.2: imgly-only TIER_MODELS for reliability */
 const TIER_MODELS = {
-  minimal:  { portrait: 'mediapipe',   general: 'u2netp' },
-  low:      { portrait: 'mediapipe',   general: 'u2netp' },
-  mid:      { portrait: 'modnet',      general: 'isnet_quint8' },
-  high:     { portrait: 'isnet_fp16',  general: 'isnet_fp16' },
-  flagship: { portrait: 'ormbg',       general: 'ormbg' }
+  minimal:  { portrait: 'mediapipe',    general: 'u2netp' },
+  low:      { portrait: 'mediapipe',    general: 'u2netp' },
+  mid:      { portrait: 'isnet_quint8', general: 'isnet_quint8' },
+  high:     { portrait: 'isnet_fp16',   general: 'isnet_fp16' },
+  flagship: { portrait: 'isnet_full',   general: 'isnet_full' }
 };
 
 const TIER_RAM_LIMIT_MB = { minimal: 130, low: 200, mid: 320, high: 480, flagship: 1000 };
@@ -2088,6 +2083,8 @@ async function addFiles(files) {
   let valid = arr.filter(f => f.size <= CONFIG.MAX_FILE_MB * 1024 * 1024);
   if (!valid.length) { toast('❌ File बहुत बड़ी'); return; }
 
+  if (!engineCache.imgly) loadImgly().catch(() => {});
+
   const est = await getStorageEstimate();
   if (est && est.quota && (est.usage / est.quota) > CONFIG.STORAGE_QUOTA_HARD_RATIO) {
     if ($checked('autoCleanupQuota', true)) {
@@ -2199,27 +2196,62 @@ async function loadTF() {
   })();
   return loadingEngine.tf;
 }
+
+/* ============================================================================
+ * v2.1.2 FIX: getPipeline — try multiple task/dtype combos with better errors
+ * ========================================================================== */
 async function getPipeline(modelId, opts = {}) {
   const key = 'pipe:' + modelId;
   if (engineCache[key]) { lruTouch(key); return engineCache[key]; }
   if (loadingEngine[key]) return loadingEngine[key];
   loadingEngine[key] = (async () => {
-    try {
-      const { pipeline } = await loadTF();
-      const device = (IS_MOBILE || !HAS_WEBGPU) ? 'wasm' : (opts.device || 'webgpu');
-      const dtype = opts.dtype || (IS_MOBILE ? 'q8' : 'fp16');
-      status('AI downloading…', 10);
-      const pipe = await pipeline(opts.task || 'image-segmentation', modelId, { device, dtype });
-      engineCache[key] = pipe; lruTouch(key); updateCacheStatus();
-      return pipe;
-    } catch (e) {
-      loadingEngine[key] = null;
-      console.error('[AI] Pipeline load failed:', modelId, e);
-      throw new Error('Model load failed: ' + modelId + ' — ' + errMsg(e));
+    const { pipeline, env } = await loadTF();
+    try { env.allowLocalModels = false; env.useBrowserCache = true; } catch (_) {}
+
+    const device = (IS_MOBILE || !HAS_WEBGPU) ? 'wasm' : (opts.device || 'webgpu');
+    const attempts = IS_MOBILE
+      ? [
+          { task: 'image-segmentation', dtype: 'q8' },
+          { task: 'image-segmentation', dtype: 'fp32' },
+          { task: 'background-removal', dtype: 'q8' }
+        ]
+      : [
+          { task: 'image-segmentation', dtype: 'fp16' },
+          { task: 'image-segmentation', dtype: 'q8' },
+          { task: 'image-segmentation', dtype: 'fp32' },
+          { task: 'background-removal', dtype: 'fp16' }
+        ];
+
+    let lastErr = null;
+    for (const att of attempts) {
+      try {
+        status(`AI loading (${att.task}/${att.dtype})…`, 10);
+        log.info(`Trying pipeline: model=${modelId} task=${att.task} dtype=${att.dtype} device=${device}`);
+        const pipe = await pipeline(att.task, modelId, {
+          device,
+          dtype: att.dtype,
+          progress_callback: (data) => {
+            if (data && data.status === 'progress' && data.progress != null) {
+              status(`Downloading ${modelId}… ${Math.round(data.progress)}%`, 10 + data.progress * 0.3);
+            }
+          }
+        });
+        engineCache[key] = pipe;
+        lruTouch(key);
+        updateCacheStatus();
+        log.info(`✅ Pipeline loaded: ${modelId} (task=${att.task}, dtype=${att.dtype})`);
+        return pipe;
+      } catch (e) {
+        lastErr = e;
+        log.warn(`Pipeline attempt failed: task=${att.task} dtype=${att.dtype}`, (e && e.message) || e);
+      }
     }
+    loadingEngine[key] = null;
+    throw new Error('Model load failed after all attempts: ' + modelId + ' — ' + errMsg(lastErr));
   })();
   return loadingEngine[key];
 }
+
 let mediaPipePromise = null;
 async function loadMediaPipe() {
   if (engineCache.mediapipe) return engineCache.mediapipe;
@@ -2266,7 +2298,7 @@ async function clearAllCaches() {
 }
 
 /* ============================================================================
- * WARM-UP AI v2.1.1
+ * WARM-UP AI v2.1.2 — with imgly fallback
  * ========================================================================== */
 let warmupRunning = false;
 async function warmUpAI() {
@@ -2310,12 +2342,38 @@ async function warmUpAI() {
       await loadMediaPipe();
       markEngineWarm('mediapipe');
     } else if (meta?.engine === 'transformers') {
+      // v2.1.2 FIX: try transformers, fallback to imgly on failure
+      let transformersOk = false;
       try {
-        await getPipeline(meta.model, { task: 'background-removal' });
+        await getPipeline(meta.model);
+        markEngineWarm(primary);
+        transformersOk = true;
+        log.info(`✅ Transformer model warmed: ${meta.model}`);
       } catch (e) {
-        await getPipeline(meta.model, { task: 'image-segmentation' });
+        log.warn(`⚠️ Transformer failed (${meta.model}), falling back to imgly`, (e && e.message) || e);
       }
-      markEngineWarm(primary);
+      if (!transformersOk) {
+        setStatus('📥 Fallback: isnet_quint8 (40MB) download…');
+        setProgress(45);
+        try {
+          await loadImgly();
+          const m = engineCache.imgly;
+          const dummy = pool.acquire(64, 64);
+          const dctx = dummy.getContext('2d'); dctx.fillStyle = '#888'; dctx.fillRect(0, 0, 64, 64);
+          const dummyBlob = await new Promise(r => dummy.toBlob(r, 'image/png'));
+          pool.release(dummy);
+          await m.removeBackground(dummyBlob, {
+            model: 'isnet_quint8',
+            output: { format: 'image/png', type: 'foreground' },
+            publicPath: CONFIG.CDN.IMGLY_DATA
+          });
+          markEngineWarm('isnet_quint8');
+          log.info('✅ Fallback to imgly isnet_quint8 succeeded');
+        } catch (e2) {
+          log.error('❌ Both transformer and imgly failed', e2);
+          throw new Error('Warm-up failed: ' + errMsg(e2));
+        }
+      }
     }
     setProgress(75);
     setStatus('📥 MediaPipe (fast fallback) ready kar rahe hain…');
@@ -2325,9 +2383,12 @@ async function warmUpAI() {
     updateCacheStatus();
     setTimeout(() => { if (bar1) bar1.classList.add('hidden'); if (bar2) bar2.classList.add('hidden'); }, 2500);
   } catch (e) {
+    // v2.1.2 FIX: soft warning, not alarming error
     log.error('warmUpAI', e);
-    setStatus('❌ Warm-up fail — WiFi check karein.');
-    toastSafe('❌ Warm-up fail — try again');
+    const msg = errMsg(e);
+    setStatus(`⚠️ Preload incomplete. Pehli photo thoda slow hogi — uske baad normal.\n(${msg})`);
+    toastSafe('⚠️ Preload incomplete — pehli photo slow', 4000);
+    // FALLBACK_CHAIN will still work during actual processing
   } finally {
     warmupRunning = false;
     if (btn1) btn1.disabled = false;
@@ -2338,7 +2399,7 @@ on($('warmupBtn'), 'click', warmUpAI);
 on($('warmupBtn2'), 'click', warmUpAI);
 
 /* ============================================================================
- * QUALITY LEVELS v2.1.1
+ * QUALITY LEVELS v2.1.2 — imgly-preferred
  * ========================================================================== */
 const QUALITY_LEVELS = {
   auto:     { label: 'Auto',     postLevel: 'adaptive', resolutionMode: 'auto' },
@@ -2348,18 +2409,18 @@ const QUALITY_LEVELS = {
 };
 
 function pickInternalModel(quality, imageType) {
-  const q = QUALITY_LEVELS[quality] || QUALITY_LEVELS.auto;
+  // v2.1.2 FIX: imgly-preferred everywhere
   if (quality === 'fast') {
     const m = imageType === 'portrait' ? 'mediapipe' : 'u2netp';
     return isModelSafeForDevice(m) ? m : pickModelForDevice(imageType);
   }
   if (quality === 'balanced') {
-    const m = imageType === 'portrait' ? 'modnet' : 'isnet_quint8';
+    const m = 'isnet_quint8';
     if (isModelSafeForDevice(m)) return m;
     return pickModelForDevice(imageType);
   }
   if (quality === 'quality') {
-    const m = imageType === 'portrait' ? 'birefnet_lite' : 'ormbg';
+    const m = 'isnet_fp16';
     if (isModelSafeForDevice(m)) return m;
     return pickModelForDevice(imageType);
   }
@@ -2470,13 +2531,7 @@ async function runImglyAdapter(blob, modelId, onProgress) {
   }
 }
 async function runTransformersAdapter(blob, modelId) {
-  let pipe;
-  try {
-    pipe = await getPipeline(modelId, { task: 'background-removal' });
-  } catch (e1) {
-    log.warn('background-removal task failed, trying image-segmentation', e1);
-    pipe = await getPipeline(modelId, { task: 'image-segmentation' });
-  }
+  const pipe = await getPipeline(modelId);
   const result = await pipe(blob);
   if (!result) throw new Error('No result');
   const first = Array.isArray(result) ? result[0] : result;
@@ -2536,16 +2591,16 @@ async function runEngine(engineId, blob, onProgress) {
   }
 }
 const FALLBACK_CHAIN = {
-  isnet_quint8:  ['isnet_fp16', 'u2netp', 'mediapipe', 'ormbg'],
-  isnet_fp16:    ['isnet_quint8', 'isnet_full', 'ormbg'],
-  isnet_full:    ['isnet_fp16', 'ormbg', 'birefnet_lite'],
-  mediapipe:     ['u2netp', 'silueta', 'isnet_quint8'],
+  isnet_quint8:  ['isnet_fp16', 'u2netp', 'mediapipe'],
+  isnet_fp16:    ['isnet_quint8', 'isnet_full', 'mediapipe'],
+  isnet_full:    ['isnet_fp16', 'isnet_quint8', 'mediapipe'],
+  mediapipe:     ['u2netp', 'isnet_quint8', 'silueta'],
   u2netp:        ['mediapipe', 'isnet_quint8', 'silueta'],
   silueta:       ['u2netp', 'isnet_quint8', 'mediapipe'],
-  modnet:        ['isnet_quint8', 'silueta', 'mediapipe'],
-  ormbg:         ['isnet_quint8', 'isnet_fp16', 'birefnet_lite', 'u2netp'],
-  birefnet_lite: ['ormbg', 'isnet_quint8', 'isnet_fp16'],
-  isnet_general: ['isnet_fp16', 'isnet_quint8']
+  modnet:        ['isnet_quint8', 'mediapipe', 'u2netp'],
+  ormbg:         ['isnet_quint8', 'isnet_fp16', 'mediapipe'],
+  birefnet_lite: ['isnet_quint8', 'isnet_fp16', 'mediapipe'],
+  isnet_general: ['isnet_fp16', 'isnet_quint8', 'mediapipe']
 };
 function isCached(engineId) {
   const meta = MODEL_REGISTRY[engineId]; if (!meta) return false;
@@ -2557,7 +2612,6 @@ function isCached(engineId) {
 
 async function processAISingle(item, onStage, cancelToken) {
   cancelToken.throwIfCancelled();
-
   const dc = DEVICE_CLASS();
   const hardTimeoutMs = CONFIG.PROCESSING_HARD_TIMEOUT_MS[dc] || 90000;
   const startedAt = performance.now();
@@ -3636,7 +3690,7 @@ window.addEventListener('visibilitychange', () => {
 });
 
 /* ============================================================================
- * DEVICE INFO UI v2.1.1
+ * DEVICE INFO UI v2.1.2
  * ========================================================================== */
 function renderDeviceInfo() {
   const dc = $('deviceCard');
@@ -3687,7 +3741,6 @@ function renderDeviceInfo() {
 }
 
 async function init() {
-  // Async device detection FIRST — before anything that depends on tier
   try {
     await detectDeviceTier();
     log.info('Device tier detected: ' + DEVICE_TIER);
@@ -3695,16 +3748,13 @@ async function init() {
     log.error('detectDeviceTier failed, using fallback mid', e);
     DEVICE_TIER = 'mid';
   }
-
   try {
     renderExamGrid();
     selectExam(selectedExam);
   } catch (e) { log.error('renderExamGrid failed', e); }
-
   try {
     await loadQueueFromDB();
   } catch (e) { log.error('loadQueueFromDB failed', e); }
-
   try {
     if (activeId) loadActiveFromQueue();
     clearCanvas(); syncAllUI(); updateQueueUI();
@@ -3715,15 +3765,12 @@ async function init() {
     const vi = $('versionInfo'); if (vi) vi.textContent = 'v' + APP_VERSION;
     if (work) render();
   } catch (e) { log.error('UI sync failed', e); }
-
   if (DEVICE_TIER === 'minimal' || DEVICE_TIER === 'low') {
     const card = document.querySelector('.qualityCard[data-quality="fast"]');
     if (card) { document.querySelectorAll('.qualityCard').forEach(c2 => c2.classList.remove('on')); card.classList.add('on'); currentQuality = 'fast'; }
   }
-
   log.info(`v${APP_VERSION} ready • tier=${DEVICE_TIER} • ${ALL_ENGINE_IDS.length} engines`);
   console.log(`[Exam Photo Maker] v${APP_VERSION} ready • tier=${DEVICE_TIER}`);
-
   if (DEVICE_TIER === 'mid' || DEVICE_TIER === 'high' || DEVICE_TIER === 'flagship') {
     setTimeout(() => { if (!engineCache.imgly && !engineCache.mediapipe) warmUpAI().catch(e => log.warn('idle warmup', e)); }, CONFIG.AI_INIT_IDLE_MS);
   }
