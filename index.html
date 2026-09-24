@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5">
 <meta name="theme-color" content="#07070d">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: https://esm.sh https://cdn.jsdelivr.net https://staticimgly.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; img-src 'self' blob: data:; connect-src 'self' blob: data: https://esm.sh https://cdn.jsdelivr.net https://staticimgly.com https://huggingface.co https://cdn-lfs.huggingface.co https://cdn-lfs-us-1.huggingface.co https://cas-bridge.xethub.hf.co; worker-src 'self' blob:;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: https://esm.sh https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; img-src 'self' blob: data:; connect-src 'self' blob: data: https://esm.sh https://cdn.jsdelivr.net https://huggingface.co https://cdn-lfs.huggingface.co https://cdn-lfs-us-1.huggingface.co https://cas-bridge.xethub.hf.co; worker-src 'self' blob:;">
 <meta name="description" content="SSC, UPSC, IBPS, Railway exam photo ready in browser. Background remove, auto crop, resize, compress.">
 <title>Exam Photo Maker — Fast AI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,7 +29,7 @@ button:focus-visible{outline:2px solid #a78bfa;outline-offset:2px}
 .hero{text-align:center;padding:10px 10px 6px;margin-bottom:6px}
 .hero .logo{width:42px;height:42px;border-radius:12px;margin:0 auto 6px;background:linear-gradient(135deg,#8b5cf6,#22d3ee);display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 24px rgba(139,92,246,.5)}
 .hero h1{font-family:"Plus Jakarta Sans",sans-serif;font-size:17px;margin:0 0 2px;font-weight:800;background:linear-gradient(90deg,#f1f5f9,#a78bfa 60%,#22d3ee);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.hero p{margin:0;color:var(--muted);font-size:11px}
+.hero p{margin:0;color:var(--muted);font-size:11.5px}
 .hero .ver{display:inline-block;font-size:9px;color:var(--faint);padding:1px 6px;border:1px solid var(--stroke);border-radius:99px;margin-top:4px}
 .grid{display:block}
 .canvasCol{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,#07070d 0%,#07070d 92%,rgba(7,7,13,.9));backdrop-filter:blur(16px);margin:0 -8px 8px;padding:6px 8px 8px;border-bottom:1px solid var(--stroke)}
@@ -81,6 +81,9 @@ button:focus-visible{outline:2px solid #a78bfa;outline-offset:2px}
 .featureNav button{padding:6px 2px;font-size:9px;font-weight:600;min-height:50px;background:transparent;border:1px solid transparent;border-radius:10px;flex-direction:column;gap:3px;line-height:1.2;color:var(--muted);word-break:break-word}
 .featureNav button.on{background:linear-gradient(135deg,rgba(139,92,246,.9),rgba(34,211,238,.75));color:#fff;border-color:transparent;box-shadow:0 6px 18px -6px rgba(139,92,246,.6)}
 .featureNav button.highlight{background:linear-gradient(135deg,rgba(16,185,129,.75),rgba(34,211,238,.5));color:#fff;border-color:transparent;box-shadow:0 6px 18px -6px rgba(16,185,129,.6)}
+.featureNav .moreBtn{background:rgba(139,92,246,.08);color:#c4b5fd;border:1px dashed rgba(167,139,250,.4)}
+.featureNav .moreBtn.on{background:linear-gradient(135deg,rgba(139,92,246,.55),rgba(34,211,238,.4));color:#fff;border-style:solid;border-color:transparent}
+.featureNavMore{background:rgba(10,10,20,.35);border-style:dashed;margin-top:-4px;animation:fadeIn .22s var(--ease) both}
 .panel{display:none;animation:fadeIn .25s var(--ease) both;background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:13px;backdrop-filter:blur(20px);box-shadow:0 8px 24px -8px rgba(0,0,0,.4)}
 .panel.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
@@ -97,6 +100,7 @@ button:focus-visible{outline:2px solid #a78bfa;outline-offset:2px}
 .notice.warn{border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.08)}
 .notice.green{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.06)}
 .notice.error{border-color:rgba(239,68,68,.45);background:rgba(239,68,68,.1);color:#fecaca}
+.notice.privacy{border-color:rgba(34,211,238,.4);background:rgba(34,211,238,.09);color:#67e8f9;font-size:11.5px;font-weight:600;text-align:center;padding:11px 12px;margin:0 0 10px}
 .row{display:flex;align-items:center;gap:10px;margin:8px 0}
 .row label{color:var(--muted);font-size:11.5px;flex:1}
 .row output{font-weight:700;font-size:11.5px;min-width:38px;text-align:right}
@@ -123,6 +127,7 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
 .bgPreviewGrid canvas.on{border-color:#a78bfa;box-shadow:0 0 0 2px rgba(139,92,246,.4)}
 .bgPreviewLabel{font-size:9.5px;color:var(--muted);text-align:center;margin-top:2px}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.actions.three{grid-template-columns:repeat(3,1fr)}
 .actions.single{grid-template-columns:1fr}
 .sizeInfo{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:10.5px;color:var(--muted);margin-top:8px;padding:7px 9px;background:rgba(10,10,20,.4);border-radius:10px;border:1px solid var(--stroke)}
 .storageBar{height:6px;background:rgba(148,163,184,.12);border-radius:99px;overflow:hidden;margin-top:6px}
@@ -145,13 +150,14 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
 .confirmBox h3{font-size:16px;margin:0 0 8px}
 .confirmBox p{color:var(--muted);font-size:12.5px;margin:0 0 16px;line-height:1.55;white-space:pre-line;word-break:break-word}
 .detectedType{display:inline-block;padding:2px 8px;background:rgba(34,211,238,.15);border:1px solid rgba(34,211,238,.4);border-radius:6px;font-size:10px;color:#67e8f9;font-weight:700;margin-left:4px}
-.qualityPicker{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px}
+.qualityPicker{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:6px}
 .qualityCard{background:rgba(10,10,20,.5);border:1px solid var(--stroke);border-radius:12px;padding:12px 10px;cursor:pointer;transition:.18s var(--ease);text-align:center;display:flex;flex-direction:column;gap:4px;align-items:center;min-height:auto}
 .qualityCard.on{background:linear-gradient(135deg,rgba(139,92,246,.75),rgba(34,211,238,.5));border-color:transparent;box-shadow:0 6px 18px -6px rgba(139,92,246,.6)}
 .qualityCard .qcIcon{font-size:22px}
 .qualityCard .qcName{font-size:12.5px;font-weight:700;color:#e2e8f0}
 .qualityCard .qcTime{font-size:10px;color:var(--muted)}
 .qualityCard.on .qcName,.qualityCard.on .qcTime{color:#fff}
+.qualityHelp{font-size:10.5px;color:var(--muted);text-align:center;padding:8px 10px;background:rgba(10,10,20,.35);border-radius:8px;border:1px dashed var(--stroke);margin-bottom:12px;line-height:1.5}
 .photoSheetPreview{margin-top:10px;border-radius:12px;overflow:hidden;border:1px solid var(--stroke);background:#fff;padding:8px}
 .photoSheetPreview canvas{width:100%;height:auto;display:block;border-radius:4px}
 .examInfoCard{background:linear-gradient(135deg,rgba(139,92,246,.15),rgba(34,211,238,.08));border:1px solid rgba(139,92,246,.35);border-radius:12px;padding:11px;margin-bottom:10px}
@@ -198,16 +204,20 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
 .deviceCard .dcTitle{font-size:11px;font-weight:700;color:#67e8f9;margin-bottom:4px}
 .deviceCard .dcDetail{font-size:10.5px;color:var(--muted);line-height:1.55}
 .deviceCard .dcDetail b{color:#e2e8f0}
+.maskInfo{font-size:10px;color:var(--muted);padding:5px 8px;background:rgba(10,10,20,.4);border-radius:8px;border:1px dashed var(--stroke);margin-top:8px;line-height:1.4}
+.maskInfo b{color:#67e8f9}
 @media(min-width:900px){
   .app{max-width:1360px;padding:16px;padding-bottom:90px}
   .hero{padding:16px 12px 12px}.hero h1{font-size:24px}.hero .logo{width:52px;height:52px;font-size:26px}
+  .hero p{font-size:13px}
   .grid{display:grid;grid-template-columns:1fr 420px;gap:16px;align-items:start}
   .canvasCol{top:16px;background:transparent;backdrop-filter:none;margin:0;padding:0;border:0}
   .stageWrap{height:auto;min-height:440px;max-height:76vh}
   .canvasActions{margin-top:10px}
   .canvasActions button{flex-direction:row;min-height:44px;font-size:12px}
   .controlsCol{max-height:calc(100vh - 32px);overflow-y:auto;padding-right:8px}
-  .featureNav{grid-template-columns:repeat(4,1fr)}
+  .featureNav{grid-template-columns:repeat(6,1fr)}
+  .featureNavMore{grid-template-columns:repeat(7,1fr)}
   .qItem{width:84px;height:84px}.qAdd{width:84px;height:84px}
   .bgPreviewGrid{grid-template-columns:repeat(4,1fr)}
   .examGrid{grid-template-columns:repeat(3,1fr)}
@@ -222,8 +232,8 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
 <header class="hero">
   <div class="logo" aria-hidden="true">📸</div>
   <h1>Exam Photo Maker</h1>
-  <p>Fast AI • Device-adaptive • 100% private</p>
-  <span class="ver" id="appVersion">v2.1.2</span>
+  <p>📸 Photo से लेकर Exam Form तक — सब एक जगह</p>
+  <span class="ver" id="appVersion">v2.3.0</span>
 </header>
 
 <div class="grid">
@@ -266,18 +276,21 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
   </div>
 
   <div class="controlsCol">
-    <div class="featureNav" id="featureNav" role="tablist" aria-label="Features">
+    <div class="featureNav" id="featureNav" role="tablist" aria-label="Primary features">
       <button data-tab="exam" class="on highlight" role="tab" aria-selected="true"><span class="ico" aria-hidden="true">🎯</span><span>Exam Ready</span></button>
       <button data-tab="upload" role="tab" aria-selected="false"><span class="ico" aria-hidden="true">📷</span><span>Upload</span></button>
       <button data-tab="ai" role="tab" aria-selected="false"><span class="ico" aria-hidden="true">🤖</span><span>AI</span></button>
       <button data-tab="bg" role="tab" aria-selected="false"><span class="ico" aria-hidden="true">🎨</span><span>BG</span></button>
-      <button data-tab="sign" role="tab" aria-selected="false"><span class="ico" aria-hidden="true">✍️</span><span>Sign</span></button>
-      <button data-tab="adjust" role="tab" aria-selected="false"><span class="ico" aria-hidden="true">🎛️</span><span>Adjust</span></button>
-      <button data-tab="brush" role="tab" aria-selected="false"><span class="ico" aria-hidden="true">🖌️</span><span>Fix</span></button>
-      <button data-tab="sheet" role="tab" aria-selected="false"><span class="ico" aria-hidden="true">📄</span><span>Sheet</span></button>
       <button data-tab="download" role="tab" aria-selected="false"><span class="ico" aria-hidden="true">⬇</span><span>Save</span></button>
-      <button data-tab="effects" role="tab" aria-selected="false"><span class="ico" aria-hidden="true">✨</span><span>Effects</span></button>
+      <button id="moreToolsToggle" class="moreBtn" type="button" aria-label="More tools" aria-expanded="false"><span class="ico" aria-hidden="true">☰</span><span>More</span></button>
+    </div>
+    <div class="featureNav featureNavMore hidden" id="featureNavMore" role="tablist" aria-label="Advanced tools">
+      <button data-tab="sign" role="tab" aria-selected="false"><span class="ico" aria-hidden="true">✍️</span><span>Sign</span></button>
+      <button data-tab="sheet" role="tab" aria-selected="false"><span class="ico" aria-hidden="true">📄</span><span>Sheet</span></button>
       <button data-tab="size" role="tab" aria-selected="false"><span class="ico" aria-hidden="true">📐</span><span>Size</span></button>
+      <button data-tab="brush" role="tab" aria-selected="false"><span class="ico" aria-hidden="true">🖌️</span><span>Fix</span></button>
+      <button data-tab="adjust" role="tab" aria-selected="false"><span class="ico" aria-hidden="true">🎛️</span><span>Adjust</span></button>
+      <button data-tab="effects" role="tab" aria-selected="false"><span class="ico" aria-hidden="true">✨</span><span>Effects</span></button>
       <button data-tab="settings" role="tab" aria-selected="false"><span class="ico" aria-hidden="true">⚙️</span><span>Settings</span></button>
     </div>
 
@@ -299,15 +312,17 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
         <div class="actions single" style="margin-top:12px">
           <button id="examReadyBtn" class="primary" style="padding:16px;font-size:15px;background:linear-gradient(135deg,#059669,#10b981,#34d399);border-color:rgba(16,185,129,.55)">⚡ One-Click Exam Photo Ready</button>
         </div>
-        <div class="actions" style="margin-top:6px">
-          <button id="examSignBtn" class="ghost">✍️ Signature Mode</button>
-          <button id="examSheetBtn" class="ghost">📄 Photo Sheet</button>
+        <div class="actions three" style="margin-top:8px">
+          <button id="examSignBtn" class="ghost" style="padding:12px 6px;font-size:11px"><span class="ico">✍️</span><span>Signature</span></button>
+          <button id="examSheetBtn" class="ghost" style="padding:12px 6px;font-size:11px"><span class="ico">📄</span><span>Photo Sheet</span></button>
+          <button id="examNewCustomerBtn" class="ghost" style="padding:12px 6px;font-size:11px"><span class="ico">👤</span><span>New Customer</span></button>
         </div>
         <div class="notice warn" style="margin-top:10px">⚠️ <b>Note:</b> Exam specs (size/KB/BG) <b>typical preset</b> hain — recruitment notification badal sakti hai. Final apply se pehle official advertisement se verify karein.</div>
       </div>
 
       <div class="panel" data-panel="upload" role="tabpanel">
         <h3>📷 Image Upload</h3>
+        <div class="notice privacy">🔒 आपकी फोटो browser में ही process होती है — photo server पर upload नहीं की जाती</div>
         <label id="drop" class="drop" for="fileMulti">
           <span class="ico" aria-hidden="true">🖼️</span>
           <strong>Images Upload करें</strong>
@@ -316,8 +331,7 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
         <input id="fileMulti" type="file" accept="image/*" multiple aria-label="Upload images">
         <div id="status" class="status" role="status" aria-live="polite">Images upload करें।</div>
         <div class="bar"><i id="progress"></i></div>
-        <div class="notice green">🔒 Images आपके browser में process होती हैं — server upload नहीं।</div>
-        <div class="notice warn">🌐 <b>First run:</b> AI download hoga (device ke hisaab se 2–176 MB). Uske baad cached — <b>typical 3–10 sec</b> per image. AI tab me <b>🔥 Warm-up</b> button se pehle hi ready kar sakte hain.</div>
+        <div class="notice warn">🌐 <b>First run:</b> AI model download hoga (device ke hisaab se 2–47 MB). Uske baad cached — <b>typical 3–10 sec</b> per image. AI tab me <b>🔥 Warm-up</b> button se pehle hi ready kar sakte hain.</div>
         <div class="actions single" style="margin-top:10px">
           <button id="clearQueueBtn" class="ghost small">🗑 Clear Queue</button>
         </div>
@@ -343,22 +357,20 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
         </div>
         <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">🎯 Quality Level</div>
         <div class="qualityPicker" id="qualityPicker">
-          <button class="qualityCard on" data-quality="auto"><span class="qcIcon">🎯</span><span class="qcName">Auto</span><span class="qcTime" id="qcAutoTime">Smart pick</span></button>
           <button class="qualityCard" data-quality="fast"><span class="qcIcon">⚡</span><span class="qcName">Fast</span><span class="qcTime" id="qcFastTime">~2–4 sec</span></button>
-          <button class="qualityCard" data-quality="balanced"><span class="qcIcon">🧠</span><span class="qcName">Balanced</span><span class="qcTime" id="qcBalTime">~4–8 sec</span></button>
-          <button class="qualityCard" data-quality="quality"><span class="qcIcon">🏆</span><span class="qcName">Maximum</span><span class="qcTime" id="qcQualTime">~6–12 sec</span></button>
+          <button class="qualityCard on" data-quality="auto"><span class="qcIcon">🎯</span><span class="qcName">Auto</span><span class="qcTime" id="qcAutoTime">Recommended</span></button>
+          <button class="qualityCard" data-quality="balanced"><span class="qcIcon">🧠</span><span class="qcName">Better</span><span class="qcTime" id="qcBalTime">~4–8 sec</span></button>
+          <button class="qualityCard" data-quality="quality"><span class="qcIcon">🏆</span><span class="qcName">Best Quality</span><span class="qcTime" id="qcQualTime">~6–12 sec</span></button>
         </div>
+        <div class="qualityHelp">💡 <b>Auto recommended</b> — आपके device और photo के हिसाब से AI mode चुनेगा।</div>
         <div id="detectedTypeRow" class="row hidden" style="margin-top:-4px">
           <label style="font-size:10.5px">Detected:</label>
           <span class="detectedType" id="detectedType">—</span>
         </div>
-        <div class="row">
-          <label>Auto enhancements</label>
-          <input id="autoEnhance" type="checkbox" checked style="width:22px;height:22px;min-height:22px;accent-color:#8b5cf6">
-        </div>
+        <div id="maskInfoRow" class="maskInfo hidden">Mask: <b id="maskVerdict">—</b> • FG <b id="maskFg">—</b> • Edges <b id="maskEdge">—</b> • Ch <b id="maskCh">—</b> • Task <b id="maskTask">—</b></div>
         <div class="actions single"><button id="aiRemove" class="primary">✨ Background हटाएँ</button></div>
         <div class="actions single"><button id="aiRemoveAll" class="primary success">🚀 सभी Images (Batch)</button></div>
-        <div class="notice" id="aiModelInfo">💡 <b>Auto</b> device RAM + CPU + storage ke hisaab se best model chunta hai.</div>
+        <div class="notice" id="aiModelInfo">💡 <b>Auto</b> device RAM + CPU ke hisaab se best model chunta hai.</div>
       </div>
 
       <div class="panel" data-panel="bg" role="tabpanel">
@@ -653,7 +665,7 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
           <button id="clearAllDataBtn" class="ghost small danger">🗑 Clear All Data & Cache</button>
         </div>
         <div class="notice">💡 <b>Device:</b> <span id="deviceInfo">—</span></div>
-        <div class="notice">🏷️ <b>Version:</b> <span id="versionInfo">v2.1.2</span></div>
+        <div class="notice">🏷️ <b>Version:</b> <span id="versionInfo">v2.3.0</span></div>
       </div>
     </div>
   </div>
@@ -676,38 +688,40 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
 <script type="module">
 'use strict';
 
-console.log('[Exam Photo Maker] module loading… v2.1.2');
+console.log('[Exam Photo Maker] module loading… v2.3.0');
 
-const APP_VERSION = '2.1.2';
+const APP_VERSION = '2.3.0';
 
 const CONFIG = Object.freeze({
   MAX_FILE_MB: 25,
   DB_NAME: 'exam-photo-maker-v5',
   DB_VERSION: 1,
   LRU_MAX: 3,
-  RETRY_MAX: 2,
+  RETRY_MAX: 1,
   RETRY_BASE_MS: 1500,
   AI_INIT_IDLE_MS: 3000,
-  FALLBACK_TIME_BUDGET_MS: { minimal: 8000, low: 8000, mid: 15000, high: 20000, flagship: 25000 },
+  FALLBACK_TIME_BUDGET_MS: { minimal: 12000, low: 12000, mid: 18000, high: 25000, flagship: 30000 },
   PROCESSING_HARD_TIMEOUT_MS: { minimal: 45000, low: 60000, mid: 90000, high: 120000, flagship: 150000 },
   STORAGE_QUOTA_WARN_RATIO: 0.7,
   STORAGE_QUOTA_HARD_RATIO: 0.9,
   DB_SAVE_DEBOUNCE_MS: 350,
   FACE_DETECT_TIMEOUT_MS: 2500,
   FACE_DETECT_RELEASE_GRACE_MS: 3000,
+  MAX_AI_ATTEMPTS: 3,
+  MASK_MIN_VARIANCE: 25,
+  MASK_INVERT_BORDER_RATIO: 0.75,
+  MASK_CENTER_FG_MIN: 0.03,
   CDN: Object.freeze({
-    IMGLY: 'https://esm.sh/@imgly/background-removal@1.7.0',
     TRANSFORMERS: 'https://esm.sh/@huggingface/transformers@3.8.1',
     JSZIP: 'https://esm.sh/jszip@3.10.1',
     MEDIAPIPE_BASE: 'https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1',
-    MEDIAPIPE_FACE_BASE: 'https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@0.4',
-    IMGLY_DATA: 'https://staticimgly.com/@imgly/background-removal-data/1.7.0/dist/'
+    MEDIAPIPE_FACE_BASE: 'https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@0.4'
   })
 });
 
 function tryJson(o) { try { return JSON.stringify(o); } catch { return String(o); } }
 class Logger {
-  constructor() { this.buffer = []; this.max = 300; this.listeners = new Set(); }
+  constructor() { this.buffer = []; this.max = 400; this.listeners = new Set(); }
   _push(level, args) {
     const entry = { t: Date.now(), level, msg: args.map(a => (a instanceof Error ? (a.stack || a.message) : typeof a === 'object' ? tryJson(a) : String(a))).join(' ') };
     this.buffer.push(entry);
@@ -726,22 +740,48 @@ class Logger {
 const log = new Logger();
 
 /* ============================================================================
- * MODEL REGISTRY v2.1.2
+ * MODEL REGISTRY v2.3.0
+ * Each entry declares the task order to try when loading the pipeline.
+ * The adapter (runTransformersAdapter) walks through tasks in order.
  * ========================================================================== */
 const MODEL_REGISTRY = Object.freeze({
-  isnet_quint8:  { engine: 'imgly', model: 'isnet_quint8', label: 'Quality A', sizeMB: 40,  portrait: true, general: true, quality: 'fast',     mobileSafe: true,  ramMB: 250 },
-  isnet_fp16:    { engine: 'imgly', model: 'isnet_fp16',   label: 'Quality B', sizeMB: 80,  portrait: true, general: true, quality: 'balanced', mobileSafe: true,  ramMB: 320 },
-  isnet_full:    { engine: 'imgly', model: 'isnet',        label: 'Quality C', sizeMB: 170, portrait: true, general: true, quality: 'quality',  mobileSafe: false, ramMB: 450 },
-  mediapipe:     { engine: 'mediapipe', model: null, label: 'Portrait Fast', sizeMB: 2, portrait: true, general: false, quality: 'fast', mobileSafe: true, ramMB: 90 },
-  modnet:        { engine: 'transformers', model: 'Xenova/modnet', label: 'Portrait Pro', sizeMB: 25, portrait: true, general: false, quality: 'balanced', mobileSafe: true, ramMB: 220 },
-  u2netp:        { engine: 'transformers', model: 'onnx-community/u2netp', label: 'Micro', sizeMB: 4, portrait: true, general: true, quality: 'fast', mobileSafe: true, ramMB: 130 },
-  silueta:       { engine: 'transformers', model: 'Xenova/silueta', label: 'Lite A', sizeMB: 44, portrait: true, general: true, quality: 'fast', mobileSafe: true, ramMB: 240 },
-  isnet_general: { engine: 'transformers', model: 'Xenova/isnet-general-use', label: 'Precision B', sizeMB: 170, portrait: true, general: true, quality: 'balanced', mobileSafe: false, ramMB: 450 },
-  birefnet_lite: { engine: 'transformers', model: 'studioludens/birefnet-lite-512', label: 'Browser Premium', sizeMB: 47, portrait: true, general: true, quality: 'quality', mobileSafe: true, ramMB: 280 },
-  ormbg:         { engine: 'transformers', model: 'onnx-community/ormbg-ONNX', label: 'RMBG Open', sizeMB: 44, portrait: true, general: true, quality: 'quality', mobileSafe: true, ramMB: 260 }
+  mediapipe: {
+    engine: 'mediapipe', model: null,
+    label: 'Emergency', sizeMB: 2, ramMB: 90,
+    role: 'emergency', quality: 'fast',
+    portrait: true, general: false
+  },
+  u2netp: {
+    engine: 'transformers', model: 'onnx-community/u2netp',
+    tasks: ['image-segmentation', 'background-removal'],
+    label: 'Micro', sizeMB: 4, ramMB: 130,
+    role: 'micro', quality: 'fast',
+    portrait: true, general: true
+  },
+  modnet: {
+    engine: 'transformers', model: 'Xenova/modnet',
+    tasks: ['image-segmentation', 'background-removal'],
+    label: 'Portrait', sizeMB: 25, ramMB: 220,
+    role: 'portrait', quality: 'balanced',
+    portrait: true, general: false
+  },
+  ormbg: {
+    engine: 'transformers', model: 'onnx-community/ormbg-ONNX',
+    tasks: ['background-removal', 'image-segmentation'],
+    label: 'General', sizeMB: 44, ramMB: 260,
+    role: 'general', quality: 'quality',
+    portrait: true, general: true
+  },
+  birefnet_lite: {
+    engine: 'transformers', model: 'studioludens/birefnet-lite-512',
+    tasks: ['background-removal', 'image-segmentation'],
+    label: 'Premium', sizeMB: 47, ramMB: 280,
+    role: 'premium', quality: 'quality',
+    portrait: true, general: true
+  }
 });
 const ALL_ENGINE_IDS = Object.keys(MODEL_REGISTRY);
-log.info(`Registry loaded: ${ALL_ENGINE_IDS.length} engines (v2.1.2)`);
+log.info(`Registry loaded: ${ALL_ENGINE_IDS.length} models (v2.3.0)`);
 
 window.addEventListener('error', e => { log.error('window.error', e.message || e.error, e.filename, e.lineno); toastSafe('⚠️ ' + (e.message || 'Error')); });
 window.addEventListener('unhandledrejection', e => { log.error('unhandledrejection', e.reason); toastSafe('⚠️ ' + (e.reason?.message || 'Background task failed')); });
@@ -752,9 +792,6 @@ const $checked = (id, def = false) => { const el = $(id); return el ? el.checked
 const on = (el, ev, fn, opts) => { if (el) el.addEventListener(ev, fn, opts); };
 function toastSafe(msg) { try { toast(msg); } catch (_) {} }
 
-/* ============================================================================
- * DEVICE DETECTION v2.1.2
- * ========================================================================== */
 const UA = navigator.userAgent;
 const IS_MOBILE = /Android|iPhone|iPad|iPod|Mobile/i.test(UA);
 const IS_IOS = /iPhone|iPad|iPod/i.test(UA);
@@ -776,15 +813,13 @@ async function detectDeviceTier() {
         new Promise((_, reject) => setTimeout(() => reject(new Error('storage-timeout')), 1500))
       ]);
       if (est && est.quota) availableMB = Math.max(0, Math.round((est.quota - (est.usage || 0)) / 1048576));
-    } catch (e) {
-      log.warn('storage estimate failed/timeout, using default 500MB', e);
-    }
+    } catch (e) { log.warn('storage estimate failed/timeout, using default 500MB', e); }
     DEVICE_STORAGE_MB = availableMB;
     if (ram <= 2 || cores < 2) DEVICE_TIER = 'minimal';
-    else if (ram <= 3 || cores < 4) DEVICE_TIER = (availableMB >= 100) ? 'low' : 'minimal';
-    else if (ram <= 4 || cores < 6) DEVICE_TIER = (availableMB >= 200) ? 'mid' : 'low';
-    else if (ram <= 6 || cores < 8) DEVICE_TIER = (availableMB >= 500 && HAS_WEBGPU) ? 'high' : 'mid';
-    else DEVICE_TIER = (availableMB >= 1000 && HAS_WEBGPU) ? 'flagship' : 'high';
+    else if (ram <= 3 || cores < 4) DEVICE_TIER = 'low';
+    else if (ram <= 4 || cores < 6) DEVICE_TIER = 'mid';
+    else if (ram <= 6 || cores < 8) DEVICE_TIER = HAS_WEBGPU ? 'high' : 'mid';
+    else DEVICE_TIER = HAS_WEBGPU ? 'flagship' : 'high';
     log.info(`Tier=${DEVICE_TIER} | RAM=${ram}GB | Cores=${cores} | Storage=${availableMB}MB | WebGPU=${HAS_WEBGPU}`);
   } catch (e) {
     log.error('detectDeviceTier failed, fallback to mid', e);
@@ -804,15 +839,13 @@ function getMaxMP() { return { minimal: 4, low: 6, mid: 10, high: 14, flagship: 
 function getMaxHistory() { return { minimal: 3, low: 4, mid: 6, high: 10, flagship: 12 }[DEVICE_TIER] || 6; }
 function getQueueLimit() { return { minimal: 3, low: 5, mid: 8, high: 15, flagship: 25 }[DEVICE_TIER] || 8; }
 
-/* FIX v2.1.2: imgly-only TIER_MODELS for reliability */
 const TIER_MODELS = {
-  minimal:  { portrait: 'mediapipe',    general: 'u2netp' },
-  low:      { portrait: 'mediapipe',    general: 'u2netp' },
-  mid:      { portrait: 'isnet_quint8', general: 'isnet_quint8' },
-  high:     { portrait: 'isnet_fp16',   general: 'isnet_fp16' },
-  flagship: { portrait: 'isnet_full',   general: 'isnet_full' }
+  minimal:  { portrait: 'mediapipe', general: 'u2netp' },
+  low:      { portrait: 'mediapipe', general: 'u2netp' },
+  mid:      { portrait: 'modnet',    general: 'ormbg' },
+  high:     { portrait: 'modnet',    general: 'ormbg' },
+  flagship: { portrait: 'modnet',    general: 'birefnet_lite' }
 };
-
 const TIER_RAM_LIMIT_MB = { minimal: 130, low: 200, mid: 320, high: 480, flagship: 1000 };
 
 function isModelSafeForDevice(modelId) {
@@ -825,14 +858,72 @@ function isModelSafeForDevice(modelId) {
 function pickModelForDevice(imageType) {
   const portrait = imageType === 'portrait';
   const tierModel = TIER_MODELS[DEVICE_TIER] || TIER_MODELS.mid;
-  const chosen = portrait ? tierModel.portrait : tierModel.general;
+  let chosen = portrait ? tierModel.portrait : tierModel.general;
   if (!isModelSafeForDevice(chosen)) {
     log.warn(`Model ${chosen} unsafe for tier ${DEVICE_TIER}, downgrading`);
-    if (DEVICE_TIER === 'minimal' || DEVICE_TIER === 'low') return portrait ? 'mediapipe' : 'u2netp';
-    if (DEVICE_TIER === 'mid') return portrait ? 'mediapipe' : 'isnet_quint8';
-    return portrait ? 'isnet_fp16' : 'isnet_fp16';
+    chosen = portrait ? 'mediapipe' : 'u2netp';
   }
   return chosen;
+}
+
+const FALLBACK_CHAIN = {
+  birefnet_lite: ['ormbg', 'modnet', 'u2netp'],
+  ormbg:         ['modnet', 'birefnet_lite', 'u2netp'],
+  modnet:        ['ormbg', 'u2netp', 'mediapipe'],
+  u2netp:        ['mediapipe', 'modnet'],
+  mediapipe:     ['u2netp', 'modnet']
+};
+
+/* ============================================================================
+ * MASK VALIDATOR v2.3.0 — with centrality check
+ * ========================================================================== */
+function validateMask(alpha, w, h) {
+  const n = w * h;
+  if (!n || !alpha) return { verdict: 'BAD', reason: 'empty' };
+  const stepX = Math.max(1, Math.floor(w / 200));
+  const stepY = Math.max(1, Math.floor(h / 200));
+  const borderPx = Math.max(3, Math.floor(Math.min(w, h) * 0.01));
+  let fgCount = 0, edgeCount = 0, sampled = 0, borderFg = 0, borderTotal = 0;
+  // NEW: centrality
+  const cx = w / 2, cy = h / 2;
+  const centerR = Math.min(w, h) * 0.35;
+  let centerFg = 0, centerTotal = 0;
+
+  for (let y = 0; y < h; y += stepY) {
+    for (let x = 0; x < w; x += stepX) {
+      const i = y * w + x;
+      const a = alpha[i];
+      sampled++;
+      if (a > 0.5) fgCount++;
+      if (a > 0.02 && a < 0.98) edgeCount++;
+      if (x < borderPx || x >= w - borderPx || y < borderPx || y >= h - borderPx) {
+        borderTotal++;
+        if (a > 0.5) borderFg++;
+      }
+      const dx = x - cx, dy = y - cy;
+      if (Math.sqrt(dx*dx + dy*dy) < centerR) {
+        centerTotal++;
+        if (a > 0.5) centerFg++;
+      }
+    }
+  }
+  if (sampled === 0) return { verdict: 'BAD', reason: 'no-sample' };
+  const fgRatio = fgCount / sampled;
+  const edgeRatio = edgeCount / sampled;
+  const borderRatio = borderTotal > 0 ? borderFg / borderTotal : 0;
+  const centerFgRatio = centerTotal > 0 ? centerFg / centerTotal : 0;
+
+  if (fgRatio < 0.015) return { verdict: 'BAD', reason: 'empty-mask', fgRatio, edgeRatio, borderRatio, centerFgRatio };
+  if (fgRatio > 0.98) return { verdict: 'BAD', reason: 'full-mask', fgRatio, edgeRatio, borderRatio, centerFgRatio };
+  if (fgRatio < 0.04) return { verdict: 'UNCERTAIN', reason: 'tiny-subject', fgRatio, edgeRatio, borderRatio, centerFgRatio };
+  if (fgRatio > 0.92) return { verdict: 'UNCERTAIN', reason: 'huge-subject', fgRatio, edgeRatio, borderRatio, centerFgRatio };
+  if (borderRatio > 0.5) return { verdict: 'UNCERTAIN', reason: 'border-contamination', fgRatio, edgeRatio, borderRatio, centerFgRatio };
+  if (edgeRatio < 0.003) return { verdict: 'UNCERTAIN', reason: 'no-soft-edges', fgRatio, edgeRatio, borderRatio, centerFgRatio };
+  // NEW centrality: for typical subject images, center should have SOME fg
+  if (centerFgRatio < CONFIG.MASK_CENTER_FG_MIN && fgRatio > 0.04) {
+    return { verdict: 'UNCERTAIN', reason: 'no-central-subject', fgRatio, edgeRatio, borderRatio, centerFgRatio };
+  }
+  return { verdict: 'GOOD', fgRatio, edgeRatio, borderRatio, centerFgRatio };
 }
 
 function defaultFx() {
@@ -1234,7 +1325,6 @@ async function flushSave() {
   })();
   return flushInProgress;
 }
-async function saveQueueToDB() { markAllDirty(); return flushSave(); }
 
 async function deleteItemFromDB(id) {
   try {
@@ -1446,11 +1536,6 @@ function getCustomerName() {
   const raw = ($val('customerName', '') || '').trim();
   const clean = raw.replace(/[^a-zA-Z0-9_-]/g, '_').replace(/^_+|_+$/g, '');
   return clean;
-}
-function getEffectiveBase(item) {
-  const cust = getCustomerName();
-  if (cust) return cust;
-  return (item && item.fileBase) || 'photo';
 }
 
 function snapshot(img) {
@@ -1887,8 +1972,19 @@ function resetCompare() {
   updateLiveBadge();
 }
 function updateLiveBadge() { const lb = $('liveBadge'); if (lb) lb.classList.toggle('hidden', !hasResult || compareMode); }
+
+const SECONDARY_TABS = ['sign', 'sheet', 'size', 'brush', 'adjust', 'effects', 'settings'];
+
 function switchTab(tab) {
-  document.querySelectorAll('#featureNav button').forEach(b => {
+  if (SECONDARY_TABS.includes(tab)) {
+    const more = $('featureNavMore');
+    if (more && more.classList.contains('hidden')) {
+      more.classList.remove('hidden');
+      const t = $('moreToolsToggle');
+      if (t) { t.classList.add('on'); t.setAttribute('aria-expanded', 'true'); t.innerHTML = '<span class="ico" aria-hidden="true">☰</span><span>Less</span>'; }
+    }
+  }
+  document.querySelectorAll('#featureNav button[data-tab], #featureNavMore button[data-tab]').forEach(b => {
     const isActive = b.dataset.tab === tab;
     b.classList.toggle('on', isActive);
     b.setAttribute('aria-selected', isActive ? 'true' : 'false');
@@ -2083,8 +2179,6 @@ async function addFiles(files) {
   let valid = arr.filter(f => f.size <= CONFIG.MAX_FILE_MB * 1024 * 1024);
   if (!valid.length) { toast('❌ File बहुत बड़ी'); return; }
 
-  if (!engineCache.imgly) loadImgly().catch(() => {});
-
   const est = await getStorageEstimate();
   if (est && est.quota && (est.usage / est.quota) > CONFIG.STORAGE_QUOTA_HARD_RATIO) {
     if ($checked('autoCleanupQuota', true)) {
@@ -2169,23 +2263,9 @@ on($('fileMulti'), 'change', e => {
 window.addEventListener('dragover', e => e.preventDefault());
 window.addEventListener('drop', e => e.preventDefault());
 
-async function loadImgly() {
-  if (engineCache.imgly) { lruTouch('imgly'); return engineCache.imgly; }
-  if (loadingEngine.imgly) return loadingEngine.imgly;
-  loadingEngine.imgly = (async () => {
-    try {
-      status('AI downloading…', 10);
-      const mod = await withRetry(() => import(/* @vite-ignore */ CONFIG.CDN.IMGLY), 2, 2000, 'imgly');
-      engineCache.imgly = mod; lruTouch('imgly'); updateCacheStatus();
-      return mod;
-    } catch (e) {
-      loadingEngine.imgly = null;
-      console.error('[AI] imgly library load failed:', e);
-      throw new Error('AI library load failed: ' + errMsg(e));
-    }
-  })();
-  return loadingEngine.imgly;
-}
+/* ============================================================================
+ * TRANSFORMERS LOADER v2.3.0 — task-aware
+ * ========================================================================== */
 async function loadTF() {
   if (engineCache.tf) { lruTouch('tf'); return engineCache.tf; }
   if (loadingEngine.tf) return loadingEngine.tf;
@@ -2197,39 +2277,27 @@ async function loadTF() {
   return loadingEngine.tf;
 }
 
-/* ============================================================================
- * v2.1.2 FIX: getPipeline — try multiple task/dtype combos with better errors
- * ========================================================================== */
-async function getPipeline(modelId, opts = {}) {
-  const key = 'pipe:' + modelId;
+async function getPipeline(modelId, task, dtype) {
+  const key = `pipe:${task}:${modelId}:${dtype || 'auto'}`;
   if (engineCache[key]) { lruTouch(key); return engineCache[key]; }
   if (loadingEngine[key]) return loadingEngine[key];
   loadingEngine[key] = (async () => {
     const { pipeline, env } = await loadTF();
     try { env.allowLocalModels = false; env.useBrowserCache = true; } catch (_) {}
 
-    const device = (IS_MOBILE || !HAS_WEBGPU) ? 'wasm' : (opts.device || 'webgpu');
-    const attempts = IS_MOBILE
-      ? [
-          { task: 'image-segmentation', dtype: 'q8' },
-          { task: 'image-segmentation', dtype: 'fp32' },
-          { task: 'background-removal', dtype: 'q8' }
-        ]
-      : [
-          { task: 'image-segmentation', dtype: 'fp16' },
-          { task: 'image-segmentation', dtype: 'q8' },
-          { task: 'image-segmentation', dtype: 'fp32' },
-          { task: 'background-removal', dtype: 'fp16' }
-        ];
+    const device = (IS_MOBILE || !HAS_WEBGPU) ? 'wasm' : 'webgpu';
+    const dtypeAttempts = dtype ? [dtype] : (IS_MOBILE
+      ? ['q8', 'fp32']
+      : ['fp16', 'q8', 'fp32']);
 
     let lastErr = null;
-    for (const att of attempts) {
+    for (const dt of dtypeAttempts) {
       try {
-        status(`AI loading (${att.task}/${att.dtype})…`, 10);
-        log.info(`Trying pipeline: model=${modelId} task=${att.task} dtype=${att.dtype} device=${device}`);
-        const pipe = await pipeline(att.task, modelId, {
+        status(`AI loading (${task}/${dt})…`, 10);
+        log.info(`Pipeline: model=${modelId} task=${task} dtype=${dt} device=${device}`);
+        const pipe = await pipeline(task, modelId, {
           device,
-          dtype: att.dtype,
+          dtype: dt,
           progress_callback: (data) => {
             if (data && data.status === 'progress' && data.progress != null) {
               status(`Downloading ${modelId}… ${Math.round(data.progress)}%`, 10 + data.progress * 0.3);
@@ -2239,15 +2307,15 @@ async function getPipeline(modelId, opts = {}) {
         engineCache[key] = pipe;
         lruTouch(key);
         updateCacheStatus();
-        log.info(`✅ Pipeline loaded: ${modelId} (task=${att.task}, dtype=${att.dtype})`);
+        log.info(`✅ Pipeline loaded: ${task}/${modelId}/${dt}`);
         return pipe;
       } catch (e) {
         lastErr = e;
-        log.warn(`Pipeline attempt failed: task=${att.task} dtype=${att.dtype}`, (e && e.message) || e);
+        log.warn(`Pipeline attempt failed: task=${task} dtype=${dt}`, (e && e.message) || e);
       }
     }
     loadingEngine[key] = null;
-    throw new Error('Model load failed after all attempts: ' + modelId + ' — ' + errMsg(lastErr));
+    throw new Error(`Model load failed: ${task}/${modelId} — ${errMsg(lastErr)}`);
   })();
   return loadingEngine[key];
 }
@@ -2257,20 +2325,26 @@ async function loadMediaPipe() {
   if (engineCache.mediapipe) return engineCache.mediapipe;
   if (mediaPipePromise) return mediaPipePromise;
   mediaPipePromise = (async () => {
-    if (typeof window.SelfieSegmentation === 'undefined') {
-      await new Promise((res, rej) => {
-        const s = document.createElement('script');
-        s.src = CONFIG.CDN.MEDIAPIPE_BASE + '/selfie_segmentation.js';
-        s.crossOrigin = 'anonymous';
-        s.onload = res;
-        s.onerror = () => rej(new Error('MediaPipe script load failed'));
-        document.head.appendChild(s);
-      });
+    try {
+      if (typeof window.SelfieSegmentation === 'undefined') {
+        await new Promise((res, rej) => {
+          const s = document.createElement('script');
+          s.src = CONFIG.CDN.MEDIAPIPE_BASE + '/selfie_segmentation.js';
+          s.crossOrigin = 'anonymous';
+          s.onload = res;
+          s.onerror = () => rej(new Error('MediaPipe script load failed'));
+          document.head.appendChild(s);
+        });
+      }
+      const seg = new window.SelfieSegmentation({ locateFile: f => `${CONFIG.CDN.MEDIAPIPE_BASE}/${f}` });
+      seg.setOptions({ modelSelection: 1 });
+      engineCache.mediapipe = seg;
+      return seg;
+    } catch (e) {
+      mediaPipePromise = null;
+      log.warn('loadMediaPipe failed (promise reset)', e);
+      throw e;
     }
-    const seg = new window.SelfieSegmentation({ locateFile: f => `${CONFIG.CDN.MEDIAPIPE_BASE}/${f}` });
-    seg.setOptions({ modelSelection: 1 });
-    engineCache.mediapipe = seg;
-    return seg;
   })();
   return mediaPipePromise;
 }
@@ -2286,7 +2360,7 @@ function updateCacheStatus() {
     const wb = $('warmupBox'); if (wb) wb.style.display = 'none';
   } else {
     icon.textContent = '📥';
-    text.textContent = 'First run: AI download hoga (device ke hisaab se)';
+    text.textContent = 'First run: AI model download hoga (device ke hisaab se)';
     box.className = 'cacheStatus new';
   }
 }
@@ -2298,161 +2372,296 @@ async function clearAllCaches() {
 }
 
 /* ============================================================================
- * WARM-UP AI v2.1.2 — with imgly fallback
+ * v2.3.0 UNIVERSAL MASK DECODER
+ * Converts any transformers.js output (RawImage / array / mask object)
+ * into a canvas + format metadata.
  * ========================================================================== */
-let warmupRunning = false;
-async function warmUpAI() {
-  if (warmupRunning) return;
-  warmupRunning = true;
-  const bar1 = $('warmupProgressBar'), fill1 = $('warmupProgressFill');
-  const bar2 = $('warmupProgressBar2'), fill2 = $('warmupProgressFill2');
-  const st1 = $('warmupStatusTxt');
-  const setProgress = (pct) => {
-    if (fill1) fill1.style.width = pct + '%';
-    if (fill2) fill2.style.width = pct + '%';
-  };
-  const setStatus = (txt) => {
-    if (st1) { st1.classList.remove('hidden'); st1.textContent = txt; }
-    toast(txt, 1500);
-  };
-  if (bar1) bar1.classList.remove('hidden');
-  if (bar2) bar2.classList.remove('hidden');
-  const btn1 = $('warmupBtn'), btn2 = $('warmupBtn2');
-  if (btn1) btn1.disabled = true;
-  if (btn2) btn2.disabled = true;
-  try {
-    const primary = pickModelForDevice('portrait');
-    const meta = MODEL_REGISTRY[primary];
-    setStatus(`📥 ${primary} (${meta?.sizeMB || '?'}MB) download ho raha hai…`);
-    setProgress(15);
+async function outputToMaskCanvas(output) {
+  if (!output) throw new Error('Empty model output');
 
-    if (meta?.engine === 'imgly') {
-      await loadImgly();
-      const m = engineCache.imgly;
-      const dummy = pool.acquire(64, 64);
-      const dctx = dummy.getContext('2d'); dctx.fillStyle = '#888'; dctx.fillRect(0, 0, 64, 64);
-      const dummyBlob = await new Promise(r => dummy.toBlob(r, 'image/png'));
-      pool.release(dummy);
-      setProgress(40);
-      try {
-        await m.removeBackground(dummyBlob, { model: meta.model, output: { format: 'image/png', type: 'foreground' }, publicPath: CONFIG.CDN.IMGLY_DATA });
-        markEngineWarm(primary);
-      } catch (e) { log.warn('warmup imgly inference failed', e); }
-    } else if (meta?.engine === 'mediapipe') {
-      await loadMediaPipe();
-      markEngineWarm('mediapipe');
-    } else if (meta?.engine === 'transformers') {
-      // v2.1.2 FIX: try transformers, fallback to imgly on failure
-      let transformersOk = false;
-      try {
-        await getPipeline(meta.model);
-        markEngineWarm(primary);
-        transformersOk = true;
-        log.info(`✅ Transformer model warmed: ${meta.model}`);
-      } catch (e) {
-        log.warn(`⚠️ Transformer failed (${meta.model}), falling back to imgly`, (e && e.message) || e);
-      }
-      if (!transformersOk) {
-        setStatus('📥 Fallback: isnet_quint8 (40MB) download…');
-        setProgress(45);
-        try {
-          await loadImgly();
-          const m = engineCache.imgly;
-          const dummy = pool.acquire(64, 64);
-          const dctx = dummy.getContext('2d'); dctx.fillStyle = '#888'; dctx.fillRect(0, 0, 64, 64);
-          const dummyBlob = await new Promise(r => dummy.toBlob(r, 'image/png'));
-          pool.release(dummy);
-          await m.removeBackground(dummyBlob, {
-            model: 'isnet_quint8',
-            output: { format: 'image/png', type: 'foreground' },
-            publicPath: CONFIG.CDN.IMGLY_DATA
-          });
-          markEngineWarm('isnet_quint8');
-          log.info('✅ Fallback to imgly isnet_quint8 succeeded');
-        } catch (e2) {
-          log.error('❌ Both transformer and imgly failed', e2);
-          throw new Error('Warm-up failed: ' + errMsg(e2));
-        }
-      }
+  // A) Array output (image-segmentation): pick the top-scoring item
+  if (Array.isArray(output)) {
+    if (!output.length) throw new Error('Empty segmentation array');
+    // Sort by score if available
+    const sorted = output.slice().sort((a, b) => (b?.score || 0) - (a?.score || 0));
+    const first = sorted[0];
+    if (first && first.mask) return outputToMaskCanvas(first.mask);
+    // Some models return arrays of RawImages
+    if (first && (first.data || first.toCanvas)) return outputToMaskCanvas(first);
+    throw new Error('Unsupported array output');
+  }
+
+  // B) Object with .mask property
+  if (output.mask && (output.mask.data || output.mask.toCanvas)) {
+    return outputToMaskCanvas(output.mask);
+  }
+
+  // C) RawImage with .data/.width/.height/.channels
+  if (output.data && output.width && output.height) {
+    const channels = output.channels || 4;
+    const cv = document.createElement('canvas');
+    cv.width = output.width;
+    cv.height = output.height;
+    const ctx2 = cv.getContext('2d');
+    const n = output.width * output.height;
+
+    if (channels === 4) {
+      // RGBA — direct
+      const arr = new Uint8ClampedArray(n * 4);
+      for (let i = 0; i < n * 4; i++) arr[i] = output.data[i] || 0;
+      ctx2.putImageData(new ImageData(arr, output.width, output.height), 0, 0);
+      return { canvas: cv, format: 'rgba', channels: 4 };
     }
-    setProgress(75);
-    setStatus('📥 MediaPipe (fast fallback) ready kar rahe hain…');
-    try { await loadMediaPipe(); markEngineWarm('mediapipe'); } catch (e) { log.warn('mediapipe warmup failed', e); }
-    setProgress(100);
-    setStatus('✅ AI warm! Ab har photo 3-10 sec me ready hogi.');
-    updateCacheStatus();
-    setTimeout(() => { if (bar1) bar1.classList.add('hidden'); if (bar2) bar2.classList.add('hidden'); }, 2500);
-  } catch (e) {
-    // v2.1.2 FIX: soft warning, not alarming error
-    log.error('warmUpAI', e);
-    const msg = errMsg(e);
-    setStatus(`⚠️ Preload incomplete. Pehli photo thoda slow hogi — uske baad normal.\n(${msg})`);
-    toastSafe('⚠️ Preload incomplete — pehli photo slow', 4000);
-    // FALLBACK_CHAIN will still work during actual processing
-  } finally {
-    warmupRunning = false;
-    if (btn1) btn1.disabled = false;
-    if (btn2) btn2.disabled = false;
+    if (channels === 3) {
+      // RGB — expand to RGBA (A=255)
+      const id = ctx2.createImageData(output.width, output.height);
+      for (let i = 0; i < n; i++) {
+        id.data[i*4]   = output.data[i*3];
+        id.data[i*4+1] = output.data[i*3+1];
+        id.data[i*4+2] = output.data[i*3+2];
+        id.data[i*4+3] = 255;
+      }
+      ctx2.putImageData(id, 0, 0);
+      return { canvas: cv, format: 'rgb', channels: 3 };
+    }
+    if (channels === 2) {
+      // Unusual — L+A? Fall back to R channel
+      const id = ctx2.createImageData(output.width, output.height);
+      for (let i = 0; i < n; i++) {
+        const v = output.data[i*2];
+        id.data[i*4]   = v;
+        id.data[i*4+1] = v;
+        id.data[i*4+2] = v;
+        id.data[i*4+3] = 255;
+      }
+      ctx2.putImageData(id, 0, 0);
+      return { canvas: cv, format: 'gray', channels: 2 };
+    }
+    if (channels === 1) {
+      // Grayscale — expand to RGBA (A=255)
+      const id = ctx2.createImageData(output.width, output.height);
+      for (let i = 0; i < n; i++) {
+        const v = output.data[i];
+        id.data[i*4]   = v;
+        id.data[i*4+1] = v;
+        id.data[i*4+2] = v;
+        id.data[i*4+3] = 255;
+      }
+      ctx2.putImageData(id, 0, 0);
+      return { canvas: cv, format: 'gray', channels: 1 };
+    }
+    throw new Error(`Unsupported channels: ${channels}`);
+  }
+
+  // D) RawImage with .toCanvas method
+  if (typeof output.toCanvas === 'function') {
+    const cv = await output.toCanvas();
+    return { canvas: cv, format: 'unknown', channels: 0 };
+  }
+
+  // E) Blob / File
+  if (output instanceof Blob) {
+    const im = await loadImage(output);
+    const cv = document.createElement('canvas');
+    cv.width = im.width; cv.height = im.height;
+    cv.getContext('2d').drawImage(im, 0, 0);
+    return { canvas: cv, format: 'unknown', channels: 0 };
+  }
+
+  throw new Error('Unrecognized model output format');
+}
+
+/* Extract alpha channel from a mask canvas with variance-based channel selection */
+function canvasToAlpha(canvas, targetW, targetH, format) {
+  const c2 = document.createElement('canvas');
+  c2.width = targetW;
+  c2.height = targetH;
+  const ctx2 = c2.getContext('2d');
+  ctx2.imageSmoothingEnabled = true;
+  ctx2.imageSmoothingQuality = 'high';
+  ctx2.clearRect(0, 0, targetW, targetH);
+  ctx2.drawImage(canvas, 0, 0, targetW, targetH);
+  const md = ctx2.getImageData(0, 0, targetW, targetH).data;
+
+  const n = targetW * targetH;
+  const alpha = new Float32Array(n);
+
+  // Sample variances of R/G/B/A
+  const step = Math.max(1, Math.floor(n / 5000));
+  let sumR = 0, sumG = 0, sumB = 0, sumA = 0;
+  let sumR2 = 0, sumG2 = 0, sumB2 = 0, sumA2 = 0;
+  let sampled = 0;
+  for (let i = 0; i < n; i += step) {
+    const p = i * 4;
+    const r = md[p], g = md[p+1], b = md[p+2], a = md[p+3];
+    sumR += r; sumG += g; sumB += b; sumA += a;
+    sumR2 += r*r; sumG2 += g*g; sumB2 += b*b; sumA2 += a*a;
+    sampled++;
+  }
+  if (!sampled) return null;
+  const meanR = sumR/sampled, meanG = sumG/sampled, meanB = sumB/sampled, meanA = sumA/sampled;
+  const varR = Math.max(0, sumR2/sampled - meanR*meanR);
+  const varG = Math.max(0, sumG2/sampled - meanG*meanG);
+  const varB = Math.max(0, sumB2/sampled - meanB*meanB);
+  const varA = Math.max(0, sumA2/sampled - meanA*meanA);
+
+  // Selection rules:
+  //   - If format explicitly 'rgba', prefer A when it varies
+  //   - If A variance is meaningful (not flat 255), use A
+  //   - Otherwise use R (grayscale mask stored in RGB)
+  let chosen = 'R', chosenVar = varR, channelIdx = 0;
+  if (varG > chosenVar) { chosen = 'G'; chosenVar = varG; channelIdx = 1; }
+  if (varB > chosenVar) { chosen = 'B'; chosenVar = varB; channelIdx = 2; }
+  // Alpha only counts if it's actually varying (not a flat 255)
+  if (varA > chosenVar * 1.05 && meanA < 254) {
+    chosen = 'A'; chosenVar = varA; channelIdx = 3;
+  }
+
+  if (chosenVar < CONFIG.MASK_MIN_VARIANCE) {
+    log.warn(`canvasToAlpha: all channels flat (varR=${varR.toFixed(1)} varA=${varA.toFixed(1)})`);
+    return null;
+  }
+
+  if (channelIdx === 3) {
+    for (let i = 0; i < n; i++) alpha[i] = md[i*4 + 3] / 255;
+  } else {
+    // Use luminance to be safe for grayscale masks
+    for (let i = 0; i < n; i++) {
+      const p = i * 4;
+      alpha[i] = (md[p] * 0.299 + md[p+1] * 0.587 + md[p+2] * 0.114) / 255;
+    }
+  }
+
+  // Polarity check
+  const bw = Math.max(2, Math.floor(Math.min(targetW, targetH) * 0.025));
+  let borderFg = 0, borderTotal = 0;
+  for (let y = 0; y < targetH; y++) {
+    const isBRow = y < bw || y >= targetH - bw;
+    for (let x = 0; x < targetW; x++) {
+      if (!isBRow && x >= bw && x < targetW - bw) continue;
+      if (alpha[y * targetW + x] > 0.5) borderFg++;
+      borderTotal++;
+    }
+  }
+  const borderRatio = borderTotal > 0 ? borderFg / borderTotal : 0;
+  let inverted = false;
+  if (borderRatio > CONFIG.MASK_INVERT_BORDER_RATIO) {
+    log.warn(`Mask inverted (border=${borderRatio.toFixed(2)}) — flipping`);
+    for (let i = 0; i < n; i++) alpha[i] = 1 - alpha[i];
+    inverted = true;
+  }
+
+  return { alpha, channel: chosen, variance: chosenVar, inverted, borderRatio };
+}
+
+/* Adapter for transformer-based models with task fallback */
+async function runTransformersAdapter(blob, modelId, modelMeta) {
+  const tasks = (modelMeta && modelMeta.tasks) || ['image-segmentation', 'background-removal'];
+  let lastErr = null;
+  for (const task of tasks) {
+    try {
+      const pipe = await getPipeline(modelId, task);
+      const output = await pipe(blob);
+      const normalized = await outputToMaskCanvas(output);
+      log.info(`Adapter[${modelId}@${task}] format=${normalized.format} ch=${normalized.channels}`);
+      return { ...normalized, task };
+    } catch (e) {
+      lastErr = e;
+      log.warn(`Adapter[${modelId}@${task}] failed:`, (e && e.message) || e);
+    }
+  }
+  throw lastErr || new Error(`All tasks failed for ${modelId}`);
+}
+async function runMediaPipeAdapter(blob) {
+  const im = await loadImage(blob);
+  const cv = pool.acquire(im.width, im.height);
+  const cc = cv.getContext('2d');
+  cc.drawImage(im, 0, 0);
+  const imgData = cc.getImageData(0, 0, im.width, im.height);
+  pool.release(cv);
+  const seg = await loadMediaPipe();
+  return new Promise((resolve, reject) => {
+    let resolved = false;
+    seg.onResults(res => {
+      if (resolved) return; resolved = true;
+      try {
+        const w = imgData.width, h = imgData.height;
+        const mc = pool.acquire(w, h);
+        const mctx = mc.getContext('2d');
+        mctx.clearRect(0, 0, w, h);
+        // MediaPipe returns segmentationMask which is RGBA — but the mask is in R channel
+        mctx.drawImage(res.segmentationMask, 0, 0, w, h);
+        const out = { canvas: mc, format: 'gray-rgba', channels: 4, task: 'segmentation' };
+        resolve(out);
+      } catch (err) { reject(err); }
+    });
+    const tmp = pool.acquire(imgData.width, imgData.height);
+    tmp.getContext('2d').putImageData(imgData, 0, 0);
+    seg.send({ image: tmp }).then(() => pool.release(tmp)).catch(reject);
+  });
+}
+async function runEngine(engineId, blob) {
+  const meta = MODEL_REGISTRY[engineId];
+  if (!meta) throw new Error('Unknown engine: ' + engineId);
+  switch (meta.engine) {
+    case 'mediapipe':    return runMediaPipeAdapter(blob);
+    case 'transformers': return runTransformersAdapter(blob, meta.model, meta);
+    default:             throw new Error('Unknown engine type: ' + meta.engine);
   }
 }
-on($('warmupBtn'), 'click', warmUpAI);
-on($('warmupBtn2'), 'click', warmUpAI);
+function isCached(engineId) {
+  const meta = MODEL_REGISTRY[engineId]; if (!meta) return false;
+  if (meta.engine === 'mediapipe') return !!engineCache.mediapipe;
+  if (meta.engine === 'transformers') {
+    return Object.keys(engineCache).some(k => k.startsWith(`pipe:`) && k.includes(meta.model));
+  }
+  return false;
+}
 
 /* ============================================================================
- * QUALITY LEVELS v2.1.2 — imgly-preferred
+ * v2.3.0 ATTEMPT ENGINE — universal decoder + validation
  * ========================================================================== */
-const QUALITY_LEVELS = {
-  auto:     { label: 'Auto',     postLevel: 'adaptive', resolutionMode: 'auto' },
-  fast:     { label: 'Fast',     postLevel: 'light',    resolutionMode: 'fast',     internal: null },
-  balanced: { label: 'Balanced', postLevel: 'medium',   resolutionMode: 'balanced', internal: null },
-  quality:  { label: 'Maximum',  postLevel: 'full',     resolutionMode: 'quality',  internal: null }
-};
-
-function pickInternalModel(quality, imageType) {
-  // v2.1.2 FIX: imgly-preferred everywhere
-  if (quality === 'fast') {
-    const m = imageType === 'portrait' ? 'mediapipe' : 'u2netp';
-    return isModelSafeForDevice(m) ? m : pickModelForDevice(imageType);
+async function attemptEngine(engineId, blob, w, h, onStage, cancelToken, baseProgress) {
+  cancelToken.throwIfCancelled();
+  onStage && onStage('AI', `Trying ${engineId}…`, baseProgress);
+  const maskResult = await runEngine(engineId, blob);
+  cancelToken.throwIfCancelled();
+  if (!maskResult || !maskResult.canvas) {
+    return {
+      engineId, alpha: null, task: maskResult?.task || '?',
+      channel: null, inverted: false,
+      validation: { verdict: 'BAD', reason: 'no-canvas', fgRatio: 0, edgeRatio: 0, borderRatio: 0, centerFgRatio: 0 }
+    };
   }
-  if (quality === 'balanced') {
-    const m = 'isnet_quint8';
-    if (isModelSafeForDevice(m)) return m;
-    return pickModelForDevice(imageType);
+  const alphaResult = canvasToAlpha(maskResult.canvas, w, h, maskResult.format);
+  try { if (maskResult.canvas.width) { maskResult.canvas.width = 0; maskResult.canvas.height = 0; } } catch (_) {}
+  if (!alphaResult || !alphaResult.alpha) {
+    return {
+      engineId, alpha: null, task: maskResult.task,
+      channel: null, inverted: false,
+      validation: { verdict: 'BAD', reason: 'decode-failed', fgRatio: 0, edgeRatio: 0, borderRatio: 0, centerFgRatio: 0 }
+    };
   }
-  if (quality === 'quality') {
-    const m = 'isnet_fp16';
-    if (isModelSafeForDevice(m)) return m;
-    return pickModelForDevice(imageType);
-  }
-  return pickModelForDevice(imageType);
+  const validation = validateMask(alphaResult.alpha, w, h);
+  log.info(`Mask[${engineId}@${maskResult.task}] ch=${alphaResult.channel} var=${alphaResult.variance.toFixed(0)} inv=${alphaResult.inverted} → ${validation.verdict}${validation.reason ? '(' + validation.reason + ')' : ''} fg=${(validation.fgRatio*100).toFixed(1)}% edge=${(validation.edgeRatio*100).toFixed(2)}% center=${(validation.centerFgRatio*100).toFixed(1)}%`);
+  return {
+    engineId,
+    alpha: alphaResult.alpha,
+    task: maskResult.task,
+    channel: alphaResult.channel,
+    inverted: alphaResult.inverted,
+    validation
+  };
 }
 
-function pickResolution(imgW, imgH, resolutionMode) {
-  const maxDim = Math.max(imgW, imgH);
-  const tierCap = { minimal: 640, low: 768, mid: 1024, high: 1280, flagship: 1792 }[DEVICE_TIER] || 1024;
-  let base;
-  if (resolutionMode === 'fast') base = 896;
-  else if (resolutionMode === 'balanced') base = Math.min(1280, tierCap);
-  else if (resolutionMode === 'quality') base = tierCap;
-  else base = tierCap;
-  return Math.min(base, maxDim, tierCap);
-}
-
-function analyzeComplexity(alpha) {
-  let uncertain = 0;
-  const total = alpha.length;
-  const step = Math.max(1, Math.floor(total / 50000));
-  let sampled = 0;
-  for (let i = 0; i < total; i += step) { const a = alpha[i]; if (a > 0.15 && a < 0.85) uncertain++; sampled++; }
-  const ratio = uncertain / sampled;
-  if (ratio < 0.02) return 'simple';
-  if (ratio < 0.08) return 'moderate';
-  return 'complex';
-}
+/* ============================================================================
+ * v2.3.0 IMAGE TYPE DETECTION — with document mode
+ * ========================================================================== */
 function detectImageType(imgData) {
-  const w = imgData.width, h = imgData.height, aspect = w / h, d = imgData.data, n = w * h;
+  const w = imgData.width, h = imgData.height, aspect = w / h;
+  const d = imgData.data, n = w * h;
   let skin = 0, white = 0, colorful = 0, sampled = 0;
-  const step = Math.max(1, Math.floor(n / 2000));
+  const step = Math.max(1, Math.floor(n / 3000));
   for (let i = 0; i < n; i += step) {
     const p = i * 4, r = d[p], g = d[p + 1], b = d[p + 2];
     const lum = 0.299 * r + 0.587 * g + 0.114 * b;
@@ -2462,11 +2671,37 @@ function detectImageType(imgData) {
     sampled++;
   }
   const sr = skin / sampled, wr = white / sampled, cr = colorful / sampled;
+
+  // Edge density for document detection
+  let edgeCount = 0, edgeSampled = 0;
+  const estep = Math.max(2, Math.floor(Math.sqrt(n / 4000)));
+  for (let y = estep; y < h - estep; y += estep * 2) {
+    for (let x = estep; x < w - estep; x += estep * 2) {
+      const p = (y * w + x) * 4;
+      const pR = (y * w + x + estep) * 4;
+      const pD = ((y + estep) * w + x) * 4;
+      const lum = 0.299*d[p] + 0.587*d[p+1] + 0.114*d[p+2];
+      const lumR = 0.299*d[pR] + 0.587*d[pR+1] + 0.114*d[pR+2];
+      const lumD = 0.299*d[pD] + 0.587*d[pD+1] + 0.114*d[pD+2];
+      const grad = Math.abs(lum - lumR) + Math.abs(lum - lumD);
+      if (grad > 40) edgeCount++;
+      edgeSampled++;
+    }
+  }
+  const edgeDensity = edgeSampled > 0 ? edgeCount / edgeSampled : 0;
+
+  // Priority order:
+  // 1) Extreme aspect ratio → signature
   if (aspect > 2.8 || aspect < 0.35) return 'signature';
-  if (wr > 0.55 && cr < 0.3) return 'signature';
+  // 2) Portrait skin presence
   if (sr > 0.06) return 'portrait';
+  // 3) Document: very white, low saturation, high text-edge density
+  if (wr > 0.35 && cr < 0.25 && edgeDensity > 0.18) return 'document';
+  // 4) Signature: mostly white with almost no color
+  if (wr > 0.55 && cr < 0.3) return 'signature';
   return 'product';
 }
+
 function getPostOptions(quality, complexity) {
   const tier = DEVICE_TIER;
   if (quality === 'fast') return { matting: false, hair: false, halo: false, decon: complexity === 'complex', postLevel: 'light' };
@@ -2495,121 +2730,10 @@ async function buildAIInput(imgData, maxDim) {
   pool.release(src);
   return blob;
 }
-async function getAlphaAtRes(maskBlob, w, h) {
-  const maskIm = await loadImage(maskBlob);
-  const scaled = pool.acquire(w, h);
-  const sctx = scaled.getContext('2d');
-  sctx.imageSmoothingEnabled = true; sctx.imageSmoothingQuality = 'high';
-  sctx.drawImage(maskIm, 0, 0, w, h);
-  const md = sctx.getImageData(0, 0, w, h).data;
-  pool.release(scaled);
-  const alpha = new Float32Array(w * h);
-  for (let i = 0, p = 3; i < w * h; i++, p += 4) alpha[i] = md[p] / 255;
-  return alpha;
-}
 
-async function runImglyAdapter(blob, modelId, onProgress) {
-  const m = await loadImgly();
-  try {
-    return await m.removeBackground(blob, {
-      model: modelId,
-      output: { format: 'image/png', quality: 1, type: 'foreground' },
-      publicPath: CONFIG.CDN.IMGLY_DATA,
-      progress: (key, current, total) => { if (total && onProgress) onProgress(current / total); }
-    });
-  } catch (e1) {
-    log.warn('imgly attempt 1 failed', e1);
-  }
-  try {
-    return await m.removeBackground(blob, {
-      model: modelId,
-      output: { format: 'image/png', type: 'foreground' }
-    });
-  } catch (e2) {
-    log.warn('imgly attempt 2 failed', e2);
-    throw e2;
-  }
-}
-async function runTransformersAdapter(blob, modelId) {
-  const pipe = await getPipeline(modelId);
-  const result = await pipe(blob);
-  if (!result) throw new Error('No result');
-  const first = Array.isArray(result) ? result[0] : result;
-  if (!first) throw new Error('Empty result');
-  if (typeof first.toBlob === 'function') {
-    return await first.toBlob('image/png');
-  }
-  if (typeof first.toCanvas === 'function') {
-    const cv = await first.toCanvas();
-    return await new Promise(r => cv.toBlob(r, 'image/png'));
-  }
-  let maskObj = first.mask || first;
-  if (!maskObj) throw new Error('No mask');
-  let mc;
-  if (typeof maskObj.toCanvas === 'function') mc = await maskObj.toCanvas();
-  else if (maskObj.data && maskObj.width && maskObj.height) {
-    mc = document.createElement('canvas');
-    mc.width = maskObj.width; mc.height = maskObj.height;
-    mc.getContext('2d').putImageData(maskObj instanceof ImageData ? maskObj : new ImageData(new Uint8ClampedArray(maskObj.data), maskObj.width, maskObj.height), 0, 0);
-  } else throw new Error('Unsupported mask format');
-  const blobOut = await new Promise(r => mc.toBlob(r, 'image/png'));
-  try { mc.width = 0; mc.height = 0; } catch (_) {}
-  return blobOut;
-}
-async function runMediaPipeAdapter(blob) {
-  const im = await loadImage(blob);
-  const cv = pool.acquire(im.width, im.height);
-  const cc = cv.getContext('2d');
-  cc.drawImage(im, 0, 0);
-  const imgData = cc.getImageData(0, 0, im.width, im.height);
-  pool.release(cv);
-  const seg = await loadMediaPipe();
-  return new Promise((resolve, reject) => {
-    let resolved = false;
-    seg.onResults(res => {
-      if (resolved) return; resolved = true;
-      try {
-        const w = imgData.width, h = imgData.height;
-        const mc = pool.acquire(w, h);
-        mc.getContext('2d').drawImage(res.segmentationMask, 0, 0, w, h);
-        mc.toBlob(b => { pool.release(mc); resolve(b); }, 'image/png');
-      } catch (err) { reject(err); }
-    });
-    const tmp = pool.acquire(imgData.width, imgData.height);
-    tmp.getContext('2d').putImageData(imgData, 0, 0);
-    seg.send({ image: tmp }).then(() => pool.release(tmp)).catch(reject);
-  });
-}
-async function runEngine(engineId, blob, onProgress) {
-  const meta = MODEL_REGISTRY[engineId];
-  if (!meta) throw new Error('Unknown engine: ' + engineId);
-  switch (meta.engine) {
-    case 'imgly':        return runImglyAdapter(blob, meta.model, onProgress);
-    case 'mediapipe':    return runMediaPipeAdapter(blob);
-    case 'transformers': return runTransformersAdapter(blob, meta.model);
-    default:             throw new Error('Unknown engine type: ' + meta.engine);
-  }
-}
-const FALLBACK_CHAIN = {
-  isnet_quint8:  ['isnet_fp16', 'u2netp', 'mediapipe'],
-  isnet_fp16:    ['isnet_quint8', 'isnet_full', 'mediapipe'],
-  isnet_full:    ['isnet_fp16', 'isnet_quint8', 'mediapipe'],
-  mediapipe:     ['u2netp', 'isnet_quint8', 'silueta'],
-  u2netp:        ['mediapipe', 'isnet_quint8', 'silueta'],
-  silueta:       ['u2netp', 'isnet_quint8', 'mediapipe'],
-  modnet:        ['isnet_quint8', 'mediapipe', 'u2netp'],
-  ormbg:         ['isnet_quint8', 'isnet_fp16', 'mediapipe'],
-  birefnet_lite: ['isnet_quint8', 'isnet_fp16', 'mediapipe'],
-  isnet_general: ['isnet_fp16', 'isnet_quint8', 'mediapipe']
-};
-function isCached(engineId) {
-  const meta = MODEL_REGISTRY[engineId]; if (!meta) return false;
-  if (meta.engine === 'imgly') return !!engineCache.imgly;
-  if (meta.engine === 'mediapipe') return !!engineCache.mediapipe;
-  if (meta.engine === 'transformers') return !!engineCache['pipe:' + meta.model];
-  return false;
-}
-
+/* ============================================================================
+ * v2.3.0 processAISingle — document-aware + validation gate
+ * ========================================================================== */
 async function processAISingle(item, onStage, cancelToken) {
   cancelToken.throwIfCancelled();
   const dc = DEVICE_CLASS();
@@ -2627,105 +2751,161 @@ async function processAISingle(item, onStage, cancelToken) {
   const tEl = $('detectedType'), rEl = $('detectedTypeRow');
   if (tEl) tEl.textContent = imageType;
   if (rEl) rEl.classList.remove('hidden');
-  onStage && onStage('Analyzing', `${imageType} detected`, 0.05);
+
+  // v2.3.0: Document/signature type — skip AI, just crop+resize
+  if ((imageType === 'document' || imageType === 'signature') && currentQuality === 'auto') {
+    log.info(`Type=${imageType} → skipping AI background removal (not applicable)`);
+    onStage && onStage('Skip AI', `${imageType} detected — no background to remove`, 1);
+    const error = new Error('DOCUMENT_MODE');
+    error.name = 'DocumentTypeError';
+    error.imageType = imageType;
+    throw error;
+  }
 
   const qualityMode = currentQuality || 'auto';
-  const engineId = pickInternalModel(qualityMode, imageType);
+  const primaryEngine = pickInternalModel(qualityMode, imageType);
   const resolutionMode = QUALITY_LEVELS[qualityMode]?.resolutionMode || 'auto';
   const resolution = pickResolution(item.original.width, item.original.height, resolutionMode);
-  log.info(`AI: type=${imageType} tier=${DEVICE_TIER} q=${qualityMode} engine=${engineId} res=${resolution}`);
+  log.info(`AI start: type=${imageType} tier=${DEVICE_TIER} q=${qualityMode} primary=${primaryEngine} res=${resolution}`);
 
-  onStage && onStage('AI Processing', `Preparing (${engineId})…`, 0.15);
+  onStage && onStage('Preparing', `Preparing (${primaryEngine})…`, 0.10);
   const blob = await buildAIInput(item.original, resolution);
   cancelToken.throwIfCancelled();
   checkTime('buildAIInput');
 
-  let maskBlob, usedFallback = false;
-  let lastError = null;
+  const w = item.original.width, h = item.original.height;
   const startMs = performance.now();
   const budget = CONFIG.FALLBACK_TIME_BUDGET_MS[dc] || 15000;
+  const rank = { GOOD: 3, UNCERTAIN: 2, BAD: 1, CRASH: 0 };
+
+  let result = null;
+  let attempts = [];
+  let usedFallback = false;
 
   try {
-    maskBlob = await withRetry(() => runEngine(engineId, blob, p => {
-      onStage && onStage('AI Processing', `Segmenting ${Math.round(p * 100)}%`, 0.15 + p * 0.4);
-    }), 1, 1000, 'primary-engine');
-    markEngineWarm(engineId);
+    result = await attemptEngine(primaryEngine, blob, w, h, onStage, cancelToken, 0.20);
+    attempts.push({ engine: primaryEngine, verdict: result.validation.verdict });
+    if (result.validation.verdict !== 'BAD' && result.alpha) markEngineWarm(primaryEngine);
   } catch (e) {
-    log.warn('primary engine failed', engineId, e);
-    console.error('[AI] Primary engine failed:', engineId, e);
-    lastError = e;
+    log.warn('primary crashed', primaryEngine, e);
+    attempts.push({ engine: primaryEngine, verdict: 'CRASH', error: errMsg(e) });
+  }
 
-    const chain = (FALLBACK_CHAIN[engineId] || ['isnet_quint8', 'mediapipe']).slice();
-    chain.sort((a, b) => {
-      const ca = (isCached(a) || warmEngines.has(a)) ? 0 : 1;
-      const cb = (isCached(b) || warmEngines.has(b)) ? 0 : 1;
-      if (ca !== cb) return ca - cb;
-      return (MODEL_REGISTRY[a]?.sizeMB || 999) - (MODEL_REGISTRY[b]?.sizeMB || 999);
-    });
+  const chain = (FALLBACK_CHAIN[primaryEngine] || ['u2netp', 'mediapipe'])
+    .filter(m => m !== primaryEngine && isModelSafeForDevice(m))
+    .slice(0, CONFIG.MAX_AI_ATTEMPTS - 1);
 
-    for (const fb of chain) {
-      cancelToken.throwIfCancelled();
-      if (performance.now() - startMs > budget) { log.warn('fallback time budget exceeded'); break; }
-      if (!isModelSafeForDevice(fb)) { log.warn('fallback skipped (unsafe)', fb); continue; }
-      checkTime('fallback-chain');
-      try {
-        onStage && onStage('AI Processing', `Trying ${fb}…`, 0.35);
-        maskBlob = await withRetry(() => runEngine(fb, blob, () => {}), 1, 800, 'fallback-engine');
+  for (const fb of chain) {
+    if (result && result.validation.verdict === 'GOOD') break;
+    if (attempts.length >= CONFIG.MAX_AI_ATTEMPTS) break;
+    if (performance.now() - startMs > budget) { log.warn('fallback time budget exceeded'); break; }
+    cancelToken.throwIfCancelled();
+    checkTime('fallback-chain');
+
+    try {
+      onStage && onStage('AI', `Fallback: ${fb}…`, 0.50);
+      const r = await attemptEngine(fb, blob, w, h, onStage, cancelToken, 0.50);
+      attempts.push({ engine: fb, verdict: r.validation.verdict });
+      if (!r.alpha) { log.warn(`fallback ${fb} no alpha`); continue; }
+      const oldV = result ? result.validation.verdict : 'CRASH';
+      if (!result || !result.alpha || rank[r.validation.verdict] > rank[oldV]) {
+        result = r;
         usedFallback = true;
         markEngineWarm(fb);
-        log.info('fallback succeeded', fb);
-        break;
-      } catch (e2) {
-        log.warn('fallback failed', fb, e2);
-        lastError = e2;
       }
-    }
-    if (!maskBlob) {
-      const err = new Error('AI could not process this photo. ' + errMsg(lastError));
-      err.name = 'AIAllFailedError';
-      throw err;
+      if (result.validation.verdict === 'GOOD') break;
+    } catch (e) {
+      log.warn('fallback crashed', fb, e);
+      attempts.push({ engine: fb, verdict: 'CRASH' });
     }
   }
+
+  if (!result || !result.alpha || result.validation.verdict === 'BAD') {
+    const err = new Error('AI could not reliably process this photo.');
+    err.name = 'AIAllFailedError';
+    err.attempts = attempts;
+    err.lastVerdict = result ? result.validation.verdict : 'CRASH';
+    log.error('AI failed gate', { attempts, lastVerdict: err.lastVerdict });
+    throw err;
+  }
+
+  log.info(`AI complete: ${attempts.map(a => a.engine + ':' + a.verdict).join(' → ')} | final=${result.engineId} verdict=${result.validation.verdict}`);
+  item.engineAttempts = attempts;
+  item.maskVerdict = result.validation.verdict;
+  item.maskChannel = result.channel;
+  item.maskTask = result.task;
+  item.maskStats = {
+    fgRatio: result.validation.fgRatio,
+    edgeRatio: result.validation.edgeRatio,
+    borderRatio: result.validation.borderRatio,
+    centerFgRatio: result.validation.centerFgRatio
+  };
+
+  const mRow = $('maskInfoRow'), mV = $('maskVerdict'), mF = $('maskFg'), mE = $('maskEdge'), mC = $('maskCh'), mT = $('maskTask');
+  if (mRow) mRow.classList.remove('hidden');
+  if (mV) mV.textContent = result.validation.verdict + (result.validation.reason ? ` (${result.validation.reason})` : '');
+  if (mF) mF.textContent = (result.validation.fgRatio * 100).toFixed(1) + '%';
+  if (mE) mE.textContent = (result.validation.edgeRatio * 100).toFixed(2) + '%';
+  if (mC) mC.textContent = (result.channel || '?') + (result.inverted ? '↺' : '');
+  if (mT) mT.textContent = result.task || '?';
 
   cancelToken.throwIfCancelled();
   checkTime('inference');
+  onStage && onStage('Refining', 'Processing edges…', 0.75);
 
-  const w = item.original.width, h = item.original.height;
-  const alpha = await getAlphaAtRes(maskBlob, w, h);
+  const alpha = result.alpha;
   const complexity = analyzeComplexity(alpha);
-  onStage && onStage('Refining', `${complexity} edges`, 0.55);
-  checkTime('getAlpha');
-
   const postOpts = getPostOptions(qualityMode, complexity);
-  let result;
+
+  let finalData;
   if (postOpts.postLevel !== 'light' || postOpts.matting || postOpts.hair) {
     try {
       const wr = await runPostProcess(item.original, alpha, postOpts,
-        (stage, pct) => onStage && onStage('Refining', stage + ' ' + pct + '%', 0.55 + (pct / 100) * 0.35),
+        (stage, pct) => onStage && onStage('Refining', stage + ' ' + pct + '%', 0.75 + (pct / 100) * 0.20),
         cancelToken);
-      result = new ImageData(wr.data, wr.width, wr.height);
+      finalData = new ImageData(wr.data, wr.width, wr.height);
     } catch (e) {
       if (e.name === 'AbortError') throw e;
       log.warn('post-process failed, using raw alpha', e);
-      result = new ImageData(new Uint8ClampedArray(item.original.data), w, h);
-      for (let i = 0, p = 3; i < w * h; i++, p += 4) result.data[p] = Math.round(alpha[i] * 255);
+      finalData = new ImageData(new Uint8ClampedArray(item.original.data), w, h);
+      for (let i = 0, p = 3; i < w * h; i++, p += 4) finalData.data[p] = Math.round(alpha[i] * 255);
     }
   } else {
-    result = new ImageData(new Uint8ClampedArray(item.original.data), w, h);
-    for (let i = 0, p = 3; i < w * h; i++, p += 4) result.data[p] = Math.round(alpha[i] * 255);
+    finalData = new ImageData(new Uint8ClampedArray(item.original.data), w, h);
+    for (let i = 0, p = 3; i < w * h; i++, p += 4) finalData.data[p] = Math.round(alpha[i] * 255);
   }
   checkTime('postProcess');
 
-  item.work = result;
+  item.work = finalData;
   item.hasResult = true;
-  item.maskBackup = captureAlpha(result);
+  item.maskBackup = captureAlpha(finalData);
   item.status = 'done';
   item.detectedType = imageType;
   item.usedFallback = usedFallback;
   item.complexity = complexity;
-  item.engineUsed = usedFallback ? 'fallback' : engineId;
+  item.engineUsed = result.engineId;
   updateProcessedThumb(item);
-  onStage && onStage('Complete', 'Done' + (usedFallback ? ' • ✓' : ''), 1);
+  onStage && onStage('Complete', `Done • ${result.engineId} • ${result.validation.verdict}`, 1);
+}
+
+/* Document mode: just crop + resize, no AI */
+async function documentModeProcess(item, preset) {
+  const imgData = item.original;
+  const cropped = await autoFaceCrop(imgData, preset.w || imgData.width, preset.h || imgData.height);
+  const finalCanvas = pool.acquire(preset.w || cropped.width, preset.h || cropped.height);
+  const fctx = finalCanvas.getContext('2d');
+  if (preset.bg === 'white') { fctx.fillStyle = '#fff'; fctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height); }
+  const tmp = imagedataToCanvas(cropped);
+  fctx.drawImage(tmp, 0, 0);
+  pool.release(tmp);
+  const finalData = fctx.getImageData(0, 0, finalCanvas.width, finalCanvas.height);
+  pool.release(finalCanvas);
+  item.work = finalData;
+  item.hasResult = true;
+  item.status = 'done';
+  item.detectedType = 'document';
+  updateProcessedThumb(item);
+  markItemDirty(item.id);
 }
 
 async function fallbackWithoutAI(item, preset) {
@@ -2947,7 +3127,21 @@ document.querySelectorAll('.qualityCard').forEach(card => {
     toast(`🎯 ${QUALITY_LEVELS[currentQuality].label} mode`);
   };
 });
-document.querySelectorAll('#featureNav button').forEach(b => { b.onclick = () => switchTab(b.dataset.tab); });
+document.querySelectorAll('#featureNav button[data-tab]').forEach(b => { b.onclick = () => switchTab(b.dataset.tab); });
+document.querySelectorAll('#featureNavMore button[data-tab]').forEach(b => { b.onclick = () => switchTab(b.dataset.tab); });
+
+on($('moreToolsToggle'), 'click', () => {
+  const more = $('featureNavMore');
+  const t = $('moreToolsToggle');
+  if (!more || !t) return;
+  const willOpen = more.classList.contains('hidden');
+  more.classList.toggle('hidden', !willOpen);
+  t.classList.toggle('on', willOpen);
+  t.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+  t.innerHTML = willOpen
+    ? '<span class="ico" aria-hidden="true">☰</span><span>Less</span>'
+    : '<span class="ico" aria-hidden="true">☰</span><span>More</span>';
+});
 
 function bindRange(id, out, cb) {
   const el = $(id); if (!el) return;
@@ -3309,11 +3503,27 @@ on($('aiRemove'), 'click', async () => {
     loadActiveFromQueue();
     $('modeBadge').textContent = 'BG REMOVED';
     const secs = ((performance.now() - t0) / 1000).toFixed(1);
-    status(`✅ ${secs}s`, 100); toast(`✅ ${secs}s`);
+    const v = item.maskVerdict || 'OK';
+    status(`✅ ${secs}s • ${v}`, 100); toast(`✅ ${secs}s • ${v}`);
     switchTab('bg');
   } catch (e) {
     if (e.name === 'AbortError') { toast('⏹ Cancelled'); item.status = 'pending'; undoStack.pop(); }
     else if (e.name === 'TimeoutError') { log.error('aiRemove timeout', e); item.status = 'error'; undoStack.pop(); toast('⏱ Timeout — Fast mode try karein', 3500); }
+    else if (e.name === 'DocumentTypeError') {
+      // v2.3.0: Document/signature → auto crop+resize instead of error
+      toast(`📄 ${e.imageType} detected — AI skip kiya`, 3000);
+      const preset = EXAM_PRESETS.find(x => x.id === selectedExam) || { w: item.original.width, h: item.original.height, bg: 'white' };
+      try {
+        await documentModeProcess(item, preset);
+        loadActiveFromQueue();
+        $('modeBadge').textContent = 'CROPPED';
+        switchTab('bg');
+      } catch (e2) {
+        log.error('documentModeProcess', e2);
+        undoStack.pop();
+        item.status = 'error'; updateQueueUI();
+      }
+    }
     else {
       log.error('aiRemove', e);
       console.error('[AI] Full error:', e);
@@ -3332,7 +3542,7 @@ on($('aiRemoveAll'), 'click', async () => {
   const token = newCancelToken();
   saveActiveToQueue();
   const t0 = performance.now();
-  let failed = 0;
+  let failed = 0, skipped = 0;
   for (let i = 0; i < pending.length; i++) {
     if (token.cancelled) break;
     const item = pending[i];
@@ -3342,8 +3552,13 @@ on($('aiRemoveAll'), 'click', async () => {
     try { await processAISingle(item, () => {}, token); }
     catch (e) {
       if (e.name === 'AbortError') break;
+      if (e.name === 'DocumentTypeError') {
+        const preset = EXAM_PRESETS.find(x => x.id === selectedExam) || { w: item.original.width, h: item.original.height, bg: 'white' };
+        try { await documentModeProcess(item, preset); skipped++; }
+        catch (e2) { log.error('documentMode batch', e2); failed++; }
+        continue;
+      }
       log.error('batch item', item.name, e);
-      console.error('[AI batch]', item.name, e);
       item.status = 'error'; failed++;
     }
     markItemDirty(item.id);
@@ -3353,7 +3568,7 @@ on($('aiRemoveAll'), 'click', async () => {
   updateQueueUI(); markMetaDirty();
   const done = queue.filter(x => x.status === 'done').length;
   const secs = ((performance.now() - t0) / 1000).toFixed(1);
-  toast(`🚀 ${done}/${queue.length} • ${secs}s` + (failed ? ` • ${failed} failed` : ''), 4000);
+  toast(`🚀 ${done}/${queue.length} • ${secs}s` + (failed ? ` • ${failed} failed` : '') + (skipped ? ` • ${skipped} docs` : ''), 4000);
   switchTab('bg');
 });
 
@@ -3396,6 +3611,31 @@ on($('examReadyBtn'), 'click', async () => {
   } catch (e) {
     if (e.name === 'AbortError') toast('⏹ Cancelled');
     else if (e.name === 'TimeoutError') toast('⏱ Timeout — Fast mode try karein', 3500);
+    else if (e.name === 'DocumentTypeError') {
+      // Document/signature → just crop
+      toast(`📄 ${e.imageType} detected — AI skip kiya`, 3000);
+      try {
+        await documentModeProcess(item, preset);
+        const cropped = await autoFaceCrop(item.work, preset.w, preset.h);
+        const finalCanvas = pool.acquire(preset.w, preset.h);
+        const fctx = finalCanvas.getContext('2d');
+        if (preset.bg === 'white') { fctx.fillStyle = '#fff'; fctx.fillRect(0, 0, preset.w, preset.h); }
+        const tmp = imagedataToCanvas(cropped);
+        fctx.drawImage(tmp, 0, 0);
+        pool.release(tmp);
+        const finalData = fctx.getImageData(0, 0, preset.w, preset.h);
+        pool.release(finalCanvas);
+        item.work = finalData;
+        item.hasResult = true;
+        item.status = 'done';
+        loadActiveFromQueue();
+        $('modeBadge').textContent = 'EXAM READY';
+        switchTab('download');
+      } catch (e2) {
+        log.error('examReady documentMode', e2);
+        item.status = 'error'; updateQueueUI();
+      }
+    }
     else {
       log.error('examReady', e);
       console.error('[ExamReady] error:', e);
@@ -3406,6 +3646,30 @@ on($('examReadyBtn'), 'click', async () => {
 });
 on($('examSignBtn'), 'click', () => { if (!activeId) return toast('❌ पहले upload'); switchTab('sign'); });
 on($('examSheetBtn'), 'click', () => { if (!activeId) return toast('❌ पहले upload'); switchTab('sheet'); });
+
+on($('examNewCustomerBtn'), 'click', () => {
+  if (isProcessing) return toast('Processing चल रही है');
+  if (!queue.length) {
+    const cn = $('customerName'); if (cn) cn.value = '';
+    toast('👤 New customer ready');
+    return;
+  }
+  showConfirm(
+    'New Customer?',
+    `${queue.length} purani images हट जाएँगी और customer name clear होगा। Continue?`,
+    async () => {
+      for (const item of queue) disposeAssets(item.id);
+      queue = []; activeId = null; loadActiveFromQueue();
+      await clearQueueStoreFromDB();
+      const cn = $('customerName'); if (cn) cn.value = '';
+      markMetaDirty();
+      syncAllUI(); clearCanvas(); updateQueueUI();
+      switchTab('exam');
+      toast('👤 New customer ready');
+    },
+    'Yes, New Customer'
+  );
+});
 
 function regenSheetPreview() {
   if (!work) return;
@@ -3492,7 +3756,8 @@ function sigCleanItem(item) {
   const alpha = new Uint8ClampedArray(w * h);
   for (let i = 0, p = 0; i < w * h; i++, p += 4) {
     const lum = 0.299 * src[p] + 0.587 * src[p + 1] + 0.114 * src[p + 2];
-    alpha[i] = Math.max(0, Math.min(255, 255 - (lum - (255 - th)) * 255 / th));
+    // v2.3.0 FIX: simplified threshold math
+    alpha[i] = Math.max(0, Math.min(255, (th - lum) * 255 / th));
   }
   for (let i = 0, p = 0; i < w * h; i++, p += 4) out.data[p + 3] = alpha[i];
   item.work = out; item.hasResult = true; item.maskBackup = captureAlpha(out);
@@ -3689,9 +3954,6 @@ window.addEventListener('visibilitychange', () => {
   }
 });
 
-/* ============================================================================
- * DEVICE INFO UI v2.1.2
- * ========================================================================== */
 function renderDeviceInfo() {
   const dc = $('deviceCard');
   if (dc) {
@@ -3702,7 +3964,7 @@ function renderDeviceInfo() {
       const recMeta = MODEL_REGISTRY[rec];
       const wg = HAS_WEBGPU ? 'WebGPU ✅' : 'WASM';
       const tierEmoji = { minimal: '⚪', low: '🟡', mid: '🟠', high: '🟢', flagship: '🔥' }[DEVICE_TIER] || '🟠';
-      detail.innerHTML = `RAM: <b>~${DEVICE_MEM_GB} GB</b> • Cores: <b>${CPU_CORES}</b> • Storage: <b>${DEVICE_STORAGE_MB} MB</b><br>
+      detail.innerHTML = `RAM: <b>~${DEVICE_MEM_GB} GB</b> • Cores: <b>${CPU_CORES}</b><br>
         Tier: ${tierEmoji} <b>${DEVICE_TIER}</b> • ${wg}<br>
         Recommended: <b>${rec}</b> (${recMeta?.sizeMB || '?'}MB, ~${recMeta?.ramMB || '?'}MB RAM)`;
     }
@@ -3724,7 +3986,7 @@ function renderDeviceInfo() {
   if (qt.fast) qt.fast.textContent = timings.fast;
   if (qt.balanced) qt.balanced.textContent = timings.bal;
   if (qt.quality) qt.quality.textContent = timings.qual;
-  if (qt.auto) qt.auto.textContent = `${rec}`;
+  if (qt.auto) qt.auto.textContent = 'Recommended';
   const wd = $('warmupDetail');
   if (wd) {
     const size = recMeta?.sizeMB || '?';
@@ -3736,7 +3998,7 @@ function renderDeviceInfo() {
     if (IS_MOBILE) type = `Mobile (${DEVICE_TIER})`;
     else if (HAS_WEBGPU) type = 'Desktop (WebGPU)';
     else type = 'Desktop (WASM)';
-    di.textContent = `${type} • RAM ~${DEVICE_MEM_GB}GB • ${CPU_CORES} cores • ${DEVICE_STORAGE_MB}MB storage`;
+    di.textContent = `${type} • RAM ~${DEVICE_MEM_GB}GB • ${CPU_CORES} cores`;
   }
 }
 
@@ -3769,10 +4031,10 @@ async function init() {
     const card = document.querySelector('.qualityCard[data-quality="fast"]');
     if (card) { document.querySelectorAll('.qualityCard').forEach(c2 => c2.classList.remove('on')); card.classList.add('on'); currentQuality = 'fast'; }
   }
-  log.info(`v${APP_VERSION} ready • tier=${DEVICE_TIER} • ${ALL_ENGINE_IDS.length} engines`);
-  console.log(`[Exam Photo Maker] v${APP_VERSION} ready • tier=${DEVICE_TIER}`);
+  log.info(`v${APP_VERSION} ready • tier=${DEVICE_TIER} • ${ALL_ENGINE_IDS.length} models`);
+  console.log(`[Exam Photo Maker] v${APP_VERSION} ready • tier=${DEVICE_TIER} • models=${ALL_ENGINE_IDS.join(',')}`);
   if (DEVICE_TIER === 'mid' || DEVICE_TIER === 'high' || DEVICE_TIER === 'flagship') {
-    setTimeout(() => { if (!engineCache.imgly && !engineCache.mediapipe) warmUpAI().catch(e => log.warn('idle warmup', e)); }, CONFIG.AI_INIT_IDLE_MS);
+    setTimeout(() => { if (!engineCache.mediapipe) warmUpAI().catch(e => log.warn('idle warmup', e)); }, CONFIG.AI_INIT_IDLE_MS);
   }
   setTimeout(async () => { try { const n = await cleanupByAge(); if (n > 0) toastSafe(`🧹 ${n} purani auto-clean`); } catch (_) {} }, 3000);
 }
