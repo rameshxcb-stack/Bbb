@@ -233,7 +233,7 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
   <div class="logo" aria-hidden="true">📸</div>
   <h1>Exam Photo Maker</h1>
   <p>📸 Photo से लेकर Exam Form तक — सब एक जगह</p>
-  <span class="ver" id="appVersion">v2.3.0</span>
+  <span class="ver" id="appVersion">v2.4.0</span>
 </header>
 
 <div class="grid">
@@ -665,7 +665,7 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
           <button id="clearAllDataBtn" class="ghost small danger">🗑 Clear All Data & Cache</button>
         </div>
         <div class="notice">💡 <b>Device:</b> <span id="deviceInfo">—</span></div>
-        <div class="notice">🏷️ <b>Version:</b> <span id="versionInfo">v2.3.0</span></div>
+        <div class="notice">🏷️ <b>Version:</b> <span id="versionInfo">v2.4.0</span></div>
       </div>
     </div>
   </div>
@@ -688,9 +688,9 @@ select:focus,input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px 
 <script type="module">
 'use strict';
 
-console.log('[Exam Photo Maker] module loading… v2.3.0');
+console.log('[Exam Photo Maker] module loading… v2.4.0');
 
-const APP_VERSION = '2.3.0';
+const APP_VERSION = '2.4.0';
 
 const CONFIG = Object.freeze({
   MAX_FILE_MB: 25,
@@ -740,9 +740,7 @@ class Logger {
 const log = new Logger();
 
 /* ============================================================================
- * MODEL REGISTRY v2.3.0
- * Each entry declares the task order to try when loading the pipeline.
- * The adapter (runTransformersAdapter) walks through tasks in order.
+ * MODEL REGISTRY v2.4.0
  * ========================================================================== */
 const MODEL_REGISTRY = Object.freeze({
   mediapipe: {
@@ -781,7 +779,7 @@ const MODEL_REGISTRY = Object.freeze({
   }
 });
 const ALL_ENGINE_IDS = Object.keys(MODEL_REGISTRY);
-log.info(`Registry loaded: ${ALL_ENGINE_IDS.length} models (v2.3.0)`);
+log.info(`Registry loaded: ${ALL_ENGINE_IDS.length} models (v2.4.0)`);
 
 window.addEventListener('error', e => { log.error('window.error', e.message || e.error, e.filename, e.lineno); toastSafe('⚠️ ' + (e.message || 'Error')); });
 window.addEventListener('unhandledrejection', e => { log.error('unhandledrejection', e.reason); toastSafe('⚠️ ' + (e.reason?.message || 'Background task failed')); });
@@ -828,23 +826,23 @@ async function detectDeviceTier() {
   return DEVICE_TIER;
 }
 
-const DEVICE_CLASS = () => {
-  if (DEVICE_TIER === 'minimal') return 'minimal';
-  if (DEVICE_TIER === 'low') return 'low';
-  if (IS_MOBILE) return 'mobile';
-  return HAS_WEBGPU ? 'desktop-webgpu' : 'desktop-wasm';
-};
+const DEVICE_CLASS = () => DEVICE_TIER || 'mid';
 
 function getMaxMP() { return { minimal: 4, low: 6, mid: 10, high: 14, flagship: 20 }[DEVICE_TIER] || 10; }
 function getMaxHistory() { return { minimal: 3, low: 4, mid: 6, high: 10, flagship: 12 }[DEVICE_TIER] || 6; }
 function getQueueLimit() { return { minimal: 3, low: 5, mid: 8, high: 15, flagship: 25 }[DEVICE_TIER] || 8; }
 
+/* ============================================================================
+ * v2.4.0 FIX #1 + #5: BETTER MODELS ON MID/HIGH TIERS
+ * birefnet_lite (best) ab mid+high pe bhi use hoga
+ * MediaPipe ab sirf minimal tier ka primary
+ * ========================================================================== */
 const TIER_MODELS = {
-  minimal:  { portrait: 'mediapipe', general: 'u2netp' },
-  low:      { portrait: 'mediapipe', general: 'u2netp' },
-  mid:      { portrait: 'modnet',    general: 'ormbg' },
-  high:     { portrait: 'modnet',    general: 'ormbg' },
-  flagship: { portrait: 'modnet',    general: 'birefnet_lite' }
+  minimal:  { portrait: 'u2netp',        general: 'u2netp' },
+  low:      { portrait: 'u2netp',        general: 'u2netp' },
+  mid:      { portrait: 'birefnet_lite', general: 'birefnet_lite' },
+  high:     { portrait: 'birefnet_lite', general: 'birefnet_lite' },
+  flagship: { portrait: 'birefnet_lite', general: 'birefnet_lite' }
 };
 const TIER_RAM_LIMIT_MB = { minimal: 130, low: 200, mid: 320, high: 480, flagship: 1000 };
 
@@ -861,22 +859,225 @@ function pickModelForDevice(imageType) {
   let chosen = portrait ? tierModel.portrait : tierModel.general;
   if (!isModelSafeForDevice(chosen)) {
     log.warn(`Model ${chosen} unsafe for tier ${DEVICE_TIER}, downgrading`);
-    chosen = portrait ? 'mediapipe' : 'u2netp';
+    // Downgrade ladder: birefnet → ormbg → modnet → u2netp → mediapipe
+    const downgrade = portrait
+      ? ['ormbg', 'modnet', 'u2netp', 'mediapipe']
+      : ['ormbg', 'u2netp', 'mediapipe'];
+    for (const d of downgrade) {
+      if (isModelSafeForDevice(d)) { chosen = d; break; }
+    }
   }
   return chosen;
 }
 
+/* ============================================================================
+ * v2.4.0 FIX #3: FALLBACK CHAIN REORDERED
+ * Better-quality models tried first
+ * ========================================================================== */
 const FALLBACK_CHAIN = {
   birefnet_lite: ['ormbg', 'modnet', 'u2netp'],
-  ormbg:         ['modnet', 'birefnet_lite', 'u2netp'],
-  modnet:        ['ormbg', 'u2netp', 'mediapipe'],
-  u2netp:        ['mediapipe', 'modnet'],
+  ormbg:         ['birefnet_lite', 'modnet', 'u2netp'],   // ← birefnet first
+  modnet:        ['ormbg', 'birefnet_lite', 'u2netp'],    // ← ormbg first
+  u2netp:        ['modnet', 'ormbg', 'mediapipe'],
   mediapipe:     ['u2netp', 'modnet']
 };
 
 /* ============================================================================
- * MASK VALIDATOR v2.3.0 — with centrality check
+ * v2.4.0 FIX #4 + #6: BETTER RESOLUTION + STRONGER POST-PROCESSING
+ * Auto mode: maxDim 768 → 1024 (matches training)
+ * Auto mode: matting always on (even for "simple" images)
  * ========================================================================== */
+const QUALITY_LEVELS = Object.freeze({
+  fast: {
+    label: 'Fast',
+    resolutionMode: 'fast',
+    maxDim: 512,
+    postLevel: 'light',
+    useMatting: false,
+    useHair: false,
+    useHalo: false
+  },
+  auto: {
+    label: 'Auto',
+    resolutionMode: 'auto',
+    maxDim: 1024,           // ← 768 → 1024
+    postLevel: 'medium',
+    useMatting: true,       // ← always
+    useHair: true,          // ← always
+    useHalo: false
+  },
+  balanced: {
+    label: 'Better',
+    resolutionMode: 'balanced',
+    maxDim: 1152,           // ← 1024 → 1152
+    postLevel: 'medium',
+    useMatting: true,
+    useHair: true,
+    useHalo: false
+  },
+  quality: {
+    label: 'Best Quality',
+    resolutionMode: 'quality',
+    maxDim: 1280,
+    postLevel: 'full',
+    useMatting: true,
+    useHair: true,
+    useHalo: true
+  }
+});
+
+function pickInternalModel(qualityMode, imageType) {
+  const portrait = imageType === 'portrait';
+  const tier = DEVICE_TIER || 'mid';
+
+  // Fast mode: lightest safe model
+  if (qualityMode === 'fast') {
+    return portrait ? 'u2netp' : 'u2netp';
+  }
+
+  // Minimal tier: don't run heavy models
+  if (tier === 'minimal') {
+    return portrait ? 'u2netp' : 'u2netp';
+  }
+
+  // Best Quality: largest safe model available
+  if (qualityMode === 'quality') {
+    if (isModelSafeForDevice('birefnet_lite')) return 'birefnet_lite';
+    if (isModelSafeForDevice('ormbg')) return 'ormbg';
+    if (isModelSafeForDevice('modnet')) return 'modnet';
+    return 'u2netp';
+  }
+
+  // Balanced
+  if (qualityMode === 'balanced') {
+    if (isModelSafeForDevice('birefnet_lite')) return 'birefnet_lite';
+    if (isModelSafeForDevice('ormbg')) return 'ormbg';
+    if (isModelSafeForDevice('modnet')) return 'modnet';
+    return 'u2netp';
+  }
+
+  // Auto: pick best safe model
+  if (isModelSafeForDevice('birefnet_lite')) return 'birefnet_lite';
+  return pickModelForDevice(imageType);
+}
+
+function pickResolution(w, h, mode) {
+  const cfg = QUALITY_LEVELS[mode] || QUALITY_LEVELS.auto;
+  const maxMP = getMaxMP();
+  const mp = (w * h) / 1e6;
+
+  let targetMax = cfg.maxDim;
+  if (mp > maxMP) {
+    const scale = Math.sqrt(maxMP / mp);
+    targetMax = Math.round(cfg.maxDim * scale);
+  }
+  return Math.min(targetMax, Math.max(w, h));
+}
+
+function analyzeComplexity(alpha) {
+  if (!alpha || !alpha.length) return 'moderate';
+  const n = alpha.length;
+  const step = Math.max(1, Math.floor(n / 8000));
+  let edges = 0, sampled = 0, strongEdges = 0;
+
+  for (let i = 1; i < n - 1; i += step) {
+    const a = alpha[i];
+    if (a > 0.03 && a < 0.97) {
+      const la = alpha[i - 1];
+      const ra = alpha[i + 1];
+      const grad = Math.abs(a - la) + Math.abs(a - ra);
+      if (grad > 0.12) edges++;
+      if (grad > 0.4) strongEdges++;
+    }
+    sampled++;
+  }
+
+  const edgeRatio = edges / Math.max(1, sampled);
+  const strongRatio = strongEdges / Math.max(1, sampled);
+
+  // v2.4.0: lowered threshold for 'complex' so more images get hair processing
+  if (edgeRatio < 0.006 && strongRatio < 0.002) return 'simple';
+  if (edgeRatio > 0.03 || strongRatio > 0.012) return 'complex';
+  return 'moderate';
+}
+
+async function warmUpAI() {
+  const btns = [$('warmupBtn'), $('warmupBtn2')].filter(Boolean);
+  const bars = [$('warmupProgressBar'), $('warmupProgressBar2')].filter(Boolean);
+  const statusTxt = $('warmupStatusTxt');
+
+  if (warmEngines.size > 0) {
+    toast('✅ AI already warm');
+    return;
+  }
+
+  btns.forEach(b => { b.disabled = true; b.textContent = '⏳ Loading…'; });
+  bars.forEach(bar => bar.classList.remove('hidden'));
+  if (statusTxt) {
+    statusTxt.classList.remove('hidden');
+    statusTxt.textContent = 'Preparing…';
+  }
+
+  const updateProgress = (pct, msg) => {
+    bars.forEach(bar => {
+      const fill = bar.querySelector('i');
+      if (fill) fill.style.width = pct + '%';
+    });
+    if (statusTxt && msg) statusTxt.textContent = msg;
+  };
+
+  try {
+    updateProgress(5, 'Detecting best model…');
+    const rec = pickModelForDevice('portrait');
+    const recMeta = MODEL_REGISTRY[rec];
+    if (!recMeta) throw new Error('No model available');
+
+    if (recMeta.engine === 'mediapipe') {
+      updateProgress(30, 'Loading MediaPipe (2MB)…');
+      await loadMediaPipe();
+      markEngineWarm('mediapipe');
+    } else {
+      updateProgress(10, `Downloading ${rec} (~${recMeta.sizeMB}MB)…`);
+      const { pipeline, env } = await loadTF();
+      try { env.allowLocalModels = false; env.useBrowserCache = true; } catch (_) {}
+
+      const task = recMeta.tasks[0];
+      const device = (IS_MOBILE || !HAS_WEBGPU) ? 'wasm' : 'webgpu';
+      const dtype = 'fp16';        // v2.4.0: fp16 default
+      let lastPct = 10;
+
+      const pipe = await pipeline(task, recMeta.model, {
+        device,
+        dtype,
+        progress_callback: (data) => {
+          if (data && data.status === 'progress' && data.progress != null) {
+            const pct = 10 + (data.progress * 0.85);
+            if (pct - lastPct > 4) {
+              lastPct = pct;
+              updateProgress(pct, `Downloading… ${Math.round(data.progress)}%`);
+            }
+          }
+        }
+      });
+
+      const key = `pipe:${task}:${recMeta.model}:${dtype}`;
+      engineCache[key] = pipe;
+      lruTouch(key);
+      markEngineWarm(rec);
+    }
+
+    updateProgress(100, '✅ AI ready!');
+    btns.forEach(b => { b.disabled = false; b.textContent = '✅ Ready'; });
+    toast('🔥 AI warm-up complete');
+    updateCacheStatus();
+  } catch (e) {
+    log.error('warmUpAI', e);
+    btns.forEach(b => { b.disabled = false; b.textContent = '🔥 Retry'; });
+    updateProgress(0, '❌ ' + errMsg(e));
+    toast('❌ Warm-up failed: ' + errMsg(e), 3500);
+  }
+}
+
 function validateMask(alpha, w, h) {
   const n = w * h;
   if (!n || !alpha) return { verdict: 'BAD', reason: 'empty' };
@@ -884,7 +1085,6 @@ function validateMask(alpha, w, h) {
   const stepY = Math.max(1, Math.floor(h / 200));
   const borderPx = Math.max(3, Math.floor(Math.min(w, h) * 0.01));
   let fgCount = 0, edgeCount = 0, sampled = 0, borderFg = 0, borderTotal = 0;
-  // NEW: centrality
   const cx = w / 2, cy = h / 2;
   const centerR = Math.min(w, h) * 0.35;
   let centerFg = 0, centerTotal = 0;
@@ -919,7 +1119,6 @@ function validateMask(alpha, w, h) {
   if (fgRatio > 0.92) return { verdict: 'UNCERTAIN', reason: 'huge-subject', fgRatio, edgeRatio, borderRatio, centerFgRatio };
   if (borderRatio > 0.5) return { verdict: 'UNCERTAIN', reason: 'border-contamination', fgRatio, edgeRatio, borderRatio, centerFgRatio };
   if (edgeRatio < 0.003) return { verdict: 'UNCERTAIN', reason: 'no-soft-edges', fgRatio, edgeRatio, borderRatio, centerFgRatio };
-  // NEW centrality: for typical subject images, center should have SOME fg
   if (centerFgRatio < CONFIG.MASK_CENTER_FG_MIN && fgRatio > 0.04) {
     return { verdict: 'UNCERTAIN', reason: 'no-central-subject', fgRatio, edgeRatio, borderRatio, centerFgRatio };
   }
@@ -1020,6 +1219,9 @@ class CancelToken {
 let activeCancelToken = null;
 function newCancelToken() { if (activeCancelToken) activeCancelToken.cancel(); activeCancelToken = new CancelToken(); return activeCancelToken; }
 
+/* ============================================================================
+ * WORKER v2.4.0 — guided filter radius 6→8, stronger matting
+ * ========================================================================== */
 const WORKER_SOURCE = `
 'use strict';
 function boxFilterFloat(src, w, h, r) {
@@ -1151,7 +1353,8 @@ self.onmessage = (e) => {
     else {
       if (options.matting) { post('matting', 0);
         const eb = detectEdgeBand(a, w, h, 4);
-        const ref = guidedFilterMatting(imgData, a, 6, 1e-4);
+        // v2.4.0: radius 6 → 8 for stronger edge refinement
+        const ref = guidedFilterMatting(imgData, a, 8, 1e-4);
         for (let i = 0; i < a.length; i++) if (eb[i]) a[i] = ref[i];
         post('matting', 100); }
       if (options.hair && level === 'full') { post('hair', 0);
@@ -2263,9 +2466,6 @@ on($('fileMulti'), 'change', e => {
 window.addEventListener('dragover', e => e.preventDefault());
 window.addEventListener('drop', e => e.preventDefault());
 
-/* ============================================================================
- * TRANSFORMERS LOADER v2.3.0 — task-aware
- * ========================================================================== */
 async function loadTF() {
   if (engineCache.tf) { lruTouch('tf'); return engineCache.tf; }
   if (loadingEngine.tf) return loadingEngine.tf;
@@ -2277,6 +2477,9 @@ async function loadTF() {
   return loadingEngine.tf;
 }
 
+/* ============================================================================
+ * v2.4.0 FIX #2: MOBILE DTYPE — fp16 first for better edge quality
+ * ========================================================================== */
 async function getPipeline(modelId, task, dtype) {
   const key = `pipe:${task}:${modelId}:${dtype || 'auto'}`;
   if (engineCache[key]) { lruTouch(key); return engineCache[key]; }
@@ -2286,9 +2489,8 @@ async function getPipeline(modelId, task, dtype) {
     try { env.allowLocalModels = false; env.useBrowserCache = true; } catch (_) {}
 
     const device = (IS_MOBILE || !HAS_WEBGPU) ? 'wasm' : 'webgpu';
-    const dtypeAttempts = dtype ? [dtype] : (IS_MOBILE
-      ? ['q8', 'fp32']
-      : ['fp16', 'q8', 'fp32']);
+    // v2.4.0: fp16 first even on mobile (modnet=25MB, birefnet=47MB — both fit)
+    const dtypeAttempts = dtype ? [dtype] : ['fp16', 'q8', 'fp32'];
 
     let lastErr = null;
     for (const dt of dtypeAttempts) {
@@ -2371,32 +2573,22 @@ async function clearAllCaches() {
   } catch (e) { log.error('clearAllCaches', e); return false; }
 }
 
-/* ============================================================================
- * v2.3.0 UNIVERSAL MASK DECODER
- * Converts any transformers.js output (RawImage / array / mask object)
- * into a canvas + format metadata.
- * ========================================================================== */
 async function outputToMaskCanvas(output) {
   if (!output) throw new Error('Empty model output');
 
-  // A) Array output (image-segmentation): pick the top-scoring item
   if (Array.isArray(output)) {
     if (!output.length) throw new Error('Empty segmentation array');
-    // Sort by score if available
     const sorted = output.slice().sort((a, b) => (b?.score || 0) - (a?.score || 0));
     const first = sorted[0];
     if (first && first.mask) return outputToMaskCanvas(first.mask);
-    // Some models return arrays of RawImages
     if (first && (first.data || first.toCanvas)) return outputToMaskCanvas(first);
     throw new Error('Unsupported array output');
   }
 
-  // B) Object with .mask property
   if (output.mask && (output.mask.data || output.mask.toCanvas)) {
     return outputToMaskCanvas(output.mask);
   }
 
-  // C) RawImage with .data/.width/.height/.channels
   if (output.data && output.width && output.height) {
     const channels = output.channels || 4;
     const cv = document.createElement('canvas');
@@ -2406,14 +2598,12 @@ async function outputToMaskCanvas(output) {
     const n = output.width * output.height;
 
     if (channels === 4) {
-      // RGBA — direct
       const arr = new Uint8ClampedArray(n * 4);
       for (let i = 0; i < n * 4; i++) arr[i] = output.data[i] || 0;
       ctx2.putImageData(new ImageData(arr, output.width, output.height), 0, 0);
       return { canvas: cv, format: 'rgba', channels: 4 };
     }
     if (channels === 3) {
-      // RGB — expand to RGBA (A=255)
       const id = ctx2.createImageData(output.width, output.height);
       for (let i = 0; i < n; i++) {
         id.data[i*4]   = output.data[i*3];
@@ -2425,7 +2615,6 @@ async function outputToMaskCanvas(output) {
       return { canvas: cv, format: 'rgb', channels: 3 };
     }
     if (channels === 2) {
-      // Unusual — L+A? Fall back to R channel
       const id = ctx2.createImageData(output.width, output.height);
       for (let i = 0; i < n; i++) {
         const v = output.data[i*2];
@@ -2438,7 +2627,6 @@ async function outputToMaskCanvas(output) {
       return { canvas: cv, format: 'gray', channels: 2 };
     }
     if (channels === 1) {
-      // Grayscale — expand to RGBA (A=255)
       const id = ctx2.createImageData(output.width, output.height);
       for (let i = 0; i < n; i++) {
         const v = output.data[i];
@@ -2453,13 +2641,11 @@ async function outputToMaskCanvas(output) {
     throw new Error(`Unsupported channels: ${channels}`);
   }
 
-  // D) RawImage with .toCanvas method
   if (typeof output.toCanvas === 'function') {
     const cv = await output.toCanvas();
     return { canvas: cv, format: 'unknown', channels: 0 };
   }
 
-  // E) Blob / File
   if (output instanceof Blob) {
     const im = await loadImage(output);
     const cv = document.createElement('canvas');
@@ -2471,7 +2657,6 @@ async function outputToMaskCanvas(output) {
   throw new Error('Unrecognized model output format');
 }
 
-/* Extract alpha channel from a mask canvas with variance-based channel selection */
 function canvasToAlpha(canvas, targetW, targetH, format) {
   const c2 = document.createElement('canvas');
   c2.width = targetW;
@@ -2486,7 +2671,6 @@ function canvasToAlpha(canvas, targetW, targetH, format) {
   const n = targetW * targetH;
   const alpha = new Float32Array(n);
 
-  // Sample variances of R/G/B/A
   const step = Math.max(1, Math.floor(n / 5000));
   let sumR = 0, sumG = 0, sumB = 0, sumA = 0;
   let sumR2 = 0, sumG2 = 0, sumB2 = 0, sumA2 = 0;
@@ -2505,14 +2689,9 @@ function canvasToAlpha(canvas, targetW, targetH, format) {
   const varB = Math.max(0, sumB2/sampled - meanB*meanB);
   const varA = Math.max(0, sumA2/sampled - meanA*meanA);
 
-  // Selection rules:
-  //   - If format explicitly 'rgba', prefer A when it varies
-  //   - If A variance is meaningful (not flat 255), use A
-  //   - Otherwise use R (grayscale mask stored in RGB)
   let chosen = 'R', chosenVar = varR, channelIdx = 0;
   if (varG > chosenVar) { chosen = 'G'; chosenVar = varG; channelIdx = 1; }
   if (varB > chosenVar) { chosen = 'B'; chosenVar = varB; channelIdx = 2; }
-  // Alpha only counts if it's actually varying (not a flat 255)
   if (varA > chosenVar * 1.05 && meanA < 254) {
     chosen = 'A'; chosenVar = varA; channelIdx = 3;
   }
@@ -2525,14 +2704,12 @@ function canvasToAlpha(canvas, targetW, targetH, format) {
   if (channelIdx === 3) {
     for (let i = 0; i < n; i++) alpha[i] = md[i*4 + 3] / 255;
   } else {
-    // Use luminance to be safe for grayscale masks
     for (let i = 0; i < n; i++) {
       const p = i * 4;
       alpha[i] = (md[p] * 0.299 + md[p+1] * 0.587 + md[p+2] * 0.114) / 255;
     }
   }
 
-  // Polarity check
   const bw = Math.max(2, Math.floor(Math.min(targetW, targetH) * 0.025));
   let borderFg = 0, borderTotal = 0;
   for (let y = 0; y < targetH; y++) {
@@ -2554,7 +2731,6 @@ function canvasToAlpha(canvas, targetW, targetH, format) {
   return { alpha, channel: chosen, variance: chosenVar, inverted, borderRatio };
 }
 
-/* Adapter for transformer-based models with task fallback */
 async function runTransformersAdapter(blob, modelId, modelMeta) {
   const tasks = (modelMeta && modelMeta.tasks) || ['image-segmentation', 'background-removal'];
   let lastErr = null;
@@ -2589,7 +2765,6 @@ async function runMediaPipeAdapter(blob) {
         const mc = pool.acquire(w, h);
         const mctx = mc.getContext('2d');
         mctx.clearRect(0, 0, w, h);
-        // MediaPipe returns segmentationMask which is RGBA — but the mask is in R channel
         mctx.drawImage(res.segmentationMask, 0, 0, w, h);
         const out = { canvas: mc, format: 'gray-rgba', channels: 4, task: 'segmentation' };
         resolve(out);
@@ -2618,9 +2793,6 @@ function isCached(engineId) {
   return false;
 }
 
-/* ============================================================================
- * v2.3.0 ATTEMPT ENGINE — universal decoder + validation
- * ========================================================================== */
 async function attemptEngine(engineId, blob, w, h, onStage, cancelToken, baseProgress) {
   cancelToken.throwIfCancelled();
   onStage && onStage('AI', `Trying ${engineId}…`, baseProgress);
@@ -2654,9 +2826,6 @@ async function attemptEngine(engineId, blob, w, h, onStage, cancelToken, basePro
   };
 }
 
-/* ============================================================================
- * v2.3.0 IMAGE TYPE DETECTION — with document mode
- * ========================================================================== */
 function detectImageType(imgData) {
   const w = imgData.width, h = imgData.height, aspect = w / h;
   const d = imgData.data, n = w * h;
@@ -2672,7 +2841,6 @@ function detectImageType(imgData) {
   }
   const sr = skin / sampled, wr = white / sampled, cr = colorful / sampled;
 
-  // Edge density for document detection
   let edgeCount = 0, edgeSampled = 0;
   const estep = Math.max(2, Math.floor(Math.sqrt(n / 4000)));
   for (let y = estep; y < h - estep; y += estep * 2) {
@@ -2690,25 +2858,25 @@ function detectImageType(imgData) {
   }
   const edgeDensity = edgeSampled > 0 ? edgeCount / edgeSampled : 0;
 
-  // Priority order:
-  // 1) Extreme aspect ratio → signature
   if (aspect > 2.8 || aspect < 0.35) return 'signature';
-  // 2) Portrait skin presence
   if (sr > 0.06) return 'portrait';
-  // 3) Document: very white, low saturation, high text-edge density
   if (wr > 0.35 && cr < 0.25 && edgeDensity > 0.18) return 'document';
-  // 4) Signature: mostly white with almost no color
   if (wr > 0.55 && cr < 0.3) return 'signature';
   return 'product';
 }
 
+/* ============================================================================
+ * v2.4.0 FIX #6: Post-processing level upgraded
+ * Auto mode: matting always ON
+ * ========================================================================== */
 function getPostOptions(quality, complexity) {
   const tier = DEVICE_TIER;
   if (quality === 'fast') return { matting: false, hair: false, halo: false, decon: complexity === 'complex', postLevel: 'light' };
-  if (quality === 'balanced') return { matting: true, hair: complexity === 'complex', halo: false, decon: false, postLevel: 'medium' };
+  if (quality === 'balanced') return { matting: true, hair: complexity !== 'simple', halo: false, decon: false, postLevel: 'medium' };
   if (quality === 'quality') return { matting: true, hair: true, halo: complexity !== 'simple', decon: complexity === 'complex', postLevel: 'full' };
-  if (complexity === 'simple') return { matting: false, hair: false, halo: false, decon: false, postLevel: 'light' };
-  if (complexity === 'moderate') return { matting: true, hair: false, halo: false, decon: false, postLevel: 'medium' };
+  // AUTO mode: matting always on, hair on for moderate+complex
+  if (complexity === 'simple') return { matting: true, hair: false, halo: false, decon: false, postLevel: 'medium' };
+  if (complexity === 'moderate') return { matting: true, hair: true, halo: false, decon: false, postLevel: 'medium' };
   return { matting: true, hair: true, halo: true, decon: tier !== 'minimal' && tier !== 'low', postLevel: (tier === 'minimal' || tier === 'low') ? 'medium' : 'full' };
 }
 
@@ -2731,9 +2899,6 @@ async function buildAIInput(imgData, maxDim) {
   return blob;
 }
 
-/* ============================================================================
- * v2.3.0 processAISingle — document-aware + validation gate
- * ========================================================================== */
 async function processAISingle(item, onStage, cancelToken) {
   cancelToken.throwIfCancelled();
   const dc = DEVICE_CLASS();
@@ -2752,7 +2917,6 @@ async function processAISingle(item, onStage, cancelToken) {
   if (tEl) tEl.textContent = imageType;
   if (rEl) rEl.classList.remove('hidden');
 
-  // v2.3.0: Document/signature type — skip AI, just crop+resize
   if ((imageType === 'document' || imageType === 'signature') && currentQuality === 'auto') {
     log.info(`Type=${imageType} → skipping AI background removal (not applicable)`);
     onStage && onStage('Skip AI', `${imageType} detected — no background to remove`, 1);
@@ -2888,7 +3052,6 @@ async function processAISingle(item, onStage, cancelToken) {
   onStage && onStage('Complete', `Done • ${result.engineId} • ${result.validation.verdict}`, 1);
 }
 
-/* Document mode: just crop + resize, no AI */
 async function documentModeProcess(item, preset) {
   const imgData = item.original;
   const cropped = await autoFaceCrop(imgData, preset.w || imgData.width, preset.h || imgData.height);
@@ -3486,6 +3649,9 @@ on($('clearQueueBtn'), 'click', () => {
   }, 'Clear All');
 });
 
+on($('warmupBtn'), 'click', warmUpAI);
+on($('warmupBtn2'), 'click', warmUpAI);
+
 on($('aiRemove'), 'click', async () => {
   if (!activeId) return toast('❌ पहले image upload करें');
   if (isProcessing) return;
@@ -3510,7 +3676,6 @@ on($('aiRemove'), 'click', async () => {
     if (e.name === 'AbortError') { toast('⏹ Cancelled'); item.status = 'pending'; undoStack.pop(); }
     else if (e.name === 'TimeoutError') { log.error('aiRemove timeout', e); item.status = 'error'; undoStack.pop(); toast('⏱ Timeout — Fast mode try karein', 3500); }
     else if (e.name === 'DocumentTypeError') {
-      // v2.3.0: Document/signature → auto crop+resize instead of error
       toast(`📄 ${e.imageType} detected — AI skip kiya`, 3000);
       const preset = EXAM_PRESETS.find(x => x.id === selectedExam) || { w: item.original.width, h: item.original.height, bg: 'white' };
       try {
@@ -3612,7 +3777,6 @@ on($('examReadyBtn'), 'click', async () => {
     if (e.name === 'AbortError') toast('⏹ Cancelled');
     else if (e.name === 'TimeoutError') toast('⏱ Timeout — Fast mode try karein', 3500);
     else if (e.name === 'DocumentTypeError') {
-      // Document/signature → just crop
       toast(`📄 ${e.imageType} detected — AI skip kiya`, 3000);
       try {
         await documentModeProcess(item, preset);
@@ -3756,7 +3920,6 @@ function sigCleanItem(item) {
   const alpha = new Uint8ClampedArray(w * h);
   for (let i = 0, p = 0; i < w * h; i++, p += 4) {
     const lum = 0.299 * src[p] + 0.587 * src[p + 1] + 0.114 * src[p + 2];
-    // v2.3.0 FIX: simplified threshold math
     alpha[i] = Math.max(0, Math.min(255, (th - lum) * 255 / th));
   }
   for (let i = 0, p = 0; i < w * h; i++, p += 4) out.data[p + 3] = alpha[i];
@@ -3978,7 +4141,7 @@ function renderDeviceInfo() {
   const qt = { fast: $('qcFastTime'), balanced: $('qcBalTime'), quality: $('qcQualTime'), auto: $('qcAutoTime') };
   const timings = {
     minimal: { fast: '~2–4 sec', bal: 'Not recommended', qual: 'Not available' },
-    low:     { fast: '~2–4 sec', bal: '~4–6 sec', qual: 'Not recommended' },
+    low:     { fast: '~2–4 sec', bal: '~4–6 sec', qual: '~6–10 sec' },
     mid:     { fast: '~3–5 sec', bal: '~5–8 sec', qual: '~8–12 sec' },
     high:    { fast: '~3–5 sec', bal: '~5–8 sec', qual: '~6–10 sec' },
     flagship:{ fast: '~2–4 sec', bal: '~4–7 sec', qual: '~5–10 sec' }
@@ -3989,6 +4152,8 @@ function renderDeviceInfo() {
   if (qt.auto) qt.auto.textContent = 'Recommended';
   const wd = $('warmupDetail');
   if (wd) {
+    const rec = pickModelForDevice('portrait');
+    const recMeta = MODEL_REGISTRY[rec];
     const size = recMeta?.sizeMB || '?';
     wd.textContent = `Download: ~${size}MB (${rec}). Baad me har photo 3-10 sec me ready.`;
   }
@@ -4027,7 +4192,7 @@ async function init() {
     const vi = $('versionInfo'); if (vi) vi.textContent = 'v' + APP_VERSION;
     if (work) render();
   } catch (e) { log.error('UI sync failed', e); }
-  if (DEVICE_TIER === 'minimal' || DEVICE_TIER === 'low') {
+  if (DEVICE_TIER === 'minimal') {
     const card = document.querySelector('.qualityCard[data-quality="fast"]');
     if (card) { document.querySelectorAll('.qualityCard').forEach(c2 => c2.classList.remove('on')); card.classList.add('on'); currentQuality = 'fast'; }
   }
